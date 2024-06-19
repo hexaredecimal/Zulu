@@ -1,11 +1,7 @@
 <div align="center">
-<p>
-    <img width="80" src="https://github.com/corgifist/barley-lang/blob/main/dist/logo.png">
-</p>
-    
-<h1>The Barley Programming Language</h1>
- <h1>PROJECT IS ALIVE, JUST GROWS SLOWLY</p>
- </div>
+<img width="20%" src="https://github.com/hexaredecimal/Erlava/assets/51314855/9e93375c-3350-4f81-b071-2742f4665398" />
+<h1>ERLAVA Programming Language</h1>
+</div>
 
 [![CI](https://github.com/elixir-lang/elixir/workflows/CI/badge.svg?branch=main)](https://app.circleci.com/pipelines/github/corgifist/barley-lang/10/workflows/45b5d058-5c12-49f8-a44a-0a7f76fdf0c9)
 
@@ -29,6 +25,7 @@
  - Clean syntax
  - Built-in terminal code editor
  - `Monty` gui library!
+
 
 
 Barley is a interpreted erlang-like language based on JVM.
