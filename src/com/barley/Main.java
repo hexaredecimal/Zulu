@@ -35,20 +35,20 @@ public class Main {
         if (file.equals("-editor")) {
             argsLength = 2;
             LinkedList<BarleyValue> argsc = new LinkedList<>();
-            for (String arg : List.of(args).subList(argsLength, args.length)) {
+            /*for (String arg : List.of(args).subList(argsLength, args.length)) {
                 argsc.add(new BarleyString(arg));
             }
-            Table.set("ARGS", new BarleyList(argsc));
+            Table.set("ARGS", new BarleyList(argsc))*/;
             Editor.main(args);
             return;
         }
         if (file.equals("-entry")) {
             argsLength = 4;
             LinkedList<BarleyValue> argsc = new LinkedList<>();
-            for (String arg : List.of(args).subList(argsLength, args.length)) {
+            /*for (String arg : List.of(args).subList(argsLength, args.length)) {
                 argsc.add(new BarleyString(arg));
-            }
-            Table.set("ARGS", new BarleyList(argsc));
+            }*/
+            //Table.set("ARGS", new BarleyList(argsc));
             Handler.entry(args[1], args[2]);
             return;
         }
