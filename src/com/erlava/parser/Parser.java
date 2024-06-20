@@ -545,7 +545,7 @@ public final class Parser implements Serializable {
         }
 
         if (match(TokenType.POINT)) {
-            if (match(TokenType.LBRACKET)) {
+            if (match(TokenType.LBRACE)) {
                 return map();
             }
             return new PointerAST(call());
@@ -569,7 +569,7 @@ public final class Parser implements Serializable {
 
     private AST map() {
         HashMap<AST, AST> map = new HashMap<>();
-        while (!match(TokenType.RBRACKET)) {
+        while (!match(TokenType.RBRACE)) {
 
             AST key = expression();
             consume(TokenType.STABBER, "expected '->' after key in map expression");
