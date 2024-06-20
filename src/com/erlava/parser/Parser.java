@@ -533,7 +533,7 @@ public final class Parser implements Serializable {
 
         if (match(TokenType.UNBIN))
         {
-            return buildCall("barley", "from_binary", new ArrayList<>(List.of(primary())));
+            return buildCall("erlava", "from_binary", new ArrayList<>(List.of(primary())));
         }
 
         if (match(TokenType.PACK)) {
@@ -685,7 +685,7 @@ public final class Parser implements Serializable {
             match(TokenType.GTGT);
             ArrayList<AST> list = new ArrayList<>();
             list.add(toBinary);
-            return buildCall("barley", "binary", list);
+            return buildCall("erlava", "binary", list);
         }
 
         if (match(TokenType.EXTERN)) {
