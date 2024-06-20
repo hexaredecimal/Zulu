@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Handler {
 
-    private static String RUNTIME_VERSION = "0.1";
+    public static String RUNTIME_VERSION = "0.11";
 
     public static void handle(String input, boolean isExpr, boolean time) {
         try {
