@@ -45,7 +45,7 @@ public enum TokenType implements Serializable {
 
     MODULE,
     MODULEDOC,
-    WHEN,
+    WHEN, TYPE,
     RECIEVE,
     CASE, OF, END,
     AND, OR, GLOBAL,
