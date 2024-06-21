@@ -23,7 +23,6 @@ public class Main {
 		conf.setVersion(Handler.RUNTIME_VERSION);
 		conf.parse(argp);
 
-		AnsiConsole.out().print("");
 		Modules.init();
 
 		if (conf.isRepl()) {
@@ -35,12 +34,11 @@ public class Main {
 			for (String arg : conf.getFiles()) {
 				argsc.add(new BarleyString(arg));
 			}
-			Table.set("ARGS", new BarleyList(argsc));
+			Table.set("Args", new BarleyList(argsc));
 			Handler.tests();
 			return;
 		} else if (!conf.getEntry().isBlank()) {
 			Handler.entry(conf.getEntry(), conf.getEntry_module());
-
 		} else if (conf.hasFiles()) {
 			for (String file : conf.getFiles()) {
 				String[] dotParts = file.split("\\.");
@@ -54,38 +52,7 @@ public class Main {
 					}
 				}
 			}
-
 		}
-
-			/*
-		String file = args[0];
-		if (file.equals("-entry")) {
-			argsLength = 4;
-			LinkedList<BarleyValue> argsc = new LinkedList<>();
-			/*for (String arg : List.of(args).subList(argsLength, args.length)) {
-                argsc.add(new BarleyString(arg));
-            }*/
-			//Table.set("ARGS", new BarleyList(argsc));
-			/*Handler.entry(args[1], args[2]);
-			return;
-		}
-		
-		LinkedList<BarleyValue> argsc = new LinkedList<>();
-		for (String arg : List.of(args).subList(argsLength, args.length)) {
-			argsc.add(new BarleyString(arg));
-		}
-		Table.set("ARGS", new BarleyList(argsc));
-		String[] dotParts = file.split("\\.");
-		if (dotParts[dotParts.length - 1].equals("app")) {
-			Modules.get("dist").get("app").execute(new BarleyString(file));
-		} else {
-			argsLength = 1;
-			try {
-				Handler.handle(SourceLoader.readSource(file), false);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}*/
 	}
 
 	public static void error(String type, String text, int line, String current) {
