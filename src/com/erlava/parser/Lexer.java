@@ -79,6 +79,7 @@ public final class Lexer {
         KEYWORDS.put("binary_operation", TokenType.BINARY_OPERATION);
         KEYWORDS.put("unary_operation", TokenType.UNARY_OPERATION);
         KEYWORDS.put("inline", TokenType.INLINE);
+        KEYWORDS.put("type", TokenType.TYPE);
     }
 
     private final String input;
