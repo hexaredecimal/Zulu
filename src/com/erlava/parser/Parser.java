@@ -655,6 +655,14 @@ public final class Parser implements Serializable {
 					txt += ">";
 					pos++;
 					break;
+				case EQ:
+					txt += "=";
+					pos++;
+					break;
+				case STRING:
+					txt += "\"" + top.getText() + "\""; 
+					pos++;
+					break;
 				case DOL: {
 					// ${}
 					match(TokenType.DOL);
@@ -666,7 +674,7 @@ public final class Parser implements Serializable {
 					consume(TokenType.RBRACE, "Expected `}` after expression xml expression");
 				}
 				default:
-					//System.out.println("C: " + top.getType());
+					txt += top.getText();
 			};
 			top = get(0);
 		}
