@@ -6,6 +6,7 @@ import com.erlava.runtime.BarleyString;
 import com.erlava.runtime.BarleyList;
 import com.erlava.runtime.Modules;
 import com.erlava.utils.BarleyException;
+import com.erlava.utils.FileUtils;
 import com.erlava.utils.Handler;
 import com.erlava.utils.SourceLoader;
 import org.fusesource.jansi.AnsiConsole;
@@ -38,14 +39,16 @@ public class Main {
 			Handler.tests();
 			return;
 		} else if (!conf.getEntry().isBlank()) {
+			String extension = FileUtils.expectExtention(conf.getEntry(), "elv");
 			Handler.entry(conf.getEntry(), conf.getEntry_module());
 		} else if (conf.hasFiles()) {
 			for (String file : conf.getFiles()) {
-				String[] dotParts = file.split("\\.");
-				if (dotParts[dotParts.length - 1].equals("app")) {
+				String ext = FileUtils.getExtension(file);
+				if (ext.equals("app")) {
 					Modules.get("dist").get("app").execute(new BarleyString(file));
 				} else {
 					try {
+						FileUtils.expectExtention(file, "elv");
 						Handler.handle(SourceLoader.readSource(file), false);
 					} catch (IOException e) {
 						e.printStackTrace();
