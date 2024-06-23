@@ -6,11 +6,13 @@ package com.erlava.ast;
 
 import com.erlava.optimizations.Optimization;
 import com.erlava.runtime.BarleyAtom;
+import com.erlava.runtime.BarleyReference;
 import com.erlava.runtime.BarleyString;
 import com.erlava.runtime.BarleyValue;
 import com.erlava.utils.AST;
 import java.io.Serializable;
 import java.util.ArrayList;
+import xmlparser.XmlParser;
 
 /**
  *
@@ -22,6 +24,13 @@ public class XMLAST implements AST, Serializable{
 	public XMLAST(ArrayList<AST> nodes) {
 		this.nodes = nodes;
 	}
+	
+
+	private BarleyValue parserXMLString(String xml) {
+		XmlParser parser = new XmlParser(); 
+		return new BarleyReference(parser.fromXml(xml));
+	}
+	 
 	
 	@Override
 	public BarleyValue execute() {
@@ -36,8 +45,8 @@ public class XMLAST implements AST, Serializable{
 				txt += node.execute().toString();
 			}
 		}
-		System.out.println("" + txt);
-		return new BarleyAtom("ok");
+
+		return parserXMLString(txt);
 	}
 
 	@Override
