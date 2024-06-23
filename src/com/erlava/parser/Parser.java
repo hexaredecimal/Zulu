@@ -51,8 +51,11 @@ import com.erlava.ast.BindAST;
 import com.erlava.Main;
 import com.erlava.ast.InstanceAST;
 import com.erlava.ast.TypeAst;
+import com.erlava.ast.XMLAST;
+import com.erlava.ast.XMLInternalExpression;
 import com.erlava.optimizations.TableEmulator;
 import com.erlava.optimizations.VariableInfo;
+import com.erlava.runtime.BarleyValue;
 import com.erlava.runtime.TypeTable;
 import com.erlava.units.UnitBase;
 import com.erlava.units.Units;
@@ -588,6 +591,10 @@ public final class Parser implements Serializable {
 				return typeInstance();
 		}
 
+		if (match(TokenType.BAR)) {
+			return xmlInstance();
+		}
+		
 		if (match(TokenType.POINT)) {
 			if (match(TokenType.LBRACE)) {
 				return map();
@@ -612,6 +619,67 @@ public final class Parser implements Serializable {
 		return call();
 	}
 
+	private AST xmlInstance() {
+		ArrayList<AST> nodes = new ArrayList<>();
+		Token top = get(0); 
+		
+		if (top.getType() != TokenType.LT) {
+			consume(TokenType.LT, "Expected `<` at the start of XML expression");
+		}
+		
+		String txt = top.getText(); 
+		while (top.getType() != TokenType.BAR) {
+			int pos_inc = 1;
+			switch (top.getType()) {
+				case VAR:
+					txt += " " + top.getText() + " ";
+					pos++;
+					break;
+				case ATOM:
+					txt += " " + top.getText() + " ";
+					pos++;
+					break;
+				case COMMA:
+					txt += ",";
+					pos++;
+					break;
+				case LT:
+					txt += "<";
+					pos++;
+					break;
+				case SLASH:
+					txt += "/";
+					pos++;
+					break;
+				case GT:
+					txt += ">";
+					pos++;
+					break;
+				case DOL: {
+					// ${}
+					match(TokenType.DOL);
+					consume(TokenType.LBRACE, "Expected `{` after `$` in xml expression");
+					AST e = new XMLInternalExpression(expression()); 
+					nodes.add(new StringAST(txt, top.getLine(), currentLine(), pos));
+					nodes.add(e);
+					txt = "";
+					consume(TokenType.RBRACE, "Expected `}` after expression xml expression");
+				}
+				default:
+					//System.out.println("C: " + top.getType());
+			};
+			top = get(0);
+		}
+		consume(TokenType.BAR, "Expected `|` after xml expression");
+
+		if (!txt.isBlank())
+					nodes.add(new StringAST(txt, top.getLine(), currentLine(), pos));
+
+		XMLAST xml = new XMLAST(nodes);
+		return xml;		
+	}
+
+	
 	private AST typeInstance() {
 		Token type_name = consume(TokenType.VAR, "");
 		consume(TokenType.LBRACE, "Expected `{` after type name in type instance.");
