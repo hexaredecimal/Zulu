@@ -9,6 +9,7 @@ import com.erlava.runtime.BarleyAtom;
 import com.erlava.runtime.BarleyReference;
 import com.erlava.runtime.BarleyString;
 import com.erlava.runtime.BarleyValue;
+import com.erlava.runtime.BarleyXML;
 import com.erlava.utils.AST;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class XMLAST implements AST, Serializable{
 
 	private BarleyValue parserXMLString(String xml) {
 		XmlParser parser = new XmlParser(); 
-		return new BarleyReference(parser.fromXml(xml));
+		return new BarleyReference(new BarleyXML(parser.fromXml(xml)));
 	}
 	 
 	
