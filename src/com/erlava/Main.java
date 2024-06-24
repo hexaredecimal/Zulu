@@ -39,7 +39,7 @@ public class Main {
 			Handler.tests();
 			return;
 		} else if (!conf.getEntry().isBlank()) {
-			String extension = FileUtils.expectExtention(conf.getEntry(), "elv");
+			String extension = FileUtils.expectExtention(conf.getEntry(), "lava");
 			Handler.entry(conf.getEntry(), conf.getEntry_module());
 		} else if (conf.hasFiles()) {
 			for (String file : conf.getFiles()) {
@@ -48,7 +48,7 @@ public class Main {
 					Modules.get("dist").get("app").execute(new BarleyString(file));
 				} else {
 					try {
-						FileUtils.expectExtention(file, "elv");
+						FileUtils.expectExtention(file, "lava");
 						Handler.handle(SourceLoader.readSource(file), false);
 					} catch (IOException e) {
 						e.printStackTrace();
