@@ -16,6 +16,10 @@ import com.erlava.reflection.Reflection;
 import com.erlava.units.Unit;
 import com.erlava.units.UnitBase;
 import com.erlava.units.Units;
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -32,6 +36,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.MalformedParameterizedTypeException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -43,6 +48,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class Modules {
@@ -878,12 +885,12 @@ public class Modules {
 				throw new BarleyException("Hash Value error", value + " is not a value in hashmap at " + hashref);
 			}
 
-			for (Entry<BarleyValue, BarleyValue> entry: map_obj.entrySet()) {
+			for (Entry<BarleyValue, BarleyValue> entry : map_obj.entrySet()) {
 				if (entry.getValue() == value || entry.getValue().equals(value)) {
-					return entry.getKey(); 
+					return entry.getKey();
 				}
 			}
-			
+
 			return new BarleyAtom("error");
 		});
 
@@ -929,7 +936,7 @@ public class Modules {
 			}
 			HashMap<BarleyValue, BarleyValue> map_obj = (HashMap<BarleyValue, BarleyValue>) hashref.raw();
 			boolean exists = map_obj.containsKey(key);
-			return new BarleyAtom(exists ? "true": "false");
+			return new BarleyAtom(exists ? "true" : "false");
 		});
 
 		map.put("has_value", args -> {
@@ -943,7 +950,7 @@ public class Modules {
 			}
 			HashMap<BarleyValue, BarleyValue> map_obj = (HashMap<BarleyValue, BarleyValue>) hashref.raw();
 			boolean exists = map_obj.containsValue(key);
-			return new BarleyAtom(exists ? "true": "false");
+			return new BarleyAtom(exists ? "true" : "false");
 		});
 
 		map.put("keys", args -> {
@@ -956,7 +963,7 @@ public class Modules {
 			}
 			HashMap<BarleyValue, BarleyValue> map_obj = (HashMap<BarleyValue, BarleyValue>) hashref.raw();
 			LinkedList<BarleyValue> keys = new LinkedList<>();
-			for (Object k: map_obj.keySet().toArray()) {
+			for (Object k : map_obj.keySet().toArray()) {
 				keys.add((BarleyValue) k);
 			}
 			return new BarleyList(keys);
@@ -972,7 +979,7 @@ public class Modules {
 			}
 			HashMap<BarleyValue, BarleyValue> map_obj = (HashMap<BarleyValue, BarleyValue>) hashref.raw();
 			LinkedList<BarleyValue> keys = new LinkedList<>();
-			for (Object k: map_obj.values().toArray()) {
+			for (Object k : map_obj.values().toArray()) {
 				keys.add((BarleyValue) k);
 			}
 			return new BarleyList(keys);
@@ -980,24 +987,24 @@ public class Modules {
 
 		map.put("new", args -> {
 			Arguments.check(0, args.length);
-			HashMap<BarleyValue, BarleyValue> map_obj = new HashMap<>(); 
+			HashMap<BarleyValue, BarleyValue> map_obj = new HashMap<>();
 			return new BarleyReference(map_obj);
 		});
 
 		map.put("is_empty", args -> {
 			Arguments.check(1, args.length);
 			BarleyValue hashref = args[0];
-			
+
 			if (!(hashref instanceof BarleyReference)) {
 				System.out.println("" + hashref);
 				throw new BarleyException("BadArg", "expected reference as hashmap object");
 			}
 
 			HashMap<BarleyValue, BarleyValue> map_obj = (HashMap<BarleyValue, BarleyValue>) hashref.raw();
-			boolean has_items = map_obj.size() > 0; 
+			boolean has_items = map_obj.size() > 0;
 			return new BarleyAtom(has_items ? "true" : "false");
 		});
-		
+
 		map.put("to_string", args -> {
 			Arguments.check(1, args.length);
 			BarleyValue hashref = args[0];
@@ -1007,16 +1014,16 @@ public class Modules {
 			}
 
 			HashMap<BarleyValue, BarleyValue> map_obj = (HashMap<BarleyValue, BarleyValue>) hashref.raw();
-			String repr = "Map@"+ map_obj.hashCode() + " {\n";
-			int index = 0; 
+			String repr = "Map@" + map_obj.hashCode() + " {\n";
+			int index = 0;
 			int end = map_obj.size();
-			
-			for (Entry<BarleyValue, BarleyValue> entry: map_obj.entrySet()) {
-				BarleyValue key = entry.getKey(); 
-				BarleyValue value = entry.getValue(); 
-				repr  += key.toString() + " -> " + value.toString() ;
+
+			for (Entry<BarleyValue, BarleyValue> entry : map_obj.entrySet()) {
+				BarleyValue key = entry.getKey();
+				BarleyValue value = entry.getValue();
+				repr += key.toString() + " -> " + value.toString();
 				if (index != end - 1) {
-					repr += ", "; 
+					repr += ", ";
 				}
 				repr += "\n";
 				index++;
@@ -1812,7 +1819,6 @@ public class Modules {
 		initAmethyst();
 		initInterface();
 		initAnsi();
-		initUnit();
 		initReflection();
 		initBase();
 		initHttp();
@@ -1889,7 +1895,168 @@ public class Modules {
 
 	private static void initHttp() {
 		HashMap<String, Function> http = new HashMap<>();
+		
+		http.put("write_stream", args -> {
+			Arguments.check(2, args.length);
+			BarleyValue first = args[0];
+			BarleyValue second = args[1];
+			
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+			
+			Object o = ((BarleyReference) first).raw(); 
+			if (!(o instanceof HttpExchange)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpContext Object value");
+			}
 
+			if (!(second instanceof BarleyString)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `2`, expected a String value: " + second.toString());
+			}
+
+			String data = ((BarleyString) second).toString(); 
+			HttpExchange exchange = (HttpExchange) o;
+			
+			OutputStream os = exchange.getResponseBody();
+			try {
+				os.write(data.getBytes());
+				os.close();
+			} catch (IOException ex) {
+				throw new BarleyException("InternalError", "Failed to write data " + data + " to " + first); 
+			}
+			
+			return new BarleyAtom("ok");
+		});
+
+
+		http.put("send_exchange_response_header", args -> {
+			Arguments.check(3, args.length);
+			BarleyValue first = args[0];
+			int status = (args[1].asInteger()).intValue(); 
+			int size = args[2].asInteger().intValue();
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+			
+			Object o = ((BarleyReference) first).raw(); 
+			if (!(o instanceof HttpExchange)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpContext Object value");
+			}
+
+			HttpExchange exchange = (HttpExchange) o;
+			
+			try {
+				exchange.sendResponseHeaders(status, size);
+			} catch (IOException ex) {
+				throw new BarleyException("InternalError", "Failed to send respond header @" + first); 
+			}
+			return new BarleyAtom("ok");
+		});
+	
+		http.put("create_inet_server", args -> {
+			Arguments.check(1, args.length);
+			try {
+				int port = args[0].asInteger().intValue();
+				HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
+				return new BarleyReference(server);
+			} catch (IOException ex) {
+				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, "http error: create_inet_server", ex);
+			}
+			return new BarleyAtom("err");
+		});
+
+		http.put("inet_create_context", args -> {
+			Arguments.check(2, args.length);
+			BarleyValue first = args[0];
+			BarleyValue second = args[1];
+
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+			
+			Object o = ((BarleyReference) first).raw(); 
+			if (!(o instanceof HttpServer)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpServer Object value");
+			}
+
+			if (!(second instanceof BarleyString)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `2`, expected a String value: " + second.toString());
+			}
+
+			String path = ((BarleyString) second).toString(); 
+			HttpServer server = (HttpServer) o;
+			 
+			return new BarleyReference(server.createContext(path));
+		});
+
+		http.put("start_http_server", args -> {
+			Arguments.check(1, args.length);
+			BarleyValue first = args[0];
+
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+			
+			Object o = ((BarleyReference) first).raw(); 
+			if (!(o instanceof HttpServer)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpServer Object value");
+			}
+
+			HttpServer server = (HttpServer) o;
+			server.start();
+			return new BarleyAtom("ok");
+		});
+
+		http.put("set_default_executor", args -> {
+			Arguments.check(1, args.length);
+			BarleyValue first = args[0];
+
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+			
+			Object o = ((BarleyReference) first).raw(); 
+			if (!(o instanceof HttpServer)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpServer Object value");
+			}
+
+			HttpServer server = (HttpServer) o;
+			server.setExecutor(null);
+			return new BarleyAtom("ok");
+		});
+
+
+		http.put("inet_add_handler", args -> {
+			Arguments.check(2, args.length);
+			BarleyValue first = args[0];
+			BarleyValue second = args[1];
+
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+			
+			Object o = ((BarleyReference) first).raw(); 
+			if (!(o instanceof HttpContext)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpContext Object value");
+			}
+
+			if (!(second instanceof BarleyFunction)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `2`, expected a Function or a closure ");
+			}
+
+			BarleyFunction func = (BarleyFunction) second; 
+			HttpContext ctx = (HttpContext) o;
+			ctx.setHandler(new HttpHandler() {
+				@Override
+				public void handle(HttpExchange he) throws IOException {
+					func.execute(new BarleyReference(he));
+				}
+			});
+
+			return new BarleyAtom("ok");
+		});
+
+		
 		http.put("download", args -> {
 			OkHttpClient client = new OkHttpClient();
 			final Response response = client.newCall(
@@ -2097,49 +2264,6 @@ public class Modules {
 		new Reflection().inject();
 	}
 
-	private static void initUnit() {
-		HashMap<String, Function> unit = new HashMap<>();
-
-		unit.put("new", args -> {
-			Arguments.check(1, args.length);
-			UnitBase base = Units.get(args[0].toString());
-			HashMap<String, BarleyValue> fields = new HashMap<>();
-			for (String f : base.getFields()) {
-				fields.put(f, new BarleyAtom("not_assigned"));
-			}
-
-			for (Map.Entry<String, AST> entry : base.getDefaults().entrySet()) {
-				fields.put(entry.getKey(), entry.getValue().execute());
-			}
-			return new BarleyReference(new Unit(fields));
-		});
-
-		unit.put("unit_to_string", args -> {
-			Arguments.check(1, args.length);
-			BarleyReference un = (BarleyReference) args[0];
-			Unit u = (Unit) un.getRef();
-			return new BarleyString(u.toString());
-		});
-
-		unit.put("set", args -> {
-			Arguments.check(3, args.length);
-			Unit base = (Unit) ((BarleyReference) args[0]).getRef();
-			base.put(args[1].toString(), args[2]);
-			return args[0];
-		});
-
-		unit.put("get", args -> {
-			Arguments.check(2, args.length);
-			Unit base = (Unit) ((BarleyReference) args[0]).getRef();
-			BarleyValue b = base.get(args[1].toString());
-			if (b == null) {
-				throw new BarleyException("BadArg", "unit '" + base + "' doesn't have key '" + args[1] + "'");
-			}
-			return b;
-		});
-
-		put("unit", unit);
-	}
 
 	private static void initAnsi() {
 		HashMap<String, Function> ansi = new HashMap<>();
