@@ -669,6 +669,25 @@ public class Modules {
 			Arguments.check(1, args.length);
 			return new BarleyNumber(args[0].toString().length());
 		});
+
+		string.put("from_end_extract_until", args -> {
+			Arguments.check(2, args.length);
+			String path = args[0].toString();
+			String match = args[1].toString();
+			ArrayList<Character> ext = new ArrayList<>();
+			
+			for (int i = path.length() - 1; i >= 0 && path.charAt(i) != match.charAt(0); i--) {
+				ext.add(path.charAt(i));
+			}
+
+			String e = "";
+			for (int i = ext.size() - 1; i >= 0; i--) {
+				e += ext.get(i);
+			}
+
+			return new BarleyString(e);
+		});
+
 		string.put("lower", args -> {
 			Arguments.check(1, args.length);
 			return new BarleyString(args[0].toString().toLowerCase(Locale.ROOT));
@@ -1822,9 +1841,36 @@ public class Modules {
 		initReflection();
 		initBase();
 		initHttp();
+		initXML();
 		initMonty();
 	}
 
+
+	public static void initXML() {
+		HashMap<String, Function> module = new HashMap<>();
+
+		module.put("stringify", args ->{
+			Arguments.check(1, args.length);
+			BarleyValue first = args[0];
+
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			Object o = ((BarleyReference) first).raw();
+			if (!(o instanceof BarleyXML)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an XML Object value");
+			}
+
+			BarleyXML xml = (BarleyXML) o;
+			
+			
+			return new BarleyString("TODO: Implementation in progress :(");
+		}); 
+		
+		put("xml", module);
+	}
+	
 	public static void initMonty() {
 		HashMap<String, Function> monty = new HashMap<>();
 
@@ -1895,17 +1941,17 @@ public class Modules {
 
 	private static void initHttp() {
 		HashMap<String, Function> http = new HashMap<>();
-		
+
 		http.put("write_stream", args -> {
 			Arguments.check(2, args.length);
 			BarleyValue first = args[0];
 			BarleyValue second = args[1];
-			
+
 			if (!(first instanceof BarleyReference)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
-			
-			Object o = ((BarleyReference) first).raw(); 
+
+			Object o = ((BarleyReference) first).raw();
 			if (!(o instanceof HttpExchange)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpContext Object value");
 			}
@@ -1914,45 +1960,63 @@ public class Modules {
 				throw new BarleyException("BadArg", "Invalid value provide for param `2`, expected a String value: " + second.toString());
 			}
 
-			String data = ((BarleyString) second).toString(); 
+			String data = ((BarleyString) second).toString();
 			HttpExchange exchange = (HttpExchange) o;
-			
+
 			OutputStream os = exchange.getResponseBody();
 			try {
 				os.write(data.getBytes());
 				os.close();
 			} catch (IOException ex) {
-				throw new BarleyException("InternalError", "Failed to write data " + data + " to " + first); 
+				throw new BarleyException("InternalError", "Failed to write data " + data + " to " + first);
 			}
-			
+
 			return new BarleyAtom("ok");
 		});
 
-
-		http.put("send_exchange_response_header", args -> {
-			Arguments.check(3, args.length);
+		http.put("get_exchange_url_path", args -> {
+			Arguments.check(1, args.length);
 			BarleyValue first = args[0];
-			int status = (args[1].asInteger()).intValue(); 
-			int size = args[2].asInteger().intValue();
+
 			if (!(first instanceof BarleyReference)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
-			
-			Object o = ((BarleyReference) first).raw(); 
+
+			Object o = ((BarleyReference) first).raw();
 			if (!(o instanceof HttpExchange)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpContext Object value");
 			}
 
 			HttpExchange exchange = (HttpExchange) o;
-			
+			String path = exchange.getRequestURI().getPath();
+			System.out.println("" + path);
+			return new BarleyString(path);
+		});
+
+		http.put("send_exchange_response_header", args -> {
+			Arguments.check(3, args.length);
+			BarleyValue first = args[0];
+			int status = (args[1].asInteger()).intValue();
+			int size = args[2].asInteger().intValue();
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			Object o = ((BarleyReference) first).raw();
+			if (!(o instanceof HttpExchange)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpContext Object value");
+			}
+
+			HttpExchange exchange = (HttpExchange) o;
+
 			try {
 				exchange.sendResponseHeaders(status, size);
 			} catch (IOException ex) {
-				throw new BarleyException("InternalError", "Failed to send respond header @" + first); 
+				throw new BarleyException("InternalError", "Failed to send respond header @" + first);
 			}
 			return new BarleyAtom("ok");
 		});
-	
+
 		http.put("create_inet_server", args -> {
 			Arguments.check(1, args.length);
 			try {
@@ -1973,8 +2037,8 @@ public class Modules {
 			if (!(first instanceof BarleyReference)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
-			
-			Object o = ((BarleyReference) first).raw(); 
+
+			Object o = ((BarleyReference) first).raw();
 			if (!(o instanceof HttpServer)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpServer Object value");
 			}
@@ -1983,9 +2047,9 @@ public class Modules {
 				throw new BarleyException("BadArg", "Invalid value provide for param `2`, expected a String value: " + second.toString());
 			}
 
-			String path = ((BarleyString) second).toString(); 
+			String path = ((BarleyString) second).toString();
 			HttpServer server = (HttpServer) o;
-			 
+
 			return new BarleyReference(server.createContext(path));
 		});
 
@@ -1996,8 +2060,8 @@ public class Modules {
 			if (!(first instanceof BarleyReference)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
-			
-			Object o = ((BarleyReference) first).raw(); 
+
+			Object o = ((BarleyReference) first).raw();
 			if (!(o instanceof HttpServer)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpServer Object value");
 			}
@@ -2014,8 +2078,8 @@ public class Modules {
 			if (!(first instanceof BarleyReference)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
-			
-			Object o = ((BarleyReference) first).raw(); 
+
+			Object o = ((BarleyReference) first).raw();
 			if (!(o instanceof HttpServer)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpServer Object value");
 			}
@@ -2025,7 +2089,6 @@ public class Modules {
 			return new BarleyAtom("ok");
 		});
 
-
 		http.put("inet_add_handler", args -> {
 			Arguments.check(2, args.length);
 			BarleyValue first = args[0];
@@ -2034,8 +2097,8 @@ public class Modules {
 			if (!(first instanceof BarleyReference)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
-			
-			Object o = ((BarleyReference) first).raw(); 
+
+			Object o = ((BarleyReference) first).raw();
 			if (!(o instanceof HttpContext)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an HttpContext Object value");
 			}
@@ -2044,7 +2107,7 @@ public class Modules {
 				throw new BarleyException("BadArg", "Invalid value provide for param `2`, expected a Function or a closure ");
 			}
 
-			BarleyFunction func = (BarleyFunction) second; 
+			BarleyFunction func = (BarleyFunction) second;
 			HttpContext ctx = (HttpContext) o;
 			ctx.setHandler(new HttpHandler() {
 				@Override
@@ -2056,7 +2119,6 @@ public class Modules {
 			return new BarleyAtom("ok");
 		});
 
-		
 		http.put("download", args -> {
 			OkHttpClient client = new OkHttpClient();
 			final Response response = client.newCall(
@@ -2263,7 +2325,6 @@ public class Modules {
 
 		new Reflection().inject();
 	}
-
 
 	private static void initAnsi() {
 		HashMap<String, Function> ansi = new HashMap<>();
