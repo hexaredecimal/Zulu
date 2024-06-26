@@ -9,7 +9,7 @@ public class SerializeUtils {
 
         try (ObjectOutputStream outputStream = new ObjectOutputStream(out)) {
             outputStream.writeObject(value);
-        }
+        } 
 
         return out.toByteArray();
     }
