@@ -39,7 +39,7 @@ public class Config {
 		this.entry_module = "main";
 	}
 
-	Config() {
+	public Config() {
 		this.files = new ArrayList<>();
 	}
 
