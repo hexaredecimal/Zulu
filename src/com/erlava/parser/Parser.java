@@ -588,13 +588,13 @@ public final class Parser implements Serializable {
 		}
 
 		if (match(TokenType.DOG)) {
-				return typeInstance();
+			return typeInstance();
 		}
 
 		if (match(TokenType.BAR)) {
 			return xmlInstance();
 		}
-		
+
 		if (match(TokenType.POINT)) {
 			if (match(TokenType.LBRACE)) {
 				return map();
@@ -621,13 +621,13 @@ public final class Parser implements Serializable {
 
 	private AST xmlInstance() {
 		ArrayList<AST> nodes = new ArrayList<>();
-		Token top = get(0); 
-		
+		Token top = get(0);
+
 		if (top.getType() != TokenType.LT) {
 			consume(TokenType.LT, "Expected `<` at the start of XML expression");
 		}
-		
-		String txt = top.getText(); 
+
+		String txt = top.getText();
 		while (top.getType() != TokenType.BAR) {
 			int pos_inc = 1;
 			switch (top.getType()) {
@@ -660,14 +660,14 @@ public final class Parser implements Serializable {
 					pos++;
 					break;
 				case STRING:
-					txt += "\"" + top.getText() + "\""; 
+					txt += "\"" + top.getText() + "\"";
 					pos++;
 					break;
 				case DOL: {
 					// ${}
 					match(TokenType.DOL);
 					consume(TokenType.LBRACE, "Expected `{` after `$` in xml expression");
-					AST e = new XMLInternalExpression(expression()); 
+					AST e = new XMLInternalExpression(expression());
 					nodes.add(new StringAST(txt, top.getLine(), currentLine(), pos));
 					nodes.add(e);
 					txt = "";
@@ -680,14 +680,14 @@ public final class Parser implements Serializable {
 		}
 		consume(TokenType.BAR, "Expected `|` after xml expression");
 
-		if (!txt.isBlank())
-					nodes.add(new StringAST(txt, top.getLine(), currentLine(), pos));
+		if (!txt.isBlank()) {
+			nodes.add(new StringAST(txt, top.getLine(), currentLine(), pos));
+		}
 
 		XMLAST xml = new XMLAST(nodes);
-		return xml;		
+		return xml;
 	}
 
-	
 	private AST typeInstance() {
 		Token type_name = consume(TokenType.VAR, "");
 		consume(TokenType.LBRACE, "Expected `{` after type name in type instance.");
@@ -695,15 +695,15 @@ public final class Parser implements Serializable {
 		if (!TypeTable.types.containsKey(type_name.getText())) {
 			throw new BarleyException("BadCompiler", type_name.getText() + " is not a defined type");
 		}
-		
+
 		ArrayList<String> fields = TypeTable.types.get(type_name.getText());
 		HashMap<String, AST> map = new HashMap<>();
 		while (!match(TokenType.RBRACE)) {
 			Token key = consume(TokenType.VAR, "Expected field but found invalid symbol");
 			consume(TokenType.EQ, "expected `=` after key in map expression");
-			
-			String field_name = key.getText(); 
-			
+
+			String field_name = key.getText();
+
 			if (!fields.contains(field_name)) {
 				throw new BarleyException("BadCompiler", field_name + " is not a field of type " + type_name.getText());
 			}
@@ -711,9 +711,9 @@ public final class Parser implements Serializable {
 			match(TokenType.COMMA);
 		}
 
-		return new InstanceAST(type_name.getText(), map); 	
+		return new InstanceAST(type_name.getText(), map);
 	}
-	
+
 	private AST map() {
 		HashMap<AST, AST> map = new HashMap<>();
 		while (!match(TokenType.RBRACE)) {
@@ -1007,6 +1007,17 @@ public final class Parser implements Serializable {
 
 	private AST buildCall(String module, String method, ArrayList<AST> args) {
 		return new CallAST(new RemoteAST(new ConstantAST(new BarleyAtom(module)), new ConstantAST(new BarleyAtom(method)), line(), currentLine()), args, line(), currentLine());
+	}
+
+	public static AST buildCallV(String module, String method, ArrayList<AST> args) {
+		return new CallAST(
+						new RemoteAST(new ConstantAST(new BarleyAtom(module)),
+										new ConstantAST(new BarleyAtom(method)),
+										0,
+										""),
+						args,
+						0,
+						"");
 	}
 
 	private void emitVariable(String name) {
