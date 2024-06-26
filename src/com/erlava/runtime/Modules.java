@@ -1,5 +1,11 @@
 package com.erlava.runtime;
 
+import com.erlava.ArgParser;
+import com.erlava.Config;
+import com.erlava.ast.CallAST;
+import com.erlava.ast.ConstantAST;
+import com.erlava.ast.MethodAST;
+import com.erlava.ast.RemoteAST;
 import com.erlava.utils.SourceLoader;
 import com.erlava.utils.TimeMeasurement;
 import com.erlava.utils.SerializeUtils;
@@ -12,10 +18,12 @@ import com.erlava.utils.GeneratorSkip;
 import com.erlava.utils.Arguments;
 import com.erlava.utils.Handler;
 import com.erlava.monty.Monty;
+import com.erlava.parser.Parser;
 import com.erlava.reflection.Reflection;
 import com.erlava.units.Unit;
 import com.erlava.units.UnitBase;
 import com.erlava.units.Units;
+import com.erlava.utils.FileUtils;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -415,7 +423,7 @@ public class Modules {
 			try {
 				List<AST> parsed = Handler.parseAST(SourceLoader.readSource(args[0].toString()));
 				byte[] binary = SerializeUtils.serialize((Serializable) parsed);
-				try (FileWriter writer = new FileWriter(args[0].toString().split("\\.")[0] + ".ast", false)) {
+				try (FileWriter writer = new FileWriter(args[0].toString().split("\\.")[0] + ".app", false)) {
 					for (byte b : binary) {
 						writer.append(String.valueOf(b)).append(" ");
 					}
@@ -426,9 +434,11 @@ public class Modules {
 			}
 			return new BarleyAtom(AtomTable.put("error"));
 		});
-		shell.put("ast_from_binary", args -> {
+		shell.put("execute_app", args -> {
 			Arguments.check(1, args.length);
 			try {
+				String path = args[0].toString();
+				FileUtils.expectExtention(path, "app");
 				String bytes = SourceLoader.readSource(args[0].toString());
 				String[] bs = bytes.split(" ");
 
@@ -438,9 +448,25 @@ public class Modules {
 				}
 				byte[] binary = toPrimitives(bts.toArray(new Byte[]{}));
 				List<AST> ast = SerializeUtils.deserialize(binary);
-				System.out.println("after parsing");
+				// System.out.println("after parsing");
+
+				
+				ArgParser argp = new ArgParser(new String[] {"entry", path });
+				Config conf = new Config();
+				conf.setProgram("Erlava");
+				conf.setVersion(Handler.RUNTIME_VERSION);
+				conf.parse(argp);
+
 				for (AST node : ast) {
-					node.execute();
+					if (node instanceof MethodAST) {
+						MethodAST n = (MethodAST) node;
+						if (n.getName().equals("main")) {
+							CallAST call = (CallAST) Parser.buildCallV(conf.getEntry_module(), "main", new ArrayList<>());
+							System.out.println("Entry: " + call.execute());
+						}
+					} else {
+						node.execute();
+					}
 				}
 				return new BarleyAtom(AtomTable.put("ok"));
 			} catch (IOException | ClassNotFoundException e) {
@@ -675,7 +701,7 @@ public class Modules {
 			String path = args[0].toString();
 			String match = args[1].toString();
 			ArrayList<Character> ext = new ArrayList<>();
-			
+
 			for (int i = path.length() - 1; i >= 0 && path.charAt(i) != match.charAt(0); i--) {
 				ext.add(path.charAt(i));
 			}
@@ -1845,11 +1871,10 @@ public class Modules {
 		initMonty();
 	}
 
-
 	public static void initXML() {
 		HashMap<String, Function> module = new HashMap<>();
 
-		module.put("stringify", args ->{
+		module.put("stringify", args -> {
 			Arguments.check(1, args.length);
 			BarleyValue first = args[0];
 
@@ -1863,14 +1888,13 @@ public class Modules {
 			}
 
 			BarleyXML xml = (BarleyXML) o;
-			
-			
+
 			return new BarleyString("TODO: Implementation in progress :(");
-		}); 
-		
+		});
+
 		put("xml", module);
 	}
-	
+
 	public static void initMonty() {
 		HashMap<String, Function> monty = new HashMap<>();
 
