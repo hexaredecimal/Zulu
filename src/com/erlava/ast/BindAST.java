@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class BindAST implements AST, Serializable {
-
+		private static final long serialVersionUID = 1L;
     private final int line;
     private final String current;
     public AST left, right;

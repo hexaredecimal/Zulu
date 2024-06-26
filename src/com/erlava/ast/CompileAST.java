@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 public class CompileAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     private String module;
     private HashMap<String, Function> methods;
 

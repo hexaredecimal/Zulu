@@ -14,6 +14,7 @@ import java.io.Serializable;
  * @author hexaredecimal
  */
 public class XMLInternalExpression implements AST, Serializable {
+		private static final long serialVersionUID = 1L;
 	
 	private AST exp; 
 

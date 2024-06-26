@@ -8,6 +8,7 @@ import com.erlava.utils.AST;
 
 public class PackAST implements AST {
 
+		private static final long serialVersionUID = 1L;
     public String name;
 
     public PackAST(String name, int line, String current) {

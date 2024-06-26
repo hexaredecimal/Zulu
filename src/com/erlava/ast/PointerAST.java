@@ -9,6 +9,7 @@ import java.io.Serializable;
 
 public class PointerAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     private AST value;
 
     public PointerAST(AST value) {

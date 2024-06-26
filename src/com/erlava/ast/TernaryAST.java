@@ -7,6 +7,7 @@ import com.erlava.utils.AST;
 import java.io.Serializable;
 
 public class TernaryAST implements AST, Serializable {
+		private static final long serialVersionUID = 1L;
 
     private final int line;
     private final String current;

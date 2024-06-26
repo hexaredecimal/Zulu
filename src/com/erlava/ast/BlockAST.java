@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class BlockAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     public ArrayList<AST> block;
 
     public BlockAST(ArrayList<AST> block) {

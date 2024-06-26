@@ -12,6 +12,7 @@ import java.io.Serializable;
 
 public class UnPointAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     private final int line;
     private final String current;
     private AST ast;

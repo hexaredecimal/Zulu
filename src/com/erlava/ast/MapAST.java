@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class MapAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     private HashMap<AST, AST> map;
 
     public MapAST(HashMap<AST, AST> map) {

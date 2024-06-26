@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 public class ConstantAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     public BarleyValue constant;
 
     public ConstantAST(BarleyValue constant) {

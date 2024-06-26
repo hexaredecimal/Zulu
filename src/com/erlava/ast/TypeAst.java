@@ -17,6 +17,7 @@ import java.util.ArrayList;
  * @author hexaredecimal
  */
 public class TypeAst implements AST, Serializable{
+		private static final long serialVersionUID = 1L;
 	private String type_name; 
 	private ArrayList<String> fields; 
 

@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 public class PointShiftAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     private AST pointer, value;
 
     public PointShiftAST(AST pointer, AST value) {

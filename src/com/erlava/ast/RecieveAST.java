@@ -13,6 +13,7 @@ import java.io.Serializable;
 
 public class RecieveAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     private AST pid, body;
     private BarleyPID p;
 

@@ -12,6 +12,7 @@ import java.io.Serializable;
 
 public class StringAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     private final String current;
     private StringBuilder result;
     private final int line;

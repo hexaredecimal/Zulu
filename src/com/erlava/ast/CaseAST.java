@@ -15,6 +15,7 @@ import java.util.List;
 
 public final class CaseAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     public final AST expression;
     public final List<Pattern> patterns;
 

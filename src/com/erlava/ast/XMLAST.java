@@ -20,6 +20,7 @@ import xmlparser.XmlParser;
  * @author hexaredecimal
  */
 public class XMLAST implements AST, Serializable{
+		private static final long serialVersionUID = 1L;
 	ArrayList<AST> nodes; 
 
 	public XMLAST(ArrayList<AST> nodes) {

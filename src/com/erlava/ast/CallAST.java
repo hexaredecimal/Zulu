@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CallAST implements AST, Serializable {
+		private static final long serialVersionUID = 1L;
 
     private final int line;
     private final String current;

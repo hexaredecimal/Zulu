@@ -10,6 +10,7 @@ import java.util.LinkedList;
 
 public class ListAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     private LinkedList<AST> array;
 
     public ListAST(LinkedList<AST> array) {

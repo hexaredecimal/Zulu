@@ -18,6 +18,7 @@ import java.util.Map.Entry;
  * @author hexaredecimal
  */
 public class InstanceAST implements AST, Serializable {
+		private static final long serialVersionUID = 1L;
 	private HashMap<String, AST> fields;
 	private String parent;
 

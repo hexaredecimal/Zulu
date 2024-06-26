@@ -14,6 +14,7 @@ import com.erlava.utils.BarleyException;
 import java.io.Serializable;
 
 public class UnaryAST implements AST, Serializable {
+		private static final long serialVersionUID = 1L;
 
     private final int line;
     private final String current;

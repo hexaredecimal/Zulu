@@ -11,6 +11,7 @@ import java.awt.*;
 import java.io.Serializable;
 
 public class StrictAST implements AST, Serializable {
+		private static final long serialVersionUID = 1L;
     @Override
     public BarleyValue execute() {
         Table.strict = true;

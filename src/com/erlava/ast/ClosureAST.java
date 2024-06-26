@@ -9,6 +9,7 @@ import com.erlava.utils.AST;
 import java.io.Serializable;
 
 public class ClosureAST implements AST, Serializable {
+		private static final long serialVersionUID = 1L;
 
     private UserFunction function;
 

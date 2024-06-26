@@ -8,6 +8,7 @@ import com.erlava.utils.AST;
 import java.io.Serializable;
 
 public class UnPackAST implements AST, Serializable {
+		private static final long serialVersionUID = 1L;
 
     public AST ast;
 

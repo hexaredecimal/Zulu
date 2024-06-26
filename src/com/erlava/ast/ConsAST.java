@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 
 public class ConsAST implements AST, Serializable {
-
+		private static final long serialVersionUID = 1L;
     public AST left, right;
 
     public ConsAST(AST left, AST right, int line, String current) {

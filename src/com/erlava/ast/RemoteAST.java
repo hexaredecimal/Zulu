@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 public class RemoteAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     private final String current;
     private final int line;
     private AST module, target;

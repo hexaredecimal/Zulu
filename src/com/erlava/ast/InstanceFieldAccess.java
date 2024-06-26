@@ -17,6 +17,7 @@ import com.erlava.utils.BarleyException;
  */
 public class InstanceFieldAccess implements AST {
 
+		private static final long serialVersionUID = 1L;
 	private AST object;
 	private String key;
 

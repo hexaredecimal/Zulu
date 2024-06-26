@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 
 public class BinaryAST implements AST, Serializable {
-
+		private static final long serialVersionUID = 1L;
     public AST expr1;
     public AST expr2;
     public char op;

@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 public class ProcessCallAST implements AST, Serializable {
 
+		private static final long serialVersionUID = 1L;
     private final int line;
     private final String current;
     public AST pid, expr;
