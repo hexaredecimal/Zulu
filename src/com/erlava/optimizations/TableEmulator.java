@@ -1,110 +1,117 @@
 package com.erlava.optimizations;
 
+import com.erlava.runtime.BarleyAtom;
 import com.erlava.runtime.BarleyNumber;
+import java.io.Serializable;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class TableEmulator {
+public final class TableEmulator implements Serializable {
 
-    private final Object lock = new Object();
-    public volatile Scope scope = new Scope();
+	private static final long serialVersionUID = 1L;
+	private final BarleyAtom lock = new BarleyAtom("lock");
+	public volatile Scope scope = new Scope();
 
-    public TableEmulator() {
-    }
+	public TableEmulator() {
+	}
 
-    public Map<String, VariableInfo> variables() {
-        return scope.variables;
-    }
+	public Map<String, VariableInfo> variables() {
+		return scope.variables;
+	}
 
-    public void clear() {
-        scope = new Scope();
-    }
+	public void clear() {
+		scope = new Scope();
+	}
 
-    public void push() {
-        synchronized (lock) {
-            scope = new Scope(scope);
-        }
-    }
+	public void push() {
+		synchronized (lock) {
+			scope = new Scope(scope);
+		}
+	}
 
-    public void pop() {
-        synchronized (lock) {
-            if (scope.parent != null) {
-                scope = scope.parent;
-            }
-        }
-    }
+	public void pop() {
+		synchronized (lock) {
+			if (scope.parent != null) {
+				scope = scope.parent;
+			}
+		}
+	}
 
-    public boolean isExists(String key) {
-        synchronized (lock) {
-            return findScope(key).isFound;
-        }
-    }
+	public boolean isExists(String key) {
+		synchronized (lock) {
+			return findScope(key).isFound;
+		}
+	}
 
-    public VariableInfo get(String key) {
-        synchronized (lock) {
-            final ScopeFindData scopeData = findScope(key);
-            if (scopeData.isFound) {
-                return scopeData.scope.variables.get(key);
-            }
-        }
-        return new VariableInfo(new BarleyNumber(0), 0);
-    }
+	public VariableInfo get(String key) {
+		synchronized (lock) {
+			final ScopeFindData scopeData = findScope(key);
+			if (scopeData.isFound) {
+				return scopeData.scope.variables.get(key);
+			}
+		}
+		return new VariableInfo(new BarleyNumber(0), 0);
+	}
 
-    public void set(String key, VariableInfo value) {
-        synchronized (lock) {
-            findScope(key).scope.variables.put(key, value);
-        }
-    }
+	public void set(String key, VariableInfo value) {
+		synchronized (lock) {
+			findScope(key).scope.variables.put(key, value);
+		}
+	}
 
-    public void define(String key, VariableInfo value) {
-        synchronized (lock) {
-            scope.variables.put(key, value);
-        }
-    }
+	public void define(String key, VariableInfo value) {
+		synchronized (lock) {
+			scope.variables.put(key, value);
+		}
+	}
 
-    public void remove(String key) {
-        synchronized (lock) {
-            findScope(key).scope.variables.remove(key);
-        }
-    }
+	public void remove(String key) {
+		synchronized (lock) {
+			findScope(key).scope.variables.remove(key);
+		}
+	}
 
-    /*
+	/*
      * Find scope where variable exists.
-     */
-    private ScopeFindData findScope(String variable) {
-        final ScopeFindData result = new ScopeFindData();
+	 */
+	private ScopeFindData findScope(String variable) {
+		final ScopeFindData result = new ScopeFindData();
 
-        Scope current = scope;
-        do {
-            if (current.variables.containsKey(variable)) {
-                result.isFound = true;
-                result.scope = current;
-                return result;
-            }
-        } while ((current = current.parent) != null);
+		Scope current = scope;
+		do {
+			if (current.variables.containsKey(variable)) {
+				result.isFound = true;
+				result.scope = current;
+				return result;
+			}
+		} while ((current = current.parent) != null);
 
-        result.isFound = false;
-        result.scope = scope;
-        return result;
-    }
+		result.isFound = false;
+		result.scope = scope;
+		return result;
+	}
 
-    public static class Scope {
-        final Scope parent;
-        final Map<String, VariableInfo> variables;
+	public static class Scope implements Serializable {
 
-        Scope() {
-            this(null);
-        }
+		private static final long serialVersionUID = 1L;
+		final Scope parent;
+		final Map<String, VariableInfo> variables;
 
-        Scope(Scope parent) {
-            this.parent = parent;
-            variables = new ConcurrentHashMap<>();
-        }
-    }
+		Scope() {
+			this(null);
+		}
 
-    private static class ScopeFindData {
-        boolean isFound;
-        Scope scope;
-    }
+		Scope(Scope parent) {
+			this.parent = parent;
+			variables = new ConcurrentHashMap<>();
+		}
+	}
+
+	private static class ScopeFindData implements Serializable {
+
+		private static final long serialVersionUID = 1L;
+		boolean isFound;
+		Scope scope;
+	}
 }
