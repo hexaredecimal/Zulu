@@ -1889,7 +1889,10 @@ public class Modules {
 
 			BarleyXML xml = (BarleyXML) o;
 
-			return new BarleyString("TODO: Implementation in progress :(");
+			String str = xml.prettyPrint(); 
+			if (str == null)
+				return new BarleyAtom("error");
+			return new BarleyString(str);
 		});
 
 		put("xml", module);
