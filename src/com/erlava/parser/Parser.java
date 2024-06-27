@@ -628,23 +628,35 @@ public final class Parser implements Serializable {
 		}
 
 		String txt = top.getText();
+		String sp = "";
+		Token prev = top;
 		while (top.getType() != TokenType.BAR) {
 			int pos_inc = 1;
 			switch (top.getType()) {
-				case VAR:
-					txt += " " + top.getText() + " ";
+				case VAR: {
+					Token next = get(1);
+					if (prev.getType() == TokenType.LT && next.getType() == TokenType.ATOM ){
+						txt += sp + top.getText() + " ";
+					} else {
+						txt += sp + top.getText() + sp;
+					}
+					sp = "";
+				}
+				pos++;
+				break;
+				case ATOM: {
+					txt += sp + top.getText() + sp;
+					sp = "";
 					pos++;
-					break;
-				case ATOM:
-					txt += " " + top.getText() + " ";
-					pos++;
-					break;
+				}
+				break;
 				case COMMA:
 					txt += ",";
 					pos++;
 					break;
 				case LT:
 					txt += "<";
+					sp = "";
 					pos++;
 					break;
 				case SLASH:
@@ -653,10 +665,12 @@ public final class Parser implements Serializable {
 					break;
 				case GT:
 					txt += ">";
+					sp = " ";
 					pos++;
 					break;
 				case EQ:
 					txt += "=";
+					sp = "";
 					pos++;
 					break;
 				case STRING:
@@ -675,7 +689,9 @@ public final class Parser implements Serializable {
 				}
 				default:
 					txt += top.getText();
+					match(top.getType());
 			};
+			prev = top;
 			top = get(0);
 		}
 		consume(TokenType.BAR, "Expected `|` after xml expression");
