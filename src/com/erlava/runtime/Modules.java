@@ -1869,7 +1869,20 @@ public class Modules {
 		initHttp();
 		initXML();
 		initMonty();
+    initSQL();
 	}
+
+
+  public static void initSQL() {
+    HashMap<String, Function> module = new HashMap<>();
+    module.put("query", args -> {
+      Arguments.check(1, args.length); 
+      String query = args[0].toString(); 
+
+      return new BarleyAtom("todo");
+    });
+    put("sql", module);
+  }
 
 	public static void initXML() {
 		HashMap<String, Function> module = new HashMap<>();
