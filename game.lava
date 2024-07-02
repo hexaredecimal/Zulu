@@ -1,0 +1,96 @@
+%% =========================================================== %%
+%% Note: This code does not compile. This file is used to 
+%% plan the syntax and API used in the language
+%% =========================================================== %%
+
+
+-module(main).
+-opt().
+-doc().
+
+-import(canvas).
+-import(ui).
+
+%% ========================================================== %%
+|                  Types
+%% ========================================================== %%
+type Player = {X, Y, Speed}.
+
+new_player_orig() ->
+  @Player{X = 0, Y = 0, Speed = 0}.
+
+new_player(X, Y, Speed) -> 
+  @Player{X = X, Y = Y, Speed = Speed}.
+
+player_move(up, P) ->
+  new_player(P::X, P::Y - P::Speed, P::Speed).
+
+player_move(down, P) ->
+  new_player(P::X, P::Y + P::Speed, P::Speed).
+
+player_move(left, P) ->
+  new_player(P::X - P::Speed, P::Y, P::Speed).
+
+player_move(right, P) ->
+  new_player(P::X + P::Speed, P::Y, P::Speed).
+
+
+%% ========================================================== %%
+|                  Gloabls   
+%% ========================================================== %%
+global Width = 400.
+global Height = 400.
+global P1 = new_player(Width / 2, Height / 2, 20).
+
+%% ========================================================== %%
+|                  Initialization functions
+%% ========================================================== %%
+create_game_window() ->
+  Window = ui:create_game_window("Game", Width, Height),
+  Canvas = canvas:new(Width, Height),
+  ui:add(Window, Canvas), 
+  [ok, Canvas, Window].
+
+%% ========================================================== %%
+|                  Event handler
+%% ========================================================== %%
+handle_events(Canvas, Window) -> 
+  Key = ui:get_window_key(Window).
+  case Key -> 
+    of vk_up: Player = player_move(up, Player).
+    of vk_down: Player = player_move(down, Player).
+    of vk_left: Player = player_move(left, Player).
+    of vk_right: Player = player_move(right, Player).
+  end.
+
+%% ========================================================== %%
+|                  Renderer
+%% ========================================================== %%
+draw_game(Canvas) ->
+  ui:fill_canvas(Canvas, ui:get_color("White")),
+  ui:draw_rectangle(Player::X, Player::Y, 5, 50).
+
+
+%% ========================================================== %%
+|                  Game loop
+%% ========================================================== %%
+game_loop(Canvas, Window) ->
+  erlava:while(
+    def () ->
+      case ui:window_is_alive(Window) ->
+        of false -> erlava:q().
+        of true -> 
+          handle_events(Canvas, Window),
+          draw_game(Canvas).
+      end.
+    end.
+  ).
+
+
+%% ========================================================== %%
+|                  Entry Point
+%% ========================================================== %%
+main() ->
+  [ok, Canvas, Window] = create_game_window()
+  game_loop(Canvas, Window),
+  0.
