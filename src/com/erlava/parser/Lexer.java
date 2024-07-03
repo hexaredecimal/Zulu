@@ -80,6 +80,7 @@ public final class Lexer {
         KEYWORDS.put("unary_operation", TokenType.UNARY_OPERATION);
         KEYWORDS.put("inline", TokenType.INLINE);
         KEYWORDS.put("type", TokenType.TYPE);
+        KEYWORDS.put("import", TokenType.IMPORT);
     }
 
     private final String input;
