@@ -9,11 +9,9 @@ import com.erlava.utils.BarleyException;
 import com.erlava.utils.FileUtils;
 import com.erlava.utils.Handler;
 import com.erlava.utils.SourceLoader;
-import org.fusesource.jansi.AnsiConsole;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 
 public class Main {
 
