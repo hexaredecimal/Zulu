@@ -59,10 +59,17 @@ import com.erlava.runtime.BarleyValue;
 import com.erlava.runtime.TypeTable;
 import com.erlava.units.UnitBase;
 import com.erlava.units.Units;
+import com.erlava.utils.FileUtils;
+import com.erlava.utils.Handler;
+import com.erlava.utils.ImportAst;
+import com.erlava.utils.SourceLoader;
+import java.io.IOException;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class Parser implements Serializable {
 
@@ -108,7 +115,16 @@ public final class Parser implements Serializable {
 		final List<AST> result = new ArrayList<>();
 		while (!match(TokenType.EOF)) {
 			AST expr = declaration();
-			result.add(expr);
+
+			if (expr instanceof ImportAst) {
+				ImportAst im = (ImportAst) expr;
+				for (AST node : im.getNodes()) {
+					MethodAST method = (MethodAST) node;	
+					methods.put(method.getName(), new UserFunction(method.method.getClauses()));
+				}
+			} else {
+				result.add(expr);
+			}
 			consume(TokenType.DOT, "unterminated term.\n    where term: \n        " + expr);
 		}
 		result.add(new CompileAST(module, methods));
@@ -162,6 +178,10 @@ public final class Parser implements Serializable {
 					match(TokenType.COMMA);
 				}
 				Units.put(name, new UnitBase(fields, defaults));
+			}
+			if (match(TokenType.IMPORT)) {
+				consume(TokenType.LPAREN, "expected '(' before module name");
+				return processImport();
 			}
 			if (match(TokenType.MODULE)) {
 				consume(TokenType.LPAREN, "expected '(' before module name");
@@ -228,6 +248,75 @@ public final class Parser implements Serializable {
 		} else {
 			throw new BarleyException("BadCompiler", "bad declaration '" + current + "'");
 		}
+	}
+
+	private AST processImport() {
+		List<AST> nodes = _processImport();
+		consume(TokenType.RPAREN, "expected ')' after module name");
+		return new ImportAst(nodes);
+	}
+
+	private List<AST> _processImport() {
+		String module_name = consume(TokenType.ATOM, "").getText();
+		Token top = get(0);
+		if (top.getType() == TokenType.RPAREN) {
+			HashMap<String, String> files = FileUtils.getFilesWithExtension(".", "lava");
+			if (files.containsKey(module_name + ".lava")) {
+				try {
+					List<AST> nodes = Handler.load(SourceLoader.readSource(files.get(module_name + ".lava")));
+					return nodes;
+				} catch (IOException ex) {
+					throw new BarleyException("BadCompiler", "Import '" + module_name + "' possible syntax error. Check module");
+				}
+			} else {
+				throw new BarleyException("BadCompiler", "Import '" + module_name + "' is not found in current dir");
+			}
+		}
+
+		if (match(TokenType.DOT)) {
+			consume(TokenType.LBRACKET, "Expected `[` after `.` in imports");
+			LinkedList<String> array = new LinkedList<>();
+			while (!(match(TokenType.RBRACKET))) {
+				Token tok = consume(TokenType.ATOM, "Expected atoms inside `[]` for import statements");
+				array.add(tok.getText());
+				match(TokenType.COMMA);
+			}
+
+			HashMap<String, String> files = FileUtils.getFilesWithExtension(".", "lava");
+			if (files.containsKey(module_name + ".lava")) {
+				try {
+					List<AST> nodes = Handler.load(SourceLoader.readSource(files.get(module_name + ".lava")));
+					List<AST> found = new LinkedList<>();
+					String lookup = "";
+					for (AST node : nodes) {
+						if (node instanceof MethodAST) {
+							MethodAST method = (MethodAST) node;
+							boolean found_it = false;
+							if (array.contains(method.getName())) {
+								found.add(node);
+								array.remove(method.getName());
+							}
+
+						}
+					}
+
+					if (array.size() != 0) {
+						throw new BarleyException("BadCompiler", "Functions '" + array + "' not found in module `" + module_name + "`");
+					}
+
+					if (found.size() == 0) {
+						throw new BarleyException("BadCompiler", "Imports not found in module '" + module_name);
+					}
+					return found;
+				} catch (IOException ex) {
+					throw new BarleyException("BadCompiler", "Import '" + module_name + "' possible syntax error. Check module");
+				}
+			} else {
+				throw new BarleyException("BadCompiler", "Import '" + module_name + "' is not found in current dir");
+			}
+		}
+
+		return null;
 	}
 
 	private AST parseBinaryExpr(TokenType type, AST expr) {
@@ -635,7 +724,7 @@ public final class Parser implements Serializable {
 			switch (top.getType()) {
 				case VAR: {
 					Token next = get(1);
-					if (prev.getType() == TokenType.LT && next.getType() == TokenType.ATOM ){
+					if (prev.getType() == TokenType.LT && next.getType() == TokenType.ATOM) {
 						txt += sp + top.getText() + " ";
 					} else {
 						txt += sp + top.getText() + sp;
