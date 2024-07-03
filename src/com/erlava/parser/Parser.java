@@ -61,7 +61,7 @@ import com.erlava.units.UnitBase;
 import com.erlava.units.Units;
 import com.erlava.utils.FileUtils;
 import com.erlava.utils.Handler;
-import com.erlava.utils.ImportAst;
+import com.erlava.ast.ImportAst;
 import com.erlava.utils.SourceLoader;
 import java.io.IOException;
 
