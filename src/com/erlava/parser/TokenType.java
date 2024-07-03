@@ -48,7 +48,7 @@ public enum TokenType implements Serializable {
     WHEN, TYPE,
     RECIEVE,
     CASE, OF, END,
-    AND, OR, GLOBAL,
+    AND, OR, GLOBAL, IMPORT,
     NOT, DEF, OPT, DEFGUARD, UNIT, STRICT, PACK, UNPACK, AST, EXTERN,
     BINARY_OPERATION, UNARY_OPERATION,
 
