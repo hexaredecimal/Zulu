@@ -119,8 +119,11 @@ public final class Parser implements Serializable {
 			if (expr instanceof ImportAst) {
 				ImportAst im = (ImportAst) expr;
 				for (AST node : im.getNodes()) {
-					MethodAST method = (MethodAST) node;	
-					methods.put(method.getName(), new UserFunction(method.method.getClauses()));
+					if (node instanceof MethodAST) {
+						MethodAST method = (MethodAST) node;
+						methods.put(method.getName(), new UserFunction(method.method.getClauses()));
+					} else if (node instanceof CompileAST) {
+					}
 				}
 			} else {
 				result.add(expr);
@@ -251,12 +254,12 @@ public final class Parser implements Serializable {
 	}
 
 	private AST processImport() {
-		List<AST> nodes = _processImport();
+		AST nodes = _processImport();
 		consume(TokenType.RPAREN, "expected ')' after module name");
-		return new ImportAst(nodes);
+		return nodes;
 	}
 
-	private List<AST> _processImport() {
+	private AST _processImport() {
 		String module_name = consume(TokenType.ATOM, "").getText();
 		Token top = get(0);
 		if (top.getType() == TokenType.RPAREN) {
@@ -264,7 +267,15 @@ public final class Parser implements Serializable {
 			if (files.containsKey(module_name + ".lava")) {
 				try {
 					List<AST> nodes = Handler.load(SourceLoader.readSource(files.get(module_name + ".lava")));
-					return nodes;
+
+					HashMap<String, Function> mtds = new HashMap<>();
+					for (AST node : nodes) {
+						if (node instanceof MethodAST) {
+							MethodAST method = (MethodAST) node;
+							mtds.put(method.getName(), new UserFunction(method.method.getClauses()));
+						}
+					}
+					return new CompileAST(module_name, mtds);
 				} catch (IOException ex) {
 					throw new BarleyException("BadCompiler", "Import '" + module_name + "' possible syntax error. Check module");
 				}
@@ -285,7 +296,8 @@ public final class Parser implements Serializable {
 			HashMap<String, String> files = FileUtils.getFilesWithExtension(".", "lava");
 			if (files.containsKey(module_name + ".lava")) {
 				try {
-					List<AST> nodes = Handler.load(SourceLoader.readSource(files.get(module_name + ".lava")));
+					String p = files.get(module_name + ".lava");
+					List<AST> nodes = Handler.load(SourceLoader.readSource(p));
 					List<AST> found = new LinkedList<>();
 					String lookup = "";
 					for (AST node : nodes) {
@@ -307,7 +319,7 @@ public final class Parser implements Serializable {
 					if (found.size() == 0) {
 						throw new BarleyException("BadCompiler", "Imports not found in module '" + module_name);
 					}
-					return found;
+					return new ImportAst(found);
 				} catch (IOException ex) {
 					throw new BarleyException("BadCompiler", "Import '" + module_name + "' possible syntax error. Check module");
 				}
