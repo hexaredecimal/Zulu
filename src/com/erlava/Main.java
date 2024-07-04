@@ -53,6 +53,9 @@ public class Main {
 					}
 				}
 			}
+		} else {
+			System.out.println("error: No input provided. Type `help` for usage information");
+			return;
 		}
 	}
 
