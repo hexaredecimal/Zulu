@@ -117,14 +117,15 @@ public final class Parser implements Serializable {
 			AST expr = declaration();
 
 			if (expr instanceof ImportAst) {
-				ImportAst im = (ImportAst) expr;
-				for (AST node : im.getNodes()) {
-					if (node instanceof MethodAST) {
+				ImportAst _import = (ImportAst) expr;
+				_import
+					.getNodes()
+					.stream()
+					.filter(node -> node instanceof MethodAST)
+					.forEach(node -> {
 						MethodAST method = (MethodAST) node;
 						methods.put(method.getName(), new UserFunction(method.method.getClauses()));
-					} else if (node instanceof CompileAST) {
-					}
-				}
+					});
 			} else {
 				result.add(expr);
 			}
@@ -262,19 +263,22 @@ public final class Parser implements Serializable {
 	private AST _processImport() {
 		String module_name = consume(TokenType.ATOM, "").getText();
 		Token top = get(0);
-		if (top.getType() == TokenType.RPAREN) {
+		if (top.getType() == TokenType.RPAREN) { // found `)`, meaning we are just importing the whole module.
 			HashMap<String, String> files = FileUtils.getFilesWithExtension(".", "lava");
 			if (files.containsKey(module_name + ".lava")) {
 				try {
 					List<AST> nodes = Handler.load(SourceLoader.readSource(files.get(module_name + ".lava")));
-
 					HashMap<String, Function> mtds = new HashMap<>();
-					for (AST node : nodes) {
-						if (node instanceof MethodAST) {
+
+					nodes
+						.stream()
+						.filter(ast -> {
+							return ast instanceof MethodAST;
+						}).forEach(node -> {
 							MethodAST method = (MethodAST) node;
 							mtds.put(method.getName(), new UserFunction(method.method.getClauses()));
-						}
-					}
+						});
+
 					return new CompileAST(module_name, mtds);
 				} catch (IOException ex) {
 					throw new BarleyException("BadCompiler", "Import '" + module_name + "' possible syntax error. Check module");
@@ -300,15 +304,14 @@ public final class Parser implements Serializable {
 					List<AST> nodes = Handler.load(SourceLoader.readSource(p));
 					List<AST> found = new LinkedList<>();
 					String lookup = "";
-					for (AST node : nodes) {
-						if (node instanceof MethodAST) {
+					for (AST node : nodes) { 													// Keep the for loop because I have to remove the method from the list
+						if (node instanceof MethodAST) {								// after I locate and convert it. 
 							MethodAST method = (MethodAST) node;
 							boolean found_it = false;
-							if (array.contains(method.getName())) {
-								found.add(node);
-								array.remove(method.getName());
+							if (array.contains(method.getName())) {  		// Find it here
+								found.add(node);													
+								array.remove(method.getName()); 					// ^^
 							}
-
 						}
 					}
 
@@ -328,7 +331,8 @@ public final class Parser implements Serializable {
 			}
 		}
 
-		return null;
+		assert false; // Crash here
+		return null; // Should not be reached. The exceptions above should get triggered before this. 
 	}
 
 	private AST parseBinaryExpr(TokenType type, AST expr) {
@@ -960,6 +964,7 @@ public final class Parser implements Serializable {
 		if (match(TokenType.RECIEVE)) {
 			return receive();
 		}
+
 		throw new BarleyException("BadCompiler", "Unknown term\n    where term:\n        " + current + "\n    when current line:\n      " + currentLine());
 	}
 
