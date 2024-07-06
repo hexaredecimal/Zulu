@@ -13,9 +13,15 @@ import com.erlava.utils.SourceLoader;
 import java.io.IOException;
 import java.util.LinkedList;
 
+
+
 public class Main {
 
 	public static void main(String[] args) throws IOException {
+		
+		//Test.run();
+		//System.exit(0);
+		
 		ArgParser argp = new ArgParser(args);
 		Config conf = new Config();
 		conf.setProgram("Erlava");
