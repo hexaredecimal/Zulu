@@ -116,8 +116,8 @@ public class Modules {
 			final String format = args[0].toString();
 			final Object[] values = new Object[args.length - 1];
 			for (int i = 1; i < args.length; i++) {
-				if (args[i] instanceof BarleyNumber) {
-					values[i - 1] = args[i].asFloat().intValue();
+				if (args[i] instanceof BarleyNumber number) {
+					values[i - 1] = number.asFloat().intValue();
 				} else {
 					values[i - 1] = args[i].toString();
 				}
@@ -130,8 +130,8 @@ public class Modules {
 			final String format = args[0].toString();
 			final Object[] values = new Object[args.length - 1];
 			for (int i = 1; i < args.length; i++) {
-				if (args[i] instanceof BarleyNumber) {
-					values[i - 1] = args[i].asFloat().intValue();
+				if (args[i] instanceof BarleyNumber number) {
+					values[i - 1] = number.asFloat().intValue();
 				} else {
 					values[i - 1] = args[i].toString();
 				}
@@ -145,8 +145,8 @@ public class Modules {
 			final String format = args[0].toString();
 			final Object[] values = new Object[args.length - 1];
 			for (int i = 1; i < args.length; i++) {
-				if (args[i] instanceof BarleyNumber) {
-					values[i - 1] = args[i].asFloat().doubleValue();
+				if (args[i] instanceof BarleyNumber number) {
+					values[i - 1] = number.asFloat().doubleValue();
 				} else {
 					values[i - 1] = args[i].toString();
 				}
@@ -424,57 +424,19 @@ public class Modules {
 			}
 			return new BarleyAtom(AtomTable.put("error"));
 		});
-		shell.put("compile", args -> {
+
+		shell.put("compile_ast", args -> {
 			Arguments.check(1, args.length);
 			try {
 				List<AST> parsed = Handler.parseAST(SourceLoader.readSource(args[0].toString()));
 				byte[] binary = SerializeUtils.serialize((Serializable) parsed);
-				try (FileWriter writer = new FileWriter(args[0].toString().split("\\.")[0] + ".app", false)) {
+				try (FileWriter writer = new FileWriter(args[0].toString().split("\\.")[0] + ".ast", false)) {
 					for (byte b : binary) {
 						writer.append(String.valueOf(b)).append(" ");
 					}
 				}
 				return new BarleyAtom(AtomTable.put("ok"));
 			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return new BarleyAtom(AtomTable.put("error"));
-		});
-		shell.put("execute_app", args -> {
-			Arguments.check(1, args.length);
-			try {
-				String path = args[0].toString();
-				FileUtils.expectExtention(path, "app");
-				String bytes = SourceLoader.readSource(args[0].toString());
-				String[] bs = bytes.split(" ");
-
-				ArrayList<Byte> bts = new ArrayList<>();
-				for (String b : bs) {
-					bts.add(Byte.parseByte(b));
-				}
-				byte[] binary = toPrimitives(bts.toArray(new Byte[]{}));
-				List<AST> ast = SerializeUtils.deserialize(binary);
-				// System.out.println("after parsing");
-
-				ArgParser argp = new ArgParser(new String[]{"entry", path});
-				Config conf = new Config();
-				conf.setProgram("Erlava");
-				conf.setVersion(Handler.RUNTIME_VERSION);
-				conf.parse(argp);
-
-				for (AST node : ast) {
-					if (node instanceof MethodAST) {
-						MethodAST n = (MethodAST) node;
-						if (n.getName().equals("main")) {
-							CallAST call = (CallAST) Parser.buildCallV(conf.getEntry_module(), "main", new ArrayList<>());
-							System.out.println("Entry: " + call.execute());
-						}
-					} else {
-						node.execute();
-					}
-				}
-				return new BarleyAtom(AtomTable.put("ok"));
-			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 			return new BarleyAtom(AtomTable.put("error"));
@@ -699,6 +661,18 @@ public class Modules {
 		string.put("length", args -> {
 			Arguments.check(1, args.length);
 			return new BarleyNumber(args[0].toString().length());
+		});
+
+		string.put("repeat", args -> {
+			Arguments.check(2, args.length);
+			String first = args[0].toString(); 
+			BarleyValue second = args[1];
+			if (!(second instanceof BarleyNumber)) {
+				throw new BarleyException("Runtime", "Expected type of argument 2 to be a number, but found " + second);
+			}
+			
+			int count = second.asInteger().intValue();
+			return new BarleyString(first.repeat(count));
 		});
 
 		string.put("from_end_extract_until", args -> {
