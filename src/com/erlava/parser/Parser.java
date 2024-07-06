@@ -116,8 +116,7 @@ public final class Parser implements Serializable {
 		while (!match(TokenType.EOF)) {
 			AST expr = declaration();
 
-			if (expr instanceof ImportAst) {
-				ImportAst _import = (ImportAst) expr;
+			if (expr instanceof ImportAst _import) {
 				_import
 					.getNodes()
 					.stream()
@@ -305,8 +304,7 @@ public final class Parser implements Serializable {
 					List<AST> found = new LinkedList<>();
 					String lookup = "";
 					for (AST node : nodes) { 													// Keep the for loop because I have to remove the method from the list
-						if (node instanceof MethodAST) {								// after I locate and convert it. 
-							MethodAST method = (MethodAST) node;
+						if (node instanceof MethodAST method) {								// after I locate and convert it. 
 							boolean found_it = false;
 							if (array.contains(method.getName())) {  		// Find it here
 								found.add(node);													
@@ -594,36 +592,39 @@ public final class Parser implements Serializable {
 		AST result = unary();
 
 		while (true) {
-			// 2 * 6 / 3
-			if (match(TokenType.STAR)) {
-				result = new BinaryAST(result, unary(), '*', line(), currentLine());
-				continue;
-			}
-			if (match(TokenType.SLASH)) {
-				result = new BinaryAST(result, unary(), '/', line(), currentLine());
-				continue;
-			}
+			Object _result = switch(get(0).getType()) {
+				case STAR ->  {
+					match(TokenType.STAR);
+					yield new BinaryAST(result, unary(), '*', line(), currentLine());
+				}
+				case SLASH -> {
+					match(TokenType.SLASH);
+					yield new BinaryAST(result, unary(), '/', line(), currentLine());
+				}
+				case CC -> {
+					match(TokenType.CC);
+					Token expr = consume(TokenType.VAR, "Expected a id after `::`");
+					yield new InstanceFieldAccess(result, expr.getText());
+				}
+				case BANG -> {
+					match(TokenType.BANG);
+					yield new ProcessCallAST(result, unary(), line(), currentLine());
+				}
+				case BAR -> {
+					match(TokenType.BAR);
+					yield new ConsAST(result, unary(), line(), currentLine());
+				}
+				case GTGT -> {
+					match(TokenType.GTGT);
+					yield new PointShiftAST(result, expression());
+				}
+				default -> get(0);
+			};
 
-			if (match(TokenType.CC)) {
-				Token expr = consume(TokenType.VAR, "Expected a id after `::`");
-				result = new InstanceFieldAccess(result, expr.getText());
-				continue;
-			}
-
-			if (match(TokenType.BANG)) {
-				result = new ProcessCallAST(result, unary(), line(), currentLine());
-			}
-
-			if (match(TokenType.BAR)) {
-				result = new ConsAST(result, unary(), line(), currentLine());
-			}
-
-			if (match(TokenType.GTGT)) {
-				result = new PointShiftAST(result, expression());
-				continue;
-			}
-
-			break;
+			if (_result instanceof AST res) {
+				result = res;
+			} else 
+				break;
 		}
 
 		return result;
@@ -1131,35 +1132,21 @@ public final class Parser implements Serializable {
 		return new CallAST(new RemoteAST(new ConstantAST(new BarleyAtom(module)), new ConstantAST(new BarleyAtom(method)), line(), currentLine()), args, line(), currentLine());
 	}
 
-	public static AST buildCallV(String module, String method, ArrayList<AST> args) {
-		return new CallAST(
-						new RemoteAST(new ConstantAST(new BarleyAtom(module)),
-										new ConstantAST(new BarleyAtom(method)),
-										0,
-										""),
-						args,
-						0,
-						"");
-	}
 
 	private void emitVariable(String name) {
 		emulator.set(name, new VariableInfo(new BarleyNull(), 0));
 	}
 
 	private Pattern pattern(AST ast) {
-		if (ast instanceof ExtractBindAST) {
-			return new VariablePattern(ast.toString());
-		} else if (ast instanceof ConstantAST) {
-			return new ConstantPattern(ast.execute());
-		} else if (ast instanceof BindAST) {
-			return new ConstantPattern(ast.execute());
-		} else if (ast instanceof ListAST) {
-			return new ListPattern(((ListAST) ast).getArray());
-		} else if (ast instanceof ConsAST) {
-			ConsAST cons = (ConsAST) ast;
-			return new ConsPattern(cons.getLeft().toString(), cons.getRight().toString());
+
+		return switch (ast) {
+			case ExtractBindAST extract -> new VariablePattern(extract.toString());
+			case ConstantAST constant -> new ConstantPattern(constant.execute());
+			case BindAST bind -> new ConstantPattern(bind.execute());
+			case ListAST list -> new ListPattern(list.getArray());
+			case ConsAST cons -> new ConsPattern(cons.getLeft().toString(), cons.getRight().toString());
+			default -> null;
 		};
-		return null;
 	}
 
 	private LinkedList<Pattern> pattern(ListPattern pattern) {
