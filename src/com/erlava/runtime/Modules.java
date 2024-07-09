@@ -1,11 +1,5 @@
 package com.erlava.runtime;
 
-import com.erlava.ArgParser;
-import com.erlava.Config;
-import com.erlava.ast.CallAST;
-import com.erlava.ast.ConstantAST;
-import com.erlava.ast.MethodAST;
-import com.erlava.ast.RemoteAST;
 import com.erlava.utils.SourceLoader;
 import com.erlava.utils.TimeMeasurement;
 import com.erlava.utils.SerializeUtils;
@@ -18,12 +12,7 @@ import com.erlava.utils.GeneratorSkip;
 import com.erlava.utils.Arguments;
 import com.erlava.utils.Handler;
 import com.erlava.monty.Monty;
-import com.erlava.parser.Parser;
 import com.erlava.reflection.Reflection;
-import com.erlava.units.Unit;
-import com.erlava.units.UnitBase;
-import com.erlava.units.Units;
-import com.erlava.utils.FileUtils;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -33,7 +22,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.fusesource.jansi.AnsiConsole;
 import org.jline.terminal.TerminalBuilder;
-import org.kohsuke.args4j.spi.ArgumentImpl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,19 +31,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.reflect.MalformedParameterizedTypeException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -65,6 +49,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import codedraw.*;
 
 public class Modules {
 
@@ -1849,6 +1834,19 @@ public class Modules {
 		initXML();
 		initMonty();
 		initSQL();
+		initCodeDraw();
+	}
+
+	public static void initCodeDraw() {
+		HashMap<String, Function> module = new HashMap<>();
+
+		module.put("show", args -> {
+			Arguments.check(0, args.length);
+		
+			return new BarleyAtom("ok");
+		});
+		
+		put("cdraw", module);
 	}
 
 	public static void initSQL() {
