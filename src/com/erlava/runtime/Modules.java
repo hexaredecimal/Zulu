@@ -650,12 +650,12 @@ public class Modules {
 
 		string.put("repeat", args -> {
 			Arguments.check(2, args.length);
-			String first = args[0].toString(); 
+			String first = args[0].toString();
 			BarleyValue second = args[1];
 			if (!(second instanceof BarleyNumber)) {
 				throw new BarleyException("Runtime", "Expected type of argument 2 to be a number, but found " + second);
 			}
-			
+
 			int count = second.asInteger().intValue();
 			return new BarleyString(first.repeat(count));
 		});
@@ -1337,7 +1337,7 @@ public class Modules {
 				return new BarleyAtom("ok");
 			}
 			throw new BUnitAssertionException("values are not equals: "
-				+ "1: " + args[0] + ", 2: " + args[1]);
+							+ "1: " + args[0] + ", 2: " + args[1]);
 		});
 		unit.put("assert_not_equals", args -> {
 			Arguments.check(2, args.length);
@@ -1345,7 +1345,7 @@ public class Modules {
 				return new BarleyAtom("ok");
 			}
 			throw new BUnitAssertionException("values are not equals: "
-				+ "1: " + args[0] + ", 2: " + args[1]);
+							+ "1: " + args[0] + ", 2: " + args[1]);
 		});
 		unit.put("assert_true", args -> {
 			Arguments.check(2, args.length);
@@ -1353,7 +1353,7 @@ public class Modules {
 				return new BarleyAtom("ok");
 			}
 			throw new BUnitAssertionException("values are not equals: "
-				+ "1: " + args[0] + ", 2: " + args[1]);
+							+ "1: " + args[0] + ", 2: " + args[1]);
 		});
 		unit.put("assert_false", args -> {
 			Arguments.check(2, args.length);
@@ -1361,7 +1361,7 @@ public class Modules {
 				return new BarleyAtom("ok");
 			}
 			throw new BUnitAssertionException("values are not equals: "
-				+ "1: " + args[0] + ", 2: " + args[1]);
+							+ "1: " + args[0] + ", 2: " + args[1]);
 		});
 		unit.put("run", new runTests());
 
@@ -1525,9 +1525,9 @@ public class Modules {
 			Arguments.check(1, args.length);
 			BarleyList root = ((BarleyList) args[0]);
 			String name = ((BarleyList) root.getList().get(0))
-				.getList().get(1).toString();
+							.getList().get(1).toString();
 			String desc = ((BarleyList) root.getList().get(1))
-				.getList().get(1).toString();
+							.getList().get(1).toString();
 			Table.define("APP_NAME", new BarleyString(name));
 			Table.define("APP_DESC", new BarleyString(desc));
 			LinkedList<BarleyValue> globals = ((BarleyList) root.getList().get(2)).getList();
@@ -1637,20 +1637,20 @@ public class Modules {
 				result += "global Line = 1.\n";
 				result += "global EOFToken = [eof, -1, \"\"].\n\n";
 				result += "peek(Parts, RelativePos) ->\n"
-					+ "    FinalPosition = RelativePos + Pos,\n"
-					+ "    lists:nth(Parts, FinalPosition).\n"
-					+ "\n"
-					+ "next(Parts) ->\n"
-					+ "    barley:define(\"Pos\", Pos + 1),\n"
-					+ "    peek(Parts, 0).\n";
+								+ "    FinalPosition = RelativePos + Pos,\n"
+								+ "    lists:nth(Parts, FinalPosition).\n"
+								+ "\n"
+								+ "next(Parts) ->\n"
+								+ "    barley:define(\"Pos\", Pos + 1),\n"
+								+ "    peek(Parts, 0).\n";
 				result += "illegal_character(S, L) -> barley:throw(\"illegal char '\" + S + \"' at line \" + Line).\n"
-					+ "\n"
-					+ "lex(String) -> lex(String, 1).\n"
-					+ "\n"
-					+ "lex(String, Line) ->\n"
-					+ "    Pos = 0,\n"
-					+ "    Line = 1,\n"
-					+ "    process_parts(string:split(String, \"\")).\n";
+								+ "\n"
+								+ "lex(String) -> lex(String, 1).\n"
+								+ "\n"
+								+ "lex(String, Line) ->\n"
+								+ "    Pos = 0,\n"
+								+ "    Line = 1,\n"
+								+ "    process_parts(string:split(String, \"\")).\n";
 				StringBuilder process = new StringBuilder("\n");
 				for (String rule : rules) {
 					if (rule.isEmpty() || rule.isBlank()) {
@@ -1662,11 +1662,11 @@ public class Modules {
 						String expr = macros.containsKey(parts[1]) ? rule.substring(5, rule.indexOf("->")).replaceAll(parts[1], macros.get(parts[1])) : String.format("%s", rule.substring(5, rule.indexOf("->")));
 						String res = String.join(" ", List.of(parts).subList(List.of(parts).indexOf("->") + 1, parts.length));
 						buffer.append("process_part(Parts, Symbol) when Symbol == \n ")
-							.append(expr)
-							.append("\n -> \n")
-							.append("  next(Parts),\n  ")
-							.append(res)
-							.append("\n.\n");
+										.append(expr)
+										.append("\n -> \n")
+										.append("  next(Parts),\n  ")
+										.append(res)
+										.append("\n.\n");
 						process.append(buffer);
 						continue;
 					}
@@ -1674,10 +1674,10 @@ public class Modules {
 						String expr = macros.containsKey(parts[1]) ? rule.substring(5, rule.indexOf("->")).replaceAll(parts[1], macros.get(parts[1])) : String.format("%s", rule.substring(5, rule.indexOf("->")));
 						String res = String.join(" ", List.of(parts).subList(List.of(parts).indexOf("->") + 1, parts.length));
 						buffer.append("process_part(Parts, Symbol) when Symbol == \n")
-							.append(expr)
-							.append("\n -> \n")
-							.append(res)
-							.append("\n.\n");
+										.append(expr)
+										.append("\n -> \n")
+										.append(res)
+										.append("\n.\n");
 						process.append(buffer);
 						continue;
 					}
@@ -1685,10 +1685,10 @@ public class Modules {
 						String expr = String.format("%s", rule.substring(16, rule.indexOf("->")));
 						String res = String.join(" ", List.of(parts).subList(List.of(parts).indexOf("->") + 1, parts.length));
 						buffer.append("process_part(Parts, Symbol) when \n")
-							.append(expr)
-							.append("\n -> \n  ")
-							.append(res)
-							.append("\n.\n");
+										.append(expr)
+										.append("\n -> \n  ")
+										.append(res)
+										.append("\n.\n");
 						process.append(buffer);
 						continue;
 					}
@@ -1704,11 +1704,11 @@ public class Modules {
 						String expr = String.join(" ", ps);
 
 						process.append("process_part(Parts, Symbol)\n when Symbol == \n  ")
-							.append(expr)
-							.append("\n -> \n")
-							.append("  next(Parts), \n  ")
-							.append("[skip, Line, \"\"]")
-							.append(".\n");
+										.append(expr)
+										.append("\n -> \n")
+										.append("  next(Parts), \n  ")
+										.append("[skip, Line, \"\"]")
+										.append(".\n");
 					}
 
 					if (parts[0].equals("line_increase")) {
@@ -1716,26 +1716,26 @@ public class Modules {
 						String expr = String.join(" ", ps);
 
 						process.append("process_part(Parts, Symbol)\n when Symbol == \n  ")
-							.append(expr)
-							.append("\n -> \n")
-							.append("Line = Line + 1, Pos = Pos + 1, [skip, Line + 1, \"\"].\n");
+										.append(expr)
+										.append("\n -> \n")
+										.append("Line = Line + 1, Pos = Pos + 1, [skip, Line + 1, \"\"].\n");
 					}
 
 					if (parts[0].equals("anyway")) {
 						String r = String.join(" ", List.of(parts).subList(2, parts.length));
 						process.append("process_part(Parts, Symbol) ->\n    ")
-							.append(r)
-							.append("\n")
-							.append(".");
+										.append(r)
+										.append("\n")
+										.append(".");
 					}
 				}
 				result += process + "\nprocess_part(Parts, Symbol) when Symbol == end_of_list -> EOFToken.\n";
 				result += "\n";
 				result += "process_parts(Parts) ->\n"
-					+ "    Result = lists:reduce(def (X, Acc) -> First = peek(Parts, 0), Acc + [process_part(Parts, First)]. end, Parts, []),\n"
-					+ "    WithoutEOF = lists:filter(def (X) -> (not (lists:nth(X, 0) == eof)). end, Result),\n"
-					+ "    WithoutEOF = lists:filter(def (X) -> (not (lists:nth(X, 0) == skip)). end, WithoutEOF),\n"
-					+ "    WithoutEOF = WithoutEOF + [EOFToken].";
+								+ "    Result = lists:reduce(def (X, Acc) -> First = peek(Parts, 0), Acc + [process_part(Parts, First)]. end, Parts, []),\n"
+								+ "    WithoutEOF = lists:filter(def (X) -> (not (lists:nth(X, 0) == eof)). end, Result),\n"
+								+ "    WithoutEOF = lists:filter(def (X) -> (not (lists:nth(X, 0) == skip)). end, WithoutEOF),\n"
+								+ "    WithoutEOF = WithoutEOF + [EOFToken].";
 				result = "-module(" + (args.length == 1 ? args[0].toString().split("\\.")[0] : args[1].toString()) + ").\n\n" + result;
 				try (FileWriter writer = new FileWriter(args[0].toString().split("\\.")[0] + ".barley")) {
 					writer.write(result);
@@ -1753,44 +1753,44 @@ public class Modules {
 				String parser = "";
 				parser += "-module(" + (args.length == 1 ? args[0].toString().split("\\.")[0] : args[1].toString()) + ").\n\n";
 				parser += "global Pos = 0.\n"
-					+ "global Size = 0.\n"
-					+ "global Tokens = [].\n"
-					+ "global Result = [].\n"
-					+ "\n"
-					+ "\n"
-					+ "type(Tok) -> lists:nth(Tok, 0).\n"
-					+ "text(Tok) -> lists:nth(Tok, 2).\n"
-					+ "\n"
-					+ "consume_in_bounds(P) when P < Size -> P.\n"
-					+ "consume_in_bounds(P) -> Size - 1.\n"
-					+ "\n"
-					+ "consume_type(Token, Type) -> type(Token) == Type.\n"
-					+ "\n"
-					+ "get(RelativePos) ->\n"
-					+ "    FinalPosition = Pos + RelativePos,\n"
-					+ "    P = consume_in_bounds(FinalPosition),\n"
-					+ "    lists:nth(Tokens, P).\n"
-					+ "\n"
-					+ "eval_match(C, T) when type(C) == T -> Pos = Pos + 1, true.\n"
-					+ "\n"
-					+ "eval_match(C, T) -> false.\n"
-					+ "\n"
-					+ "match(TokenType) ->\n"
-					+ "    C = get(0),\n"
-					+ "    eval_match(C, TokenType).\n\n";
+								+ "global Size = 0.\n"
+								+ "global Tokens = [].\n"
+								+ "global Result = [].\n"
+								+ "\n"
+								+ "\n"
+								+ "type(Tok) -> lists:nth(Tok, 0).\n"
+								+ "text(Tok) -> lists:nth(Tok, 2).\n"
+								+ "\n"
+								+ "consume_in_bounds(P) when P < Size -> P.\n"
+								+ "consume_in_bounds(P) -> Size - 1.\n"
+								+ "\n"
+								+ "consume_type(Token, Type) -> type(Token) == Type.\n"
+								+ "\n"
+								+ "get(RelativePos) ->\n"
+								+ "    FinalPosition = Pos + RelativePos,\n"
+								+ "    P = consume_in_bounds(FinalPosition),\n"
+								+ "    lists:nth(Tokens, P).\n"
+								+ "\n"
+								+ "eval_match(C, T) when type(C) == T -> Pos = Pos + 1, true.\n"
+								+ "\n"
+								+ "eval_match(C, T) -> false.\n"
+								+ "\n"
+								+ "match(TokenType) ->\n"
+								+ "    C = get(0),\n"
+								+ "    eval_match(C, TokenType).\n\n";
 				parser += "expr() -> " + root + "().\n\n";
 				parser += result + "\n";
 				parser += "make_parse() when match(eof) -> Result.\n"
-					+ "make_parse() -> Expr = [expr()],\n"
-					+ "                Result = Result + Expr,\n"
-					+ "                make_parse().\n"
-					+ "\n"
-					+ "parse(Toks) ->\n"
-					+ "    Pos = 0,\n"
-					+ "    Tokens = Toks,\n"
-					+ "    Size = barley:length(Toks),\n"
-					+ "    Result = [],\n"
-					+ "    make_parse().\n";
+								+ "make_parse() -> Expr = [expr()],\n"
+								+ "                Result = Result + Expr,\n"
+								+ "                make_parse().\n"
+								+ "\n"
+								+ "parse(Toks) ->\n"
+								+ "    Pos = 0,\n"
+								+ "    Tokens = Toks,\n"
+								+ "    Size = barley:length(Toks),\n"
+								+ "    Result = [],\n"
+								+ "    make_parse().\n";
 				try (FileWriter writer = new FileWriter(args[0].toString().split("\\.")[0] + ".barley")) {
 					writer.write(parser);
 				}
@@ -1840,12 +1840,268 @@ public class Modules {
 	public static void initCodeDraw() {
 		HashMap<String, Function> module = new HashMap<>();
 
-		module.put("show", args -> {
-			Arguments.check(0, args.length);
-		
-			return new BarleyAtom("ok");
+		module.put("init", args -> {
+			Arguments.check(2, args.length);
+			int width = args[0].asInteger().intValue();
+			int height = args[1].asInteger().intValue();
+			return new BarleyReference(new CodeDraw(width, height));
 		});
 		
+		module.put("fillsquare", args -> {
+			Arguments.check(4, args.length);
+			BarleyValue first = args[0];
+			double x1 = args[1].asFloat().doubleValue();
+			double y1 = args[1].asFloat().doubleValue();
+			double sz = args[2].asFloat().doubleValue();
+			
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			BarleyReference connection_ref = (BarleyReference) first;
+			Object ref = connection_ref.raw();
+
+			if (!(ref instanceof CodeDraw)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
+			}
+
+			CodeDraw cd = (CodeDraw) ref;
+			cd.fillSquare(x1, y1, sz);
+
+			return new BarleyAtom("ok");
+		});
+
+		module.put("fillrect", args -> {
+			Arguments.check(5, args.length);
+			BarleyValue first = args[0];
+			double x1 = args[1].asFloat().doubleValue();
+			double y1 = args[1].asFloat().doubleValue();
+			double x2 = args[2].asFloat().doubleValue();
+			double y2 = args[2].asFloat().doubleValue();
+			
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			BarleyReference connection_ref = (BarleyReference) first;
+			Object ref = connection_ref.raw();
+
+			if (!(ref instanceof CodeDraw)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
+			}
+
+			CodeDraw cd = (CodeDraw) ref;
+			cd.fillRectangle(x1, y1, x2, y2);
+
+			return new BarleyAtom("ok");
+		});
+
+
+		module.put("drawrect", args -> {
+			Arguments.check(5, args.length);
+			BarleyValue first = args[0];
+			double x1 = args[1].asFloat().doubleValue();
+			double y1 = args[1].asFloat().doubleValue();
+			double x2 = args[2].asFloat().doubleValue();
+			double y2 = args[2].asFloat().doubleValue();
+			
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			BarleyReference connection_ref = (BarleyReference) first;
+			Object ref = connection_ref.raw();
+
+			if (!(ref instanceof CodeDraw)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
+			}
+
+			CodeDraw cd = (CodeDraw) ref;
+			cd.drawRectangle(x1, y1, x2, y2);
+
+			return new BarleyAtom("ok");
+		});
+
+		module.put("drawline", args -> {
+			Arguments.check(5, args.length);
+			BarleyValue first = args[0];
+			double x1 = args[1].asFloat().doubleValue();
+			double y1 = args[1].asFloat().doubleValue();
+			double x2 = args[2].asFloat().doubleValue();
+			double y2 = args[2].asFloat().doubleValue();
+			
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			BarleyReference connection_ref = (BarleyReference) first;
+			Object ref = connection_ref.raw();
+
+			if (!(ref instanceof CodeDraw)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
+			}
+
+			CodeDraw cd = (CodeDraw) ref;
+			cd.drawLine(x1, y1, x2, y2);
+
+			return new BarleyAtom("ok");
+		});
+
+		module.put("show", args -> {
+			Arguments.check(1, args.length);
+			BarleyValue first = args[0];
+
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			BarleyReference connection_ref = (BarleyReference) first;
+			Object ref = connection_ref.raw();
+
+			if (!(ref instanceof CodeDraw)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
+			}
+
+			CodeDraw cd = (CodeDraw) ref;
+			cd.show();
+
+			return new BarleyAtom("ok");
+		});
+
+		module.put("showfor", args -> {
+			Arguments.check(1, args.length);
+			BarleyValue first = args[0];
+			int duration = args[1].asInteger().intValue();
+
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			BarleyReference connection_ref = (BarleyReference) first;
+			Object ref = connection_ref.raw();
+
+			if (!(ref instanceof CodeDraw)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
+			}
+
+			CodeDraw cd = (CodeDraw) ref;
+			cd.show(duration);
+
+			return new BarleyAtom("ok");
+		});
+
+		module.put("setcolor", args -> {
+			Arguments.check(2, args.length);
+			BarleyValue first = args[0];
+			BarleyValue second = args[1];
+
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			if (!(second instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `2`, expected a Reference value");
+			}
+
+			BarleyReference codedraw_ref = (BarleyReference) first;
+			Object ref = codedraw_ref.raw();
+			Object color_ref = ((BarleyReference) second).raw();
+
+			if (!(ref instanceof CodeDraw)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
+			}
+
+			if (!(color_ref instanceof Color)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
+			}
+
+			CodeDraw cd = (CodeDraw) ref;
+			cd.setColor((Color) color_ref);
+			cd.show();
+			return new BarleyAtom("ok");
+		});
+
+		module.put("clear", args -> {
+			Arguments.check(1, args.length);
+			BarleyValue first = args[0];
+
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			BarleyReference codedraw_ref = (BarleyReference) first;
+			Object ref = codedraw_ref.raw();
+
+			if (!(ref instanceof CodeDraw)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
+			}
+			CodeDraw cd = (CodeDraw) ref;
+
+			cd.clear();
+			return new BarleyAtom("ok");
+		});
+
+		// =============== Colors ==================
+		module.put("red", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.red);
+		});
+
+		module.put("green", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.green);
+		});
+
+		module.put("blue", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.blue);
+		});
+
+		module.put("gray", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.gray);
+		});
+
+		module.put("black", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.black);
+		});
+
+		module.put("magenta", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.magenta);
+		});
+
+		module.put("blue", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.blue);
+		});
+
+		module.put("yellow", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.yellow);
+		});
+
+		module.put("orange", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.orange);
+		});
+
+		module.put("cyan", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.cyan);
+		});
+
+		module.put("pink", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.pink);
+		});
+
+		module.put("white", args -> {
+			Arguments.check(0, args.length);
+			return new BarleyReference(Color.white);
+		});
+
 		put("cdraw", module);
 	}
 
@@ -2193,8 +2449,8 @@ public class Modules {
 		http.put("download", args -> {
 			OkHttpClient client = new OkHttpClient();
 			final Response response = client.newCall(
-				new Request.Builder().url(args[0].toString()).build())
-				.execute();
+							new Request.Builder().url(args[0].toString()).build())
+							.execute();
 			byte[] bytes = response.body().bytes();
 			LinkedList<BarleyValue> result = new LinkedList<>();
 			for (byte b : bytes) {
@@ -2432,44 +2688,44 @@ public class Modules {
 
 		inter.put("line", args -> {
 			line(args[0].asInteger().intValue(),
-				args[1].asInteger().intValue(),
-				args[2].asInteger().intValue(),
-				args[3].asInteger().intValue());
+							args[1].asInteger().intValue(),
+							args[2].asInteger().intValue(),
+							args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("oval", args -> {
 			oval(args[0].asInteger().intValue(),
-				args[1].asInteger().intValue(),
-				args[2].asInteger().intValue(),
-				args[3].asInteger().intValue());
+							args[1].asInteger().intValue(),
+							args[2].asInteger().intValue(),
+							args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("foval", args -> {
 			foval(args[0].asInteger().intValue(),
-				args[1].asInteger().intValue(),
-				args[2].asInteger().intValue(),
-				args[3].asInteger().intValue());
+							args[1].asInteger().intValue(),
+							args[2].asInteger().intValue(),
+							args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("rect", args -> {
 			rect(args[0].asInteger().intValue(),
-				args[1].asInteger().intValue(),
-				args[2].asInteger().intValue(),
-				args[3].asInteger().intValue());
+							args[1].asInteger().intValue(),
+							args[2].asInteger().intValue(),
+							args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("frect", args -> {
 			frect(args[0].asInteger().intValue(),
-				args[1].asInteger().intValue(),
-				args[2].asInteger().intValue(),
-				args[3].asInteger().intValue());
+							args[1].asInteger().intValue(),
+							args[2].asInteger().intValue(),
+							args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("clip", args -> {
 			clip(args[0].asInteger().intValue(),
-				args[1].asInteger().intValue(),
-				args[2].asInteger().intValue(),
-				args[3].asInteger().intValue());
+							args[1].asInteger().intValue(),
+							args[2].asInteger().intValue(),
+							args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("string", new DrawString());
@@ -2707,9 +2963,9 @@ public class Modules {
 		public BarleyValue execute(BarleyValue... args) {
 			HashMap<String, Function> methods = modules.get(args[0].toString());
 			List<TestInfo> tests = methods.entrySet().stream()
-				.filter(e -> e.getKey().toLowerCase().startsWith("test"))
-				.map(e -> runTest(e.getKey(), e.getValue()))
-				.collect(Collectors.toList());
+							.filter(e -> e.getKey().toLowerCase().startsWith("test"))
+							.map(e -> runTest(e.getKey(), e.getValue()))
+							.collect(Collectors.toList());
 
 			int failures = 0;
 			long summaryTime = 0;
@@ -2724,8 +2980,8 @@ public class Modules {
 			}
 			result.append("\n");
 			result.append(String.format("Tests run: %d, Failures: %d, Time elapsed: %s",
-				tests.size(), failures,
-				microsToSeconds(summaryTime)));
+							tests.size(), failures,
+							microsToSeconds(summaryTime)));
 			return new BarleyString(result.toString());
 		}
 
@@ -2769,10 +3025,10 @@ public class Modules {
 
 		public String info() {
 			return String.format("%s [%s]\n%sElapsed: %s\n",
-				name,
-				isPassed ? "passed" : "FAILED",
-				isPassed ? "" : (failureDescription + "\n"),
-				microsToSeconds(elapsedTimeInMicros)
+							name,
+							isPassed ? "passed" : "FAILED",
+							isPassed ? "" : (failureDescription + "\n"),
+							microsToSeconds(elapsedTimeInMicros)
 			);
 		}
 	}
@@ -3012,8 +3268,8 @@ public class Modules {
 	}
 
 	/**
-	 * Iterate the file once, checking for all desired characters, and store
-	 * in the Results object
+	 * Iterate the file once, checking for all desired characters, and store in
+	 * the Results object
 	 */
 	private static Results countInStream(String s) throws IOException {
 		InputStream is = new ByteArrayInputStream(s.getBytes("UTF8"));
