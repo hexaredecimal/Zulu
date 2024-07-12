@@ -31,6 +31,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -49,7 +52,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import codedraw.*;
+import java.util.stream.Stream;
 
 public class Modules {
 
@@ -1834,194 +1837,137 @@ public class Modules {
 		initXML();
 		initMonty();
 		initSQL();
-		initCodeDraw();
+		initFFI();
 	}
 
-	public static void initCodeDraw() {
+	public static void initFFI() {
 		HashMap<String, Function> module = new HashMap<>();
 
-		module.put("init", args -> {
+		module.put("load_class", args -> {
 			Arguments.check(2, args.length);
-			int width = args[0].asInteger().intValue();
-			int height = args[1].asInteger().intValue();
-			return new BarleyReference(new CodeDraw(width, height));
+			String libname = args[0].toString();
+			String clasz_name = args[1].toString();
+			Class cls = LibraryLoader.loadClass(libname, clasz_name);
+			return new BarleyReference(cls);
 		});
-		
-		module.put("fillsquare", args -> {
-			Arguments.check(4, args.length);
+
+		module.put("invoke", args -> {
+			if (args.length == 1) {
+				throw new BarleyException("BadArg", "Expected atleast 2 argument to invoke");
+			}
+
 			BarleyValue first = args[0];
-			double x1 = args[1].asFloat().doubleValue();
-			double y1 = args[1].asFloat().doubleValue();
-			double sz = args[2].asFloat().doubleValue();
+			Object second = args[1].raw();
+
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			Object ref = first.raw();
+			if (!(ref instanceof Method)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Method value, found " + ref);
+			}
+
+			Method method = (Method) ref;
+
+			Object[] rest = new Object[args.length - 2];
+			if (args.length - 2 > 1) {
+				for (int i = 2; i < args.length; i++) {
+					rest[i - 2] = args[i];
+				}
+			}
+
+			// Clean up the arguments to so that they can be understood by java
+			for (int i = 0; i < rest.length; i++) {
+				Object c = rest[i];
+				c = switch (c) {
+					case BarleyNull d ->
+						null;
+					case BarleyList l ->
+						l.getList().toArray();
+					case BarleyNumber n ->
+						n.asFloat().doubleValue();
+					case BarleyString s ->
+						s.toString();
+					default ->
+						c;
+				};
+				rest[i] = c;
+			}
+
+			//System.out.println("" + Arrays.toString(rest));
+			Object result = null;
+			try {
+				result = method.invoke(second, rest);
+			} catch (IllegalAccessException ex) {
+				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (InvocationTargetException ex) {
+				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			return new BarleyReference(result);
+		});
+
+		module.put("get_method", args -> {
+			/*if (args.length == 1) {
+				throw new BarleyException("BadArg", "Expected atleast 2 argument to get_method");
+			}*/
 			
-			if (!(first instanceof BarleyReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
-			}
-
-			BarleyReference connection_ref = (BarleyReference) first;
-			Object ref = connection_ref.raw();
-
-			if (!(ref instanceof CodeDraw)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
-			}
-
-			CodeDraw cd = (CodeDraw) ref;
-			cd.fillSquare(x1, y1, sz);
-
-			return new BarleyAtom("ok");
-		});
-
-		module.put("fillrect", args -> {
-			Arguments.check(5, args.length);
-			BarleyValue first = args[0];
-			double x1 = args[1].asFloat().doubleValue();
-			double y1 = args[1].asFloat().doubleValue();
-			double x2 = args[2].asFloat().doubleValue();
-			double y2 = args[2].asFloat().doubleValue();
-			
-			if (!(first instanceof BarleyReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
-			}
-
-			BarleyReference connection_ref = (BarleyReference) first;
-			Object ref = connection_ref.raw();
-
-			if (!(ref instanceof CodeDraw)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
-			}
-
-			CodeDraw cd = (CodeDraw) ref;
-			cd.fillRectangle(x1, y1, x2, y2);
-
-			return new BarleyAtom("ok");
-		});
-
-
-		module.put("drawrect", args -> {
-			Arguments.check(5, args.length);
-			BarleyValue first = args[0];
-			double x1 = args[1].asFloat().doubleValue();
-			double y1 = args[1].asFloat().doubleValue();
-			double x2 = args[2].asFloat().doubleValue();
-			double y2 = args[2].asFloat().doubleValue();
-			
-			if (!(first instanceof BarleyReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
-			}
-
-			BarleyReference connection_ref = (BarleyReference) first;
-			Object ref = connection_ref.raw();
-
-			if (!(ref instanceof CodeDraw)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
-			}
-
-			CodeDraw cd = (CodeDraw) ref;
-			cd.drawRectangle(x1, y1, x2, y2);
-
-			return new BarleyAtom("ok");
-		});
-
-		module.put("drawline", args -> {
-			Arguments.check(5, args.length);
-			BarleyValue first = args[0];
-			double x1 = args[1].asFloat().doubleValue();
-			double y1 = args[1].asFloat().doubleValue();
-			double x2 = args[2].asFloat().doubleValue();
-			double y2 = args[2].asFloat().doubleValue();
-			
-			if (!(first instanceof BarleyReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
-			}
-
-			BarleyReference connection_ref = (BarleyReference) first;
-			Object ref = connection_ref.raw();
-
-			if (!(ref instanceof CodeDraw)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
-			}
-
-			CodeDraw cd = (CodeDraw) ref;
-			cd.drawLine(x1, y1, x2, y2);
-
-			return new BarleyAtom("ok");
-		});
-
-		module.put("show", args -> {
-			Arguments.check(1, args.length);
-			BarleyValue first = args[0];
-
-			if (!(first instanceof BarleyReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
-			}
-
-			BarleyReference connection_ref = (BarleyReference) first;
-			Object ref = connection_ref.raw();
-
-			if (!(ref instanceof CodeDraw)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
-			}
-
-			CodeDraw cd = (CodeDraw) ref;
-			cd.show();
-
-			return new BarleyAtom("ok");
-		});
-
-		module.put("showfor", args -> {
-			Arguments.check(1, args.length);
-			BarleyValue first = args[0];
-			int duration = args[1].asInteger().intValue();
-
-			if (!(first instanceof BarleyReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
-			}
-
-			BarleyReference connection_ref = (BarleyReference) first;
-			Object ref = connection_ref.raw();
-
-			if (!(ref instanceof CodeDraw)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
-			}
-
-			CodeDraw cd = (CodeDraw) ref;
-			cd.show(duration);
-
-			return new BarleyAtom("ok");
-		});
-
-		module.put("setcolor", args -> {
 			Arguments.check(2, args.length);
 			BarleyValue first = args[0];
-			BarleyValue second = args[1];
+			String method_name = args[1].toString();
 
 			if (!(first instanceof BarleyReference)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
-			if (!(second instanceof BarleyReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `2`, expected a Reference value");
+			Object ref = first.raw();
+			if (!(ref instanceof Class)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Class value");
 			}
 
-			BarleyReference codedraw_ref = (BarleyReference) first;
-			Object ref = codedraw_ref.raw();
-			Object color_ref = ((BarleyReference) second).raw();
+			Class cls = (Class) ref;
 
-			if (!(ref instanceof CodeDraw)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
+			/*Object[] rest = new Object[args.length - 2];
+			if (args.length - 2 > 1) {
+				for (int i = 2; i < args.length; i++) {
+					rest[i - 2] = args[i];
+				}
 			}
 
-			if (!(color_ref instanceof Color)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
-			}
+			Class[] types = new Class[rest.length];
+			// Clean up the arguments to so that they can be understood by java
+			for (int i = 0; i < rest.length; i++) {
+				String clazz_names = rest[i].toString();
+				try {
+					Class found = null;
+					if (LibraryLoader.primitives.containsKey(clazz_names)) {
+						found = LibraryLoader.primitives.get(clazz_names);
+					} else {
+						found = Class.forName(clazz_names);
+					}
+					types[i] = found;
+				} catch (ClassNotFoundException ex) {
+					Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}*/
 
-			CodeDraw cd = (CodeDraw) ref;
-			cd.setColor((Color) color_ref);
-			cd.show();
-			return new BarleyAtom("ok");
+			Method mth = null;
+			var methods = Stream
+							.of(cls.getMethods())
+							.filter(m -> {
+									//System.out.println(m.getName() + " == " + method_name + " | " + m.getParameterCount() + " " + types.length);
+								return m.getName().equals(method_name) ; // && m.getParameterCount() == types.length;
+							}).collect(Collectors.toList());
+
+			if (methods.isEmpty())  {
+				System.err.println("Fatal");
+				System.exit(0);
+			}
+				
+			return new BarleyReference(methods.get(0));
 		});
 
-		module.put("clear", args -> {
+		module.put("construct", args -> {
 			Arguments.check(1, args.length);
 			BarleyValue first = args[0];
 
@@ -2029,80 +1975,51 @@ public class Modules {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
-			BarleyReference codedraw_ref = (BarleyReference) first;
-			Object ref = codedraw_ref.raw();
-
-			if (!(ref instanceof CodeDraw)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a CodeDraw connection");
+			Object ref = first.raw();
+			if (!(ref instanceof Class)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Class value");
 			}
-			CodeDraw cd = (CodeDraw) ref;
 
-			cd.clear();
-			return new BarleyAtom("ok");
+			Class cls = (Class) ref;
+
+			Object[] rest = new Object[args.length - 1];
+			for (int i = 1; i < args.length; i++) {
+				rest[i - 1] = args[i];
+			}
+
+			// Clean up the arguments to so that they can be understood by java
+			/*for (int i = 0; i < rest.length; i++) {
+				Object c = rest[i];
+				c = switch (c) {
+					case BarleyNull d -> null;
+					case BarleyList l -> l.getList().toArray();
+					case BarleyNumber n -> n.asInteger().intValue();
+					case BarleyString s -> s.toString();
+					default -> c;
+				};
+				rest[i] = c;
+			}*/
+			Object instance = null;
+			try {
+				instance = cls.getDeclaredConstructor().newInstance(rest);
+			} catch (NoSuchMethodException ex) {
+				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (SecurityException ex) {
+				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (InstantiationException ex) {
+				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (IllegalAccessException ex) {
+				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (IllegalArgumentException ex) {
+				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (InvocationTargetException ex) {
+				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			}
+
+			return new BarleyReference(instance);
 		});
 
-		// =============== Colors ==================
-		module.put("red", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.red);
-		});
-
-		module.put("green", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.green);
-		});
-
-		module.put("blue", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.blue);
-		});
-
-		module.put("gray", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.gray);
-		});
-
-		module.put("black", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.black);
-		});
-
-		module.put("magenta", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.magenta);
-		});
-
-		module.put("blue", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.blue);
-		});
-
-		module.put("yellow", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.yellow);
-		});
-
-		module.put("orange", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.orange);
-		});
-
-		module.put("cyan", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.cyan);
-		});
-
-		module.put("pink", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.pink);
-		});
-
-		module.put("white", args -> {
-			Arguments.check(0, args.length);
-			return new BarleyReference(Color.white);
-		});
-
-		put("cdraw", module);
+		put("ffi", module);
 	}
 
 	public static void initSQL() {
