@@ -4,6 +4,7 @@ import com.erlava.runtime.Table;
 import com.erlava.runtime.BarleyValue;
 import com.erlava.runtime.BarleyString;
 import com.erlava.runtime.BarleyList;
+import com.erlava.runtime.LibraryLoader;
 import com.erlava.runtime.Modules;
 import com.erlava.utils.BarleyException;
 import com.erlava.utils.FileUtils;
@@ -28,6 +29,7 @@ public class Main {
 		conf.setVersion(Handler.RUNTIME_VERSION);
 		conf.parse(argp);
 
+		LibraryLoader.init();
 		Modules.init();
 
 		if (conf.isRepl()) {
