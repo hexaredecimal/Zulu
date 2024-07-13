@@ -31,7 +31,7 @@ public class LibraryLoader {
 	}
 
 	private static URLClassLoader loadLibrary(String name) {
-		name +=".jar";
+		name += ".jar";
 		if (loaded.containsKey(name)) {
 			return loaded.get(name);
 		}
@@ -41,7 +41,7 @@ public class LibraryLoader {
 			throw new BarleyException("Internal", "Failed to locate a library file (.jar) with name " + name);
 		}
 		String path = files.get(name);
-		
+
 		File library_ptr = new File(path);
 		URLClassLoader loader = null;
 		try {
@@ -54,15 +54,18 @@ public class LibraryLoader {
 	}
 
 	public static Class loadClass(String library, String class_name) {
-		URLClassLoader loader = loadLibrary(library);
 		Class clz = null;
 		try {
-			clz = loader.loadClass(class_name);
+			clz = Class.forName(class_name);
 		} catch (ClassNotFoundException ex) {
-			throw new BarleyException("Internal", "Class `"+ class_name + "` not found in library " + library);
+			URLClassLoader loader = loadLibrary(library);
+			try {
+				clz = loader.loadClass(class_name);
+			} catch (ClassNotFoundException e) {
+				throw new BarleyException("Internal", "Class `" + class_name + "` not found in library " + library);
+			}
 		}
 		return clz;
 	}
-
 
 }
