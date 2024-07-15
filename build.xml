@@ -10,6 +10,22 @@
 <project name="erlava" default="default" basedir=".">
     <description>Builds, tests, and runs the project erlava.</description>
     <import file="nbproject/build-impl.xml"/>
+    
+    <target name="-post-jar">
+        <echo message="Building standalone jar file: ${dist.dir}/erlava-dist.jar"/>
+        <jar destfile="${dist.dir}/erlava-tmp-fat.jar" filesetmanifest="skip">
+            <zipgroupfileset dir="${dist.dir}"  includes="*.jar*"/>
+            <zipgroupfileset dir="${dist.dir}/lib"  includes="*.jar*"/>
+            <manifest>
+                <attribute name="Main-Class" value="com.erlava.Main" />
+            </manifest>
+        </jar>
+        <zip destfile="${dist.dir}/erlava-dist.jar">
+            <zipfileset src="${dist.dir}/erlava-tmp-fat.jar" 
+                excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
+        </zip>
+        <delete file="${dist.dir}/erlava-tmp-fat.jar" />
+    </target>
     <!--
 
     There exist several targets which are by default empty and which can be 
