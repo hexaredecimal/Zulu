@@ -40,10 +40,16 @@ public class Config {
 	}
 
 	public String getEntry() {
+		if (Config.isProject()) {
+			return "code/main.lava";
+		}
 		return entry;
 	}
 
 	public String getEntry_module() {
+		if (Config.isProject()) {
+			return "main";
+		}
 		return entry_module;
 	}
 
@@ -65,7 +71,7 @@ public class Config {
 
 	public String[] getFiles() {
 		if (Config.isProject()) {
-			this.files.add("main.elv");
+			this.files.add("code/main.lava");
 		}
 
 		Object[] objs = this.files.toArray();
@@ -101,23 +107,23 @@ public class Config {
 		String out_put = this.name.concat(" [options] ");
 		out_put += "\n\n";
 		out_put
-						+= "[options]\n"
-										.concat("\tentry <filepath>\t - Selects which file to start execution execution from.\n")
-										.concat("\tnew\t\t\t - Creates a new project\n")
-										.concat("\trepl \t\t\t - Starts the repl\n")
-										.concat("\ttest\t\t\t - Run the compiler in test mode\n")
-										.concat("\thelp\t\t\t - Displays this help information\n")
-										.concat("\tversion\t\t\t - Displays the version of this program\n");
+			+= "[options]\n"
+				.concat("\tentry <filepath>\t - Selects which file to start execution execution from.\n")
+				.concat("\tnew\t\t\t - Creates a new project\n")
+				.concat("\trepl \t\t\t - Starts the repl\n")
+				.concat("\ttest\t\t\t - Run the compiler in test mode\n")
+				.concat("\thelp\t\t\t - Displays this help information\n")
+				.concat("\tversion\t\t\t - Displays the version of this program\n");
 
 		String logo
-						= "\t___________      .__                 \n"
-						+ "\t\\_   ____________|  | _____ ___  ______\n"
-						+ "\t |    __)_\\_  __ |  | \\__  \\  \\/ \\__  \\ \n"
-						+ "\t |        \\|  | \\|  |__/ __ \\   / / __ \\_ \n"
-						+ "\t/_______  /|__|  |____(____  /\\_/ (____  / \n"
-						+ "\t        \\/                 \\/          \\/ \n"
-						+ "\t\t a proud fork of Barley :) \n\n"
-						+ "\t\t (c) 2024 - Gama Sibusiso\n\n";
+			= "\t___________      .__                 \n"
+			+ "\t\\_   ____________|  | _____ ___  ______\n"
+			+ "\t |    __)_\\_  __ |  | \\__  \\  \\/ \\__  \\ \n"
+			+ "\t |        \\|  | \\|  |__/ __ \\   / / __ \\_ \n"
+			+ "\t/_______  /|__|  |____(____  /\\_/ (____  / \n"
+			+ "\t        \\/                 \\/          \\/ \n"
+			+ "\t\t a proud fork of Barley :) \n\n"
+			+ "\t\t (c) 2024 - Gama Sibusiso\n\n";
 		System.out.println(out_put);
 		System.out.println(logo);
 		System.exit(101);
@@ -166,29 +172,46 @@ public class Config {
 			System.exit(1);
 		}
 
-		String txt
-						= "[package]\n"
-						+ "name = \"" + project_name + "\"\n"
-						+ "version = \"0.0.1\"\n"
-						+ "authors = []\n"
-						+ "\n"
-						+ "\n"
-						+ "[dependencies]\n";
+		String code
+			= """
+-module(main).
+-opt().
+-doc("Hello, world").
+
+-import(io.[writeln]).
+
+main() -> writeln("Hello, world").
+""";
+		StringBuilder sb = new StringBuilder();
+		sb
+			.append("[package]".indent(0))
+			.append(String.format("name = \"%s\"", project_name).indent(0))
+			.append(String.format("version = \"%s\"", "0.0.1").indent(0))
+			.append("authors = []".indent(0))
+			.append("\n".indent(0))
+			.append("[dependencies]".indent(0));
+
 		String project_file = "project.toml";
 		File fp = new File(project_file);
 		File fp_dir = new File(".pkg");
+		File src_dir = new File("code");
 		try {
-			File main_file = new File("main.elv");
-			main_file.createNewFile();
+			File main_file = new File("code/main.lava");
 			fp_dir.mkdirs();
+			src_dir.mkdirs();
 			fp.createNewFile();
-			FileWriter fw = new FileWriter(fp);
-			fw.write(txt);
-			fw.close();
+			main_file.createNewFile();
+
+			try (FileWriter fw = new FileWriter(main_file)) {
+				fw.write(code);
+			}
+			try (FileWriter fw = new FileWriter(fp)) {
+				fw.write(sb.toString());
+			}
 			FileAttributes att = new FileAttributes(fp.getAbsolutePath());
 			att.saveAttributes();
 		} catch (IOException e) {
-			System.err.println("Error: failed to initialize a new project");
+			System.err.println("Error: failed to initialize a new project: " + e.getMessage());
 			System.exit(1);
 		}
 	}
