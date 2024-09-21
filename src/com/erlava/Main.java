@@ -36,16 +36,14 @@ public class Main {
 			Table.set("Args", new BarleyList());
 			Handler.console();
 		} else if (conf.isTest()) {
-			int argsLength = 1;
 			LinkedList<BarleyValue> argsc = new LinkedList<>();
 			for (String arg : conf.getFiles()) {
 				argsc.add(new BarleyString(arg));
 			}
 			Table.set("Args", new BarleyList(argsc));
 			Handler.tests();
-			return;
 		} else if (!conf.getEntry().isBlank()) {
-			String extension = FileUtils.expectExtention(conf.getEntry(), "lava");
+			FileUtils.expectExtention(conf.getEntry(), "lava");
 			Handler.entry(conf.getEntry(), conf.getEntry_module());
 		} else if (conf.hasFiles()) {
 			for (String file : conf.getFiles()) {
@@ -63,7 +61,6 @@ public class Main {
 			}
 		} else {
 			System.out.println("error: No input provided. Type `help` for usage information");
-			return;
 		}
 	}
 
