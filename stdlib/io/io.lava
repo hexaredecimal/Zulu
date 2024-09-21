@@ -1,10 +1,13 @@
 -module(io). 
 -opt(). 
+-strict().
+-doc("I/O module").
+
 
 write(X) ->
   SystemClass = ffi:load_class("","java.lang.System"),
-	OutField = ffi:get_field(SystemClass, "out"), 
   PrintStreamClass = ffi:load_class("","java.io.PrintStream"),
+	OutField = ffi:get_field(SystemClass, "out"), 
 	Method = ffi:get_method(PrintStreamClass, "print"),
   ffi:invoke_field(Method, OutField, X).
 
