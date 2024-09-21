@@ -2,44 +2,9 @@
 -opt().
 -doc("WebServer").
 
-global Port = 8080.
-
-print_init() -> 
-	io:fwrite("Server running at port %d\n", Port).
+-import(io.[write, writeln, read]).
 
 main() -> 
-	Server = http:create_inet_server(Port),
-	
-  %% http://localhost:8080/ => build.xml
-  DefaultRoute = http:inet_create_context(Server, "/"),
-	http:inet_add_handler(
-		DefaultRoute, 
-		def(Exchange) -> 
-			Msg = file:read("build.xml"),
-			http:send_exchange_response_header(Exchange, 200, string:length(Msg)),
-			http:write_stream(Exchange, Msg),
-			ok. 
-		end
-	), 
-
-  HelloRoute = http:inet_create_context(Server, "/hello"),
-  http:inet_add_handler(
-    HelloRoute, 
-    def(Exchange) ->
-			Url = http:get_exchange_url_path(Exchange), 
-      Name = string:from_end_extract_until(Url, "/"),
-      XML = |<h1>Hello ${Name}</h1>|,
-			Msg = xml:stringify(XML),
-			http:send_exchange_response_header(Exchange, 200, string:length(Msg)),
-      http:write_stream(Exchange, Msg),
-      ok. 
-    end
-  ),
-
-
-	http:set_default_executor(Server), 
-	http:start_http_server(Server), 
-	print_init(),
-	0.
-
-
+	write("Enter your name: "),
+	Name = read(),
+	writeln("Hello " + Name).
