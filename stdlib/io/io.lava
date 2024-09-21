@@ -5,5 +5,20 @@ write(X) ->
   SystemClass = ffi:load_class("","java.lang.System"),
 	OutField = ffi:get_field(SystemClass, "out"), 
   PrintStreamClass = ffi:load_class("","java.io.PrintStream"),
-	ffi:invoke(Method, OutField, X).
+	Method = ffi:get_method(PrintStreamClass, "print"),
+  ffi:invoke_field(Method, OutField, X).
 
+writeln(X) -> 
+	write(X),
+	write("\n").
+
+read() -> 
+	ScannerClass = ffi:load_class("", "java.util.Scanner"), 
+	Method = ffi:get_method(ScannerClass, "nextLine"),
+  InputClass = ffi:load_class("","java.io.InputStream"),
+	Constructor = ffi:get_constructor(ScannerClass, InputClass),
+  SystemClass = ffi:load_class("","java.lang.System"),
+	InField = ffi:get_field(SystemClass, "in"), 
+	Object = ffi:new_instance(Constructor, InField),
+	Result = ffi:invoke(Method, Object),
+	reference:string(Result).
