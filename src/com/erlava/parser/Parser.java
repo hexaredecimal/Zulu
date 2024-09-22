@@ -753,8 +753,14 @@ public final class Parser implements Serializable {
 				pos++;
 				break;
 				case ATOM: {
-					txt += sp + top.getText() + sp;
-					sp = "";
+					var next = get(1).getType();
+					if (next != TokenType.ATOM) {
+						sp = "";
+						txt += top.getText() + sp;
+					} else {
+						sp = " ";
+						txt += top.getText() + sp;
+					}
 					pos++;
 				}
 				break;
@@ -789,7 +795,7 @@ public final class Parser implements Serializable {
 					// ${}
 					match(TokenType.DOL);
 					consume(TokenType.LBRACE, "Expected `{` after `$` in xml expression");
-					AST e = new XMLInternalExpression(expression());
+					AST e = expression();
 					nodes.add(new StringAST(txt, top.getLine(), currentLine(), pos));
 					nodes.add(e);
 					txt = "";
