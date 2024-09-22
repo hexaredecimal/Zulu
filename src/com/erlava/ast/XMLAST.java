@@ -43,8 +43,9 @@ import xmlparser.XmlParser;
 public class XMLAST implements AST, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	ArrayList<AST> nodes;
-
+	private ArrayList<AST> nodes;
+	private String html;
+	
 	public XMLAST(ArrayList<AST> nodes) {
 		this.nodes = nodes;
 	}
@@ -62,12 +63,10 @@ public class XMLAST implements AST, Serializable {
 			// Normalize the document
 			document.getDocumentElement().normalize();
 			Element e = document.getDocumentElement();
-			return new BarleyReference(new BarleyXML(e));
-		} catch (ParserConfigurationException ex) {
-			Logger.getLogger(XMLAST.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (SAXException ex) {
-			Logger.getLogger(XMLAST.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (IOException ex) {
+			var xmlnode = new BarleyXML(e);
+			xmlnode.setFormatted(xml);
+			return new BarleyReference(xmlnode);
+		} catch (ParserConfigurationException | SAXException | IOException ex) {
 			Logger.getLogger(XMLAST.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
@@ -88,17 +87,23 @@ public class XMLAST implements AST, Serializable {
 				Object reff = ref.raw(); 
 				if (reff instanceof BarleyXML) {
 					BarleyXML x = (BarleyXML) reff;
-					txt += x.prettyPrint();
+					txt += x.getFormatted();
 				} else txt += ref.toString();
 			} else {
 				txt += node.execute().toString();
 			}
 		}
-		var html = Jsoup.parseBodyFragment(txt).body().html();
+		html = Jsoup.parseBodyFragment(txt).body().html();
 		return parserXMLString(html);
 	}
 
 	@Override
 	public void visit(Optimization optimization) {
 	}
+
+	@Override
+	public String toString() {
+		return html;
+	}
+	
 }

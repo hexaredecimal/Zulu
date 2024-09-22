@@ -55,7 +55,8 @@ public class Main {
 						FileUtils.expectExtention(file, "lava");
 						Handler.handle(SourceLoader.readSource(file), false);
 					} catch (IOException e) {
-						e.printStackTrace();
+						System.err.println(e.getMessage());
+						System.exit(1);
 					}
 				}
 			}
