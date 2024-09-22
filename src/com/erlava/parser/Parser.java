@@ -62,6 +62,7 @@ import com.erlava.units.Units;
 import com.erlava.utils.FileUtils;
 import com.erlava.utils.Handler;
 import com.erlava.ast.ImportAst;
+import com.erlava.ast.ListIndexAST;
 import com.erlava.ast.MapIndexAST;
 import com.erlava.utils.SourceLoader;
 import java.io.IOException;
@@ -892,14 +893,9 @@ public final class Parser implements Serializable {
 				}
 			}
 			if (match(TokenType.LBRACKET)) {
-				ArrayList<AST> args = new ArrayList<>();
-				args.add(result);
-				args.add(expression());
-				if (args.get(1) instanceof StringAST) {
-					warnParser("Index expression can't process string indexes");
-				}
+				var index = expression();
 				consume(TokenType.RBRACKET, "expected ']' after expression in index expression");
-				result = buildCall("lists", "nth", args);
+				result = new ListIndexAST(result, index, line(), currentLine());
 				continue;
 			}
 			break;
