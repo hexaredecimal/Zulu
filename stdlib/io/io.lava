@@ -15,7 +15,24 @@ writeln(X) ->
 	write(X),
 	write("\n").
 
+fwrite(Fmt, X) ->
+  SystemClass = ffi:load_class("","java.lang.System"),
+  PrintStreamClass = ffi:load_class("","java.io.PrintStream"),
+	OutField = ffi:get_field(SystemClass, "out"), 
+	Method = ffi:get_method_at(PrintStreamClass, "printf", 1),
+  ffi:invoke_field(Method, OutField, Fmt, X).
+
 read() -> 
+	ScannerClass = ffi:load_class("", "java.util.Scanner"), 
+	Method = ffi:get_method(ScannerClass, "next"),
+  InputClass = ffi:load_class("","java.io.InputStream"),
+	Constructor = ffi:get_constructor(ScannerClass, InputClass),
+  SystemClass = ffi:load_class("","java.lang.System"),
+	InField = ffi:get_field(SystemClass, "in"), 
+	Object = ffi:new_instance(Constructor, InField),
+	ffi:invoke(Method, Object).
+
+readline() -> 
 	ScannerClass = ffi:load_class("", "java.util.Scanner"), 
 	Method = ffi:get_method(ScannerClass, "nextLine"),
   InputClass = ffi:load_class("","java.io.InputStream"),
@@ -23,5 +40,34 @@ read() ->
   SystemClass = ffi:load_class("","java.lang.System"),
 	InField = ffi:get_field(SystemClass, "in"), 
 	Object = ffi:new_instance(Constructor, InField),
-	Result = ffi:invoke(Method, Object),
-	reference:string(Result).
+	ffi:invoke(Method, Object).
+
+readint() -> 
+	ScannerClass = ffi:load_class("", "java.util.Scanner"), 
+	Method = ffi:get_method(ScannerClass, "nextInt"),
+  InputClass = ffi:load_class("","java.io.InputStream"),
+	Constructor = ffi:get_constructor(ScannerClass, InputClass),
+  SystemClass = ffi:load_class("","java.lang.System"),
+	InField = ffi:get_field(SystemClass, "in"), 
+	Object = ffi:new_instance(Constructor, InField),
+	ffi:invoke(Method, Object).
+
+readdouble() -> 
+	ScannerClass = ffi:load_class("", "java.util.Scanner"), 
+	Method = ffi:get_method(ScannerClass, "nextDouble"),
+  InputClass = ffi:load_class("","java.io.InputStream"),
+	Constructor = ffi:get_constructor(ScannerClass, InputClass),
+  SystemClass = ffi:load_class("","java.lang.System"),
+	InField = ffi:get_field(SystemClass, "in"), 
+	Object = ffi:new_instance(Constructor, InField),
+	ffi:invoke(Method, Object).
+
+readbool() -> 
+	ScannerClass = ffi:load_class("", "java.util.Scanner"), 
+	Method = ffi:get_method(ScannerClass, "nextBoolean"),
+  InputClass = ffi:load_class("","java.io.InputStream"),
+	Constructor = ffi:get_constructor(ScannerClass, InputClass),
+  SystemClass = ffi:load_class("","java.lang.System"),
+	InField = ffi:get_field(SystemClass, "in"), 
+	Object = ffi:new_instance(Constructor, InField),
+	ffi:invoke(Method, Object).
