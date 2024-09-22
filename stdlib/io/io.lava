@@ -8,7 +8,7 @@ write(X) ->
   SystemClass = ffi:load_class("","java.lang.System"),
   PrintStreamClass = ffi:load_class("","java.io.PrintStream"),
 	OutField = ffi:get_field(SystemClass, "out"), 
-	Method = ffi:get_method(PrintStreamClass, "print"),
+	Method = ffi:get_method_at(PrintStreamClass, "print", 2),
   ffi:invoke_field(Method, OutField, X).
 
 writeln(X) -> 
