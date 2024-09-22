@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.erlava.runtime;
 
 import com.erlava.utils.BarleyException;
@@ -31,41 +27,17 @@ import xmlparser.model.XmlElement;
  * @author hexaredecimal
  */
 public class BarleyXML implements BarleyValue, Serializable {
-
 	private Element element;
-
+	private String formatted;
+		
 	public BarleyXML(Element element) {
 		this.element = element;
 	}
 
+	public void setFormatted(String fmt) { this.formatted = fmt; }
 
-	public String prettyPrint() {
-		try {
-			// Create a TransformerFactory
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			// Create a Transformer
-			Transformer transformer = transformerFactory.newTransformer();
-
-			// Set output properties to pretty print
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-
-			// Create a StringWriter to capture the output
-			StringWriter writer = new StringWriter();
-
-			// Transform the document to a string
-			transformer.transform(new DOMSource(element), new StreamResult(writer));
-
-			// Print the pretty-printed XML string
-			String prettyPrintedXml = writer.toString();
-			return prettyPrintedXml; 
-		} catch (TransformerConfigurationException ex) {
-			Logger.getLogger(BarleyXML.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (TransformerException ex) {
-			Logger.getLogger(BarleyXML.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		return null; 
+	public String getFormatted() {
+		return formatted;
 	}
 	
 	public BarleyValue getNodeByTagName(String tag) {
@@ -82,6 +54,11 @@ public class BarleyXML implements BarleyValue, Serializable {
 
 	public BarleyValue getNodeByTagId(String id) {
 		return new BarleyAtom("error");
+	}
+
+	@Override
+	public String toString() {
+		return this.formatted;
 	}
 	
 	@Override
