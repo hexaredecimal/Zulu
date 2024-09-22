@@ -65,6 +65,11 @@ public class Main {
 	}
 
 	public static void error(String type, String text, int line, String current) {
-		throw new BarleyException(type, text + "\n    at line " + line + "\n      when current line:\n            " + current);
+		StringBuilder sb = new StringBuilder();
+		sb
+			.append(text.indent(0))
+			.append(String.format("line %d: ", line).indent(0))
+			.append(current.indent(2));
+		throw new BarleyException(type, sb.toString());
 	}
 }
