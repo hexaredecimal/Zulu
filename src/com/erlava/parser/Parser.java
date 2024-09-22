@@ -62,6 +62,7 @@ import com.erlava.units.Units;
 import com.erlava.utils.FileUtils;
 import com.erlava.utils.Handler;
 import com.erlava.ast.ImportAst;
+import com.erlava.ast.MapIndexAST;
 import com.erlava.utils.SourceLoader;
 import java.io.IOException;
 
@@ -883,6 +884,13 @@ public final class Parser implements Serializable {
 		AST result = primary();
 
 		while (true) {
+			if (match(TokenType.POINT)) {
+				if (match(TokenType.LBRACKET)) {
+					var index = expression();
+					result = new MapIndexAST(result, index, line(), currentLine());
+					consume(TokenType.RBRACKET, "expected ']' after expression in map index expression");
+				}
+			}
 			if (match(TokenType.LBRACKET)) {
 				ArrayList<AST> args = new ArrayList<>();
 				args.add(result);
@@ -932,6 +940,9 @@ public final class Parser implements Serializable {
 					warnBadVar("Variable '" + current.getText() + "' is not defined in this scope");
 				}
 			}
+
+			var next = get(0);
+			
 			return new ExtractBindAST(current.getText(), line(), currentLine());
 		}
 		if (match(TokenType.ATOM)) {
