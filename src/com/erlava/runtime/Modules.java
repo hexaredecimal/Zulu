@@ -503,8 +503,8 @@ public class Modules {
 		});
 
 		shell.put("width", args -> {
-				//return new BarleyNumber(TerminalBuilder.terminal().getWidth());
-				return new BarleyNumber(0);
+			//return new BarleyNumber(TerminalBuilder.terminal().getWidth());
+			return new BarleyNumber(0);
 		});
 
 		shell.put("os", args -> {
@@ -1335,7 +1335,7 @@ public class Modules {
 				return new BarleyAtom("ok");
 			}
 			throw new BUnitAssertionException("values are not equals: "
-							+ "1: " + args[0] + ", 2: " + args[1]);
+				+ "1: " + args[0] + ", 2: " + args[1]);
 		});
 		unit.put("assert_not_equals", args -> {
 			Arguments.check(2, args.length);
@@ -1343,7 +1343,7 @@ public class Modules {
 				return new BarleyAtom("ok");
 			}
 			throw new BUnitAssertionException("values are not equals: "
-							+ "1: " + args[0] + ", 2: " + args[1]);
+				+ "1: " + args[0] + ", 2: " + args[1]);
 		});
 		unit.put("assert_true", args -> {
 			Arguments.check(2, args.length);
@@ -1351,7 +1351,7 @@ public class Modules {
 				return new BarleyAtom("ok");
 			}
 			throw new BUnitAssertionException("values are not equals: "
-							+ "1: " + args[0] + ", 2: " + args[1]);
+				+ "1: " + args[0] + ", 2: " + args[1]);
 		});
 		unit.put("assert_false", args -> {
 			Arguments.check(2, args.length);
@@ -1359,7 +1359,7 @@ public class Modules {
 				return new BarleyAtom("ok");
 			}
 			throw new BUnitAssertionException("values are not equals: "
-							+ "1: " + args[0] + ", 2: " + args[1]);
+				+ "1: " + args[0] + ", 2: " + args[1]);
 		});
 		unit.put("run", new runTests());
 
@@ -1523,9 +1523,9 @@ public class Modules {
 			Arguments.check(1, args.length);
 			BarleyList root = ((BarleyList) args[0]);
 			String name = ((BarleyList) root.getList().get(0))
-							.getList().get(1).toString();
+				.getList().get(1).toString();
 			String desc = ((BarleyList) root.getList().get(1))
-							.getList().get(1).toString();
+				.getList().get(1).toString();
 			Table.define("APP_NAME", new BarleyString(name));
 			Table.define("APP_DESC", new BarleyString(desc));
 			LinkedList<BarleyValue> globals = ((BarleyList) root.getList().get(2)).getList();
@@ -1635,20 +1635,20 @@ public class Modules {
 				result += "global Line = 1.\n";
 				result += "global EOFToken = [eof, -1, \"\"].\n\n";
 				result += "peek(Parts, RelativePos) ->\n"
-								+ "    FinalPosition = RelativePos + Pos,\n"
-								+ "    lists:nth(Parts, FinalPosition).\n"
-								+ "\n"
-								+ "next(Parts) ->\n"
-								+ "    barley:define(\"Pos\", Pos + 1),\n"
-								+ "    peek(Parts, 0).\n";
+					+ "    FinalPosition = RelativePos + Pos,\n"
+					+ "    lists:nth(Parts, FinalPosition).\n"
+					+ "\n"
+					+ "next(Parts) ->\n"
+					+ "    barley:define(\"Pos\", Pos + 1),\n"
+					+ "    peek(Parts, 0).\n";
 				result += "illegal_character(S, L) -> barley:throw(\"illegal char '\" + S + \"' at line \" + Line).\n"
-								+ "\n"
-								+ "lex(String) -> lex(String, 1).\n"
-								+ "\n"
-								+ "lex(String, Line) ->\n"
-								+ "    Pos = 0,\n"
-								+ "    Line = 1,\n"
-								+ "    process_parts(string:split(String, \"\")).\n";
+					+ "\n"
+					+ "lex(String) -> lex(String, 1).\n"
+					+ "\n"
+					+ "lex(String, Line) ->\n"
+					+ "    Pos = 0,\n"
+					+ "    Line = 1,\n"
+					+ "    process_parts(string:split(String, \"\")).\n";
 				StringBuilder process = new StringBuilder("\n");
 				for (String rule : rules) {
 					if (rule.isEmpty() || rule.isBlank()) {
@@ -1660,11 +1660,11 @@ public class Modules {
 						String expr = macros.containsKey(parts[1]) ? rule.substring(5, rule.indexOf("->")).replaceAll(parts[1], macros.get(parts[1])) : String.format("%s", rule.substring(5, rule.indexOf("->")));
 						String res = String.join(" ", List.of(parts).subList(List.of(parts).indexOf("->") + 1, parts.length));
 						buffer.append("process_part(Parts, Symbol) when Symbol == \n ")
-										.append(expr)
-										.append("\n -> \n")
-										.append("  next(Parts),\n  ")
-										.append(res)
-										.append("\n.\n");
+							.append(expr)
+							.append("\n -> \n")
+							.append("  next(Parts),\n  ")
+							.append(res)
+							.append("\n.\n");
 						process.append(buffer);
 						continue;
 					}
@@ -1672,10 +1672,10 @@ public class Modules {
 						String expr = macros.containsKey(parts[1]) ? rule.substring(5, rule.indexOf("->")).replaceAll(parts[1], macros.get(parts[1])) : String.format("%s", rule.substring(5, rule.indexOf("->")));
 						String res = String.join(" ", List.of(parts).subList(List.of(parts).indexOf("->") + 1, parts.length));
 						buffer.append("process_part(Parts, Symbol) when Symbol == \n")
-										.append(expr)
-										.append("\n -> \n")
-										.append(res)
-										.append("\n.\n");
+							.append(expr)
+							.append("\n -> \n")
+							.append(res)
+							.append("\n.\n");
 						process.append(buffer);
 						continue;
 					}
@@ -1683,10 +1683,10 @@ public class Modules {
 						String expr = String.format("%s", rule.substring(16, rule.indexOf("->")));
 						String res = String.join(" ", List.of(parts).subList(List.of(parts).indexOf("->") + 1, parts.length));
 						buffer.append("process_part(Parts, Symbol) when \n")
-										.append(expr)
-										.append("\n -> \n  ")
-										.append(res)
-										.append("\n.\n");
+							.append(expr)
+							.append("\n -> \n  ")
+							.append(res)
+							.append("\n.\n");
 						process.append(buffer);
 						continue;
 					}
@@ -1702,11 +1702,11 @@ public class Modules {
 						String expr = String.join(" ", ps);
 
 						process.append("process_part(Parts, Symbol)\n when Symbol == \n  ")
-										.append(expr)
-										.append("\n -> \n")
-										.append("  next(Parts), \n  ")
-										.append("[skip, Line, \"\"]")
-										.append(".\n");
+							.append(expr)
+							.append("\n -> \n")
+							.append("  next(Parts), \n  ")
+							.append("[skip, Line, \"\"]")
+							.append(".\n");
 					}
 
 					if (parts[0].equals("line_increase")) {
@@ -1714,26 +1714,26 @@ public class Modules {
 						String expr = String.join(" ", ps);
 
 						process.append("process_part(Parts, Symbol)\n when Symbol == \n  ")
-										.append(expr)
-										.append("\n -> \n")
-										.append("Line = Line + 1, Pos = Pos + 1, [skip, Line + 1, \"\"].\n");
+							.append(expr)
+							.append("\n -> \n")
+							.append("Line = Line + 1, Pos = Pos + 1, [skip, Line + 1, \"\"].\n");
 					}
 
 					if (parts[0].equals("anyway")) {
 						String r = String.join(" ", List.of(parts).subList(2, parts.length));
 						process.append("process_part(Parts, Symbol) ->\n    ")
-										.append(r)
-										.append("\n")
-										.append(".");
+							.append(r)
+							.append("\n")
+							.append(".");
 					}
 				}
 				result += process + "\nprocess_part(Parts, Symbol) when Symbol == end_of_list -> EOFToken.\n";
 				result += "\n";
 				result += "process_parts(Parts) ->\n"
-								+ "    Result = lists:reduce(def (X, Acc) -> First = peek(Parts, 0), Acc + [process_part(Parts, First)]. end, Parts, []),\n"
-								+ "    WithoutEOF = lists:filter(def (X) -> (not (lists:nth(X, 0) == eof)). end, Result),\n"
-								+ "    WithoutEOF = lists:filter(def (X) -> (not (lists:nth(X, 0) == skip)). end, WithoutEOF),\n"
-								+ "    WithoutEOF = WithoutEOF + [EOFToken].";
+					+ "    Result = lists:reduce(def (X, Acc) -> First = peek(Parts, 0), Acc + [process_part(Parts, First)]. end, Parts, []),\n"
+					+ "    WithoutEOF = lists:filter(def (X) -> (not (lists:nth(X, 0) == eof)). end, Result),\n"
+					+ "    WithoutEOF = lists:filter(def (X) -> (not (lists:nth(X, 0) == skip)). end, WithoutEOF),\n"
+					+ "    WithoutEOF = WithoutEOF + [EOFToken].";
 				result = "-module(" + (args.length == 1 ? args[0].toString().split("\\.")[0] : args[1].toString()) + ").\n\n" + result;
 				try (FileWriter writer = new FileWriter(args[0].toString().split("\\.")[0] + ".barley")) {
 					writer.write(result);
@@ -1751,44 +1751,44 @@ public class Modules {
 				String parser = "";
 				parser += "-module(" + (args.length == 1 ? args[0].toString().split("\\.")[0] : args[1].toString()) + ").\n\n";
 				parser += "global Pos = 0.\n"
-								+ "global Size = 0.\n"
-								+ "global Tokens = [].\n"
-								+ "global Result = [].\n"
-								+ "\n"
-								+ "\n"
-								+ "type(Tok) -> lists:nth(Tok, 0).\n"
-								+ "text(Tok) -> lists:nth(Tok, 2).\n"
-								+ "\n"
-								+ "consume_in_bounds(P) when P < Size -> P.\n"
-								+ "consume_in_bounds(P) -> Size - 1.\n"
-								+ "\n"
-								+ "consume_type(Token, Type) -> type(Token) == Type.\n"
-								+ "\n"
-								+ "get(RelativePos) ->\n"
-								+ "    FinalPosition = Pos + RelativePos,\n"
-								+ "    P = consume_in_bounds(FinalPosition),\n"
-								+ "    lists:nth(Tokens, P).\n"
-								+ "\n"
-								+ "eval_match(C, T) when type(C) == T -> Pos = Pos + 1, true.\n"
-								+ "\n"
-								+ "eval_match(C, T) -> false.\n"
-								+ "\n"
-								+ "match(TokenType) ->\n"
-								+ "    C = get(0),\n"
-								+ "    eval_match(C, TokenType).\n\n";
+					+ "global Size = 0.\n"
+					+ "global Tokens = [].\n"
+					+ "global Result = [].\n"
+					+ "\n"
+					+ "\n"
+					+ "type(Tok) -> lists:nth(Tok, 0).\n"
+					+ "text(Tok) -> lists:nth(Tok, 2).\n"
+					+ "\n"
+					+ "consume_in_bounds(P) when P < Size -> P.\n"
+					+ "consume_in_bounds(P) -> Size - 1.\n"
+					+ "\n"
+					+ "consume_type(Token, Type) -> type(Token) == Type.\n"
+					+ "\n"
+					+ "get(RelativePos) ->\n"
+					+ "    FinalPosition = Pos + RelativePos,\n"
+					+ "    P = consume_in_bounds(FinalPosition),\n"
+					+ "    lists:nth(Tokens, P).\n"
+					+ "\n"
+					+ "eval_match(C, T) when type(C) == T -> Pos = Pos + 1, true.\n"
+					+ "\n"
+					+ "eval_match(C, T) -> false.\n"
+					+ "\n"
+					+ "match(TokenType) ->\n"
+					+ "    C = get(0),\n"
+					+ "    eval_match(C, TokenType).\n\n";
 				parser += "expr() -> " + root + "().\n\n";
 				parser += result + "\n";
 				parser += "make_parse() when match(eof) -> Result.\n"
-								+ "make_parse() -> Expr = [expr()],\n"
-								+ "                Result = Result + Expr,\n"
-								+ "                make_parse().\n"
-								+ "\n"
-								+ "parse(Toks) ->\n"
-								+ "    Pos = 0,\n"
-								+ "    Tokens = Toks,\n"
-								+ "    Size = barley:length(Toks),\n"
-								+ "    Result = [],\n"
-								+ "    make_parse().\n";
+					+ "make_parse() -> Expr = [expr()],\n"
+					+ "                Result = Result + Expr,\n"
+					+ "                make_parse().\n"
+					+ "\n"
+					+ "parse(Toks) ->\n"
+					+ "    Pos = 0,\n"
+					+ "    Tokens = Toks,\n"
+					+ "    Size = barley:length(Toks),\n"
+					+ "    Result = [],\n"
+					+ "    make_parse().\n";
 				try (FileWriter writer = new FileWriter(args[0].toString().split("\\.")[0] + ".barley")) {
 					writer.write(parser);
 				}
@@ -1837,7 +1837,7 @@ public class Modules {
 
 	public static void initRef() {
 		HashMap<String, Function> module = new HashMap<>();
-	
+
 		module.put("raw", args -> {
 			if (args.length != 1) {
 				throw new BarleyException("BadArg", "Expected atleast 1 argument to invoke");
@@ -1847,7 +1847,7 @@ public class Modules {
 			if (!(first instanceof BarleyReference)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
-			
+
 			return (BarleyValue) first.raw();
 		});
 
@@ -1860,14 +1860,13 @@ public class Modules {
 			if (!(first instanceof BarleyReference)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
-			
+
 			return new BarleyString(first.raw().toString());
 		});
 
 		put("reference", module);
 	}
 
-	
 	public static void initFFI() {
 		HashMap<String, Function> module = new HashMap<>();
 
@@ -1938,14 +1937,13 @@ public class Modules {
 			Object[] rest = new Object[args.length - 2];
 			if (args.length - 2 >= 1) {
 				for (int i = 2; i < args.length; i++) {
-					rest[i - 2] = ((BarleyValue)args[i]).raw();
+					rest[i - 2] = ((BarleyValue) args[i]).raw();
 				}
 			}
-			
+
 			/*for (int i = 0; i < rest.length; i++) {
 				rest[i] = rest[i].toString();
 			}*/
-
 			Object result = null;
 			try {
 				result = method.invoke(field, rest);
@@ -1972,7 +1970,7 @@ public class Modules {
 			if (!(ref instanceof Class)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Class value, found " + ref);
 			}
-			
+
 			Class<?> cls = (Class<?>) ref;
 
 			// Extract remaining arguments to form the parameter types for the constructor
@@ -2002,7 +2000,6 @@ public class Modules {
 			return new BarleyReference(null);
 		});
 
-
 		module.put("new_instance", args -> {
 			if (args.length == 1) {
 				throw new BarleyException("BadArg", "Expected atleast 1 argument to new_instance");
@@ -2020,7 +2017,7 @@ public class Modules {
 			}
 
 			Constructor<?> constructor = (Constructor<?>) ref;
-			
+
 			Object[] rest = new Object[args.length - 1];
 			if (args.length - 1 >= 1) {
 				for (int i = 1; i < args.length; i++) {
@@ -2032,7 +2029,7 @@ public class Modules {
 			Object[] values = new Object[rest.length];
 			for (int i = 0; i < rest.length; i++) {
 				Object rawValue = ((BarleyValue) rest[i]).raw();
-				values[i] = rawValue; 
+				values[i] = rawValue;
 			}
 
 			try {
@@ -2049,9 +2046,9 @@ public class Modules {
 			}
 			return new BarleyReference(null);
 		});
-		
+
 		module.put("get_field", args -> {
-			
+
 			Arguments.check(2, args.length);
 			BarleyValue first = args[0];
 			String field_name = args[1].toString();
@@ -2065,7 +2062,7 @@ public class Modules {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Class value");
 			}
 
-			Class<?> cls  = (Class) ref; 
+			Class<?> cls = (Class) ref;
 			Field field = null;
 			try {
 				field = cls.getField(field_name);
@@ -2082,13 +2079,38 @@ public class Modules {
 			return null;
 		});
 
+		module.put("get_method_at", args -> {
+			Arguments.check(3, args.length);
+			BarleyValue first = args[0];
+			String method_name = args[1].toString();
+			String index = args[2].raw().toString();
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
 
+			Object ref = first.raw();
+			if (!(ref instanceof Class)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Class value");
+			}
+
+			Class cls = (Class) ref;
+
+			var methods = Stream
+				.of(cls.getMethods())
+				.filter(m -> {
+					return m.getName().equals(method_name); // && m.getParameterCount() == types.length;
+				}).collect(Collectors.toList());
+
+			if (methods.isEmpty()) {
+				System.err.println("Fatal");
+				System.exit(0);
+			}
+
+			int i = Integer.parseInt(index);
+			return new BarleyReference(methods.get(i));
+		});
 
 		module.put("get_method", args -> {
-			/*if (args.length == 1) {
-				throw new BarleyException("BadArg", "Expected atleast 2 argument to get_method");
-			}*/
-			
 			Arguments.check(2, args.length);
 			BarleyValue first = args[0];
 			String method_name = args[1].toString();
@@ -2101,46 +2123,19 @@ public class Modules {
 			if (!(ref instanceof Class)) {
 				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Class value");
 			}
-
 			Class cls = (Class) ref;
 
-			/*Object[] rest = new Object[args.length - 2];
-			if (args.length - 2 > 1) {
-				for (int i = 2; i < args.length; i++) {
-					rest[i - 2] = args[i];
-				}
-			}
-
-			Class[] types = new Class[rest.length];
-			// Clean up the arguments to so that they can be understood by java
-			for (int i = 0; i < rest.length; i++) {
-				String clazz_names = rest[i].toString();
-				try {
-					Class found = null;
-					if (LibraryLoader.primitives.containsKey(clazz_names)) {
-						found = LibraryLoader.primitives.get(clazz_names);
-					} else {
-						found = Class.forName(clazz_names);
-					}
-					types[i] = found;
-				} catch (ClassNotFoundException ex) {
-					Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-				}
-			}*/
-
-			Method mth = null;
 			var methods = Stream
-							.of(cls.getMethods())
-							.filter(m -> {
-									//System.out.println(m.getName() + " == " + method_name + " | " + m.getParameterCount() + " " + types.length);
-								return m.getName().equals(method_name) ; // && m.getParameterCount() == types.length;
-							}).collect(Collectors.toList());
+				.of(cls.getMethods())
+				.filter(m -> {
+					return m.getName().equals(method_name); // && m.getParameterCount() == types.length;
+				}).collect(Collectors.toList());
 
-			if (methods.isEmpty())  {
+			if (methods.isEmpty()) {
 				System.err.println("Fatal");
 				System.exit(0);
 			}
-				
+
 			return new BarleyReference(methods.get(0));
 		});
 
@@ -2584,44 +2579,44 @@ public class Modules {
 
 		inter.put("line", args -> {
 			line(args[0].asInteger().intValue(),
-							args[1].asInteger().intValue(),
-							args[2].asInteger().intValue(),
-							args[3].asInteger().intValue());
+				args[1].asInteger().intValue(),
+				args[2].asInteger().intValue(),
+				args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("oval", args -> {
 			oval(args[0].asInteger().intValue(),
-							args[1].asInteger().intValue(),
-							args[2].asInteger().intValue(),
-							args[3].asInteger().intValue());
+				args[1].asInteger().intValue(),
+				args[2].asInteger().intValue(),
+				args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("foval", args -> {
 			foval(args[0].asInteger().intValue(),
-							args[1].asInteger().intValue(),
-							args[2].asInteger().intValue(),
-							args[3].asInteger().intValue());
+				args[1].asInteger().intValue(),
+				args[2].asInteger().intValue(),
+				args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("rect", args -> {
 			rect(args[0].asInteger().intValue(),
-							args[1].asInteger().intValue(),
-							args[2].asInteger().intValue(),
-							args[3].asInteger().intValue());
+				args[1].asInteger().intValue(),
+				args[2].asInteger().intValue(),
+				args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("frect", args -> {
 			frect(args[0].asInteger().intValue(),
-							args[1].asInteger().intValue(),
-							args[2].asInteger().intValue(),
-							args[3].asInteger().intValue());
+				args[1].asInteger().intValue(),
+				args[2].asInteger().intValue(),
+				args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("clip", args -> {
 			clip(args[0].asInteger().intValue(),
-							args[1].asInteger().intValue(),
-							args[2].asInteger().intValue(),
-							args[3].asInteger().intValue());
+				args[1].asInteger().intValue(),
+				args[2].asInteger().intValue(),
+				args[3].asInteger().intValue());
 			return new BarleyAtom("ok");
 		});
 		inter.put("string", new DrawString());
@@ -2859,9 +2854,9 @@ public class Modules {
 		public BarleyValue execute(BarleyValue... args) {
 			HashMap<String, Function> methods = modules.get(args[0].toString());
 			List<TestInfo> tests = methods.entrySet().stream()
-							.filter(e -> e.getKey().toLowerCase().startsWith("test"))
-							.map(e -> runTest(e.getKey(), e.getValue()))
-							.collect(Collectors.toList());
+				.filter(e -> e.getKey().toLowerCase().startsWith("test"))
+				.map(e -> runTest(e.getKey(), e.getValue()))
+				.collect(Collectors.toList());
 
 			int failures = 0;
 			long summaryTime = 0;
@@ -2876,8 +2871,8 @@ public class Modules {
 			}
 			result.append("\n");
 			result.append(String.format("Tests run: %d, Failures: %d, Time elapsed: %s",
-							tests.size(), failures,
-							microsToSeconds(summaryTime)));
+				tests.size(), failures,
+				microsToSeconds(summaryTime)));
 			return new BarleyString(result.toString());
 		}
 
@@ -2921,10 +2916,10 @@ public class Modules {
 
 		public String info() {
 			return String.format("%s [%s]\n%sElapsed: %s\n",
-							name,
-							isPassed ? "passed" : "FAILED",
-							isPassed ? "" : (failureDescription + "\n"),
-							microsToSeconds(elapsedTimeInMicros)
+				name,
+				isPassed ? "passed" : "FAILED",
+				isPassed ? "" : (failureDescription + "\n"),
+				microsToSeconds(elapsedTimeInMicros)
 			);
 		}
 	}
