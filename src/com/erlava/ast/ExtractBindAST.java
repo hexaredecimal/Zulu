@@ -9,31 +9,34 @@ import com.erlava.utils.AST;
 import java.io.Serializable;
 
 public class ExtractBindAST implements AST, Serializable {
-		private static final long serialVersionUID = 1L;
 
-    private final int line;
-    private final String current;
-    private String constant;
+	private static final long serialVersionUID = 1L;
 
-    public ExtractBindAST(String constant, int line, String current) {
-        this.constant = constant;
-        this.line = line;
-        this.current = current;
-    }
+	private final int line;
+	private final String current;
+	private String constant;
 
-    @Override
-    public BarleyValue execute() {
-        if (!Table.isExists(constant)) Main.error("UnboundVar", "unbound var '" + constant + "'", line, current);
-        return Table.get(constant);
-    }
+	public ExtractBindAST(String constant, int line, String current) {
+		this.constant = constant;
+		this.line = line;
+		this.current = current;
+	}
 
-    @Override
-    public void visit(Optimization optimization) {
+	@Override
+	public BarleyValue execute() {
+		if (!Table.isExists(constant)) {
+			Main.error("UnboundVar", "unbound var '" + constant + "'", line, current);
+		}
+		return Table.get(constant);
+	}
 
-    }
+	@Override
+	public void visit(Optimization optimization) {
 
-    @Override
-    public String toString() {
-        return constant;
-    }
+	}
+
+	@Override
+	public String toString() {
+		return constant;
+	}
 }
