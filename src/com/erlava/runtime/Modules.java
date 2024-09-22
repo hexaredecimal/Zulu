@@ -17,12 +17,6 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-//import okhttp3.OkHttpClient;
-//import okhttp3.Request;
-//import okhttp3.Response;
-//import org.fusesource.jansi.AnsiConsole;
-//import org.jline.terminal.TerminalBuilder;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -1878,6 +1872,7 @@ public class Modules {
 			return new BarleyReference(cls);
 		});
 
+
 		module.put("invoke", args -> {
 			if (args.length == 1) {
 				throw new BarleyException("BadArg", "Expected atleast 2 argument to invoke");
@@ -1898,18 +1893,50 @@ public class Modules {
 			Method method = (Method) ref;
 
 			Object[] rest = new Object[args.length - 2];
-			if (args.length - 2 > 1) {
+			if (args.length - 2 >= 1) {
 				for (int i = 2; i < args.length; i++) {
-					rest[i - 2] = args[i];
+					rest[i - 2] = ((BarleyValue) args[i]).raw();
 				}
 			}
 
 			Object result = null;
 			try {
 				result = method.invoke(second, rest);
-			} catch (IllegalAccessException ex) {
+			} catch (IllegalAccessException | InvocationTargetException ex) {
 				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (InvocationTargetException ex) {
+			}
+			return new BarleyReference(result);
+		});
+
+		module.put("invoke_static", args -> {
+			if (args.length == 1) {
+				throw new BarleyException("BadArg", "Expected atleast 2 argument to invoke");
+			}
+
+			BarleyValue first = args[0];
+
+			if (!(first instanceof BarleyReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			Object ref = first.raw();
+			if (!(ref instanceof Method)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Method value, found " + ref);
+			}
+
+			Method method = (Method) ref;
+
+			Object[] rest = new Object[args.length - 1];
+			if (args.length - 1 >= 1) {
+				for (int i = 1; i < args.length; i++) {
+					rest[i - 1] = ((BarleyValue) args[i]).raw();
+				}
+			}
+
+			Object result = null;
+			try {
+				result = method.invoke(null, rest);
+			} catch (IllegalAccessException | InvocationTargetException ex) {
 				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
 			}
 			return new BarleyReference(result);
@@ -2277,7 +2304,7 @@ public class Modules {
 
 			BarleyXML xml = (BarleyXML) o;
 
-			String str = xml.prettyPrint();
+			String str = xml.getFormatted();
 			if (str == null) {
 				return new BarleyAtom("error");
 			}
