@@ -118,7 +118,7 @@ public class LexerTests extends Tester {
 	private static boolean testString() {
 		System.out.println("running testString()");
 
-		Lexer lexer = new Lexer("\"Hello, world\" \"This is erlava\"");
+		Lexer lexer = new Lexer("\"Hello, world\" \"This is zulu\"");
 		List<Token> tokens = lexer.tokenize();
 
 		var first = tokens.remove(0);

@@ -259,10 +259,10 @@ public final class Parser implements Serializable {
 		String module_name = consume(TokenType.ATOM, "").getText();
 		Token top = get(0);
 		if (top.getType() == TokenType.RPAREN) { // found `)`, meaning we are just importing the whole module.
-			HashMap<String, String> files = FileUtils.getFilesWithExtension(".", "lava");
-			if (files.containsKey(module_name + ".lava")) {
+			HashMap<String, String> files = FileUtils.getFilesWithExtension(".", "zulu");
+			if (files.containsKey(module_name + ".zulu")) {
 				try {
-					List<AST> nodes = Handler.load(SourceLoader.readSource(files.get(module_name + ".lava")));
+					List<AST> nodes = Handler.load(SourceLoader.readSource(files.get(module_name + ".zulu")));
 					HashMap<String, Function> mtds = new HashMap<>();
 
 					nodes
@@ -292,10 +292,10 @@ public final class Parser implements Serializable {
 				match(TokenType.COMMA);
 			}
 
-			HashMap<String, String> files = FileUtils.getFilesWithExtension(".", "lava");
-			if (files.containsKey(module_name + ".lava")) {
+			HashMap<String, String> files = FileUtils.getFilesWithExtension(".", "zulu");
+			if (files.containsKey(module_name + ".zulu")) {
 				try {
-					String p = files.get(module_name + ".lava");
+					String p = files.get(module_name + ".zulu");
 					List<AST> nodes = Handler.load(SourceLoader.readSource(p));
 					List<AST> found = new LinkedList<>();
 					for (AST node : nodes) { // Keep the for loop because I have to remove the method from the list
@@ -678,7 +678,7 @@ public final class Parser implements Serializable {
 		}
 
 		if (match(TokenType.UNBIN)) {
-			return buildCall("erlava", "from_binary", new ArrayList<>(List.of(primary())));
+			return buildCall("zulu", "from_binary", new ArrayList<>(List.of(primary())));
 		}
 
 		if (match(TokenType.PACK)) {
@@ -959,7 +959,7 @@ public final class Parser implements Serializable {
 			match(TokenType.GTGT);
 			ArrayList<AST> list = new ArrayList<>();
 			list.add(toBinary);
-			return buildCall("erlava", "binary", list);
+			return buildCall("zulu", "binary", list);
 		}
 
 		if (match(TokenType.EXTERN)) {

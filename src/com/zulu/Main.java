@@ -19,7 +19,7 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		ArgParser argp = new ArgParser(args);
 		Config conf = new Config();
-		conf.setProgram("Erlava");
+		conf.setProgram("zulu");
 		conf.setVersion(Handler.RUNTIME_VERSION);
 		conf.parse(argp);
 
@@ -37,7 +37,7 @@ public class Main {
 			Table.set("Args", new ZuluList(argsc));
 			Handler.tests();
 		} else if (!conf.getEntry().isBlank()) {
-			FileUtils.expectExtention(conf.getEntry(), "lava");
+			FileUtils.expectExtention(conf.getEntry(), "zulu");
 			Handler.entry(conf.getEntry(), conf.getEntry_module());
 		} else if (conf.hasFiles()) {
 			for (String file : conf.getFiles()) {
@@ -46,7 +46,7 @@ public class Main {
 					Modules.get("dist").get("app").execute(new ZuluString(file));
 				} else {
 					try {
-						FileUtils.expectExtention(file, "lava");
+						FileUtils.expectExtention(file, "zulu");
 						Handler.handle(SourceLoader.readSource(file), false);
 					} catch (IOException e) {
 						System.err.println(e.getMessage());

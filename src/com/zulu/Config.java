@@ -31,7 +31,7 @@ public class Config {
 		this.repl = r;
 		this.name = "";
 		this.test = false;
-		this.entry = "main.lava";
+		this.entry = "main.zulu";
 		this.entry_module = "main";
 	}
 
@@ -41,7 +41,7 @@ public class Config {
 
 	public String getEntry() {
 		if (Config.isProject()) {
-			return "code/main.lava";
+			return "code/main.zulu";
 		}
 		return entry;
 	}
@@ -71,7 +71,7 @@ public class Config {
 
 	public String[] getFiles() {
 		if (Config.isProject()) {
-			this.files.add("code/main.lava");
+			this.files.add("code/main.zulu");
 		}
 
 		Object[] objs = this.files.toArray();
@@ -202,7 +202,7 @@ main() -> writeln("Hello, world").
 		File fp_dir = new File(".pkg");
 		File src_dir = new File("code");
 		try {
-			File main_file = new File("code/main.lava");
+			File main_file = new File("code/main.zulu");
 			fp_dir.mkdirs();
 			src_dir.mkdirs();
 			fp.createNewFile();
