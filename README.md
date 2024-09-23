@@ -1,6 +1,6 @@
 <div align="center">
 <img width="20%" src="https://github.com/hexaredecimal/Erlava/assets/51314855/9e93375c-3350-4f81-b071-2742f4665398" />
-<h1>ERLAVA Programming Language</h1>
+<h1>ZULU Programming Language</h1>
 </div>
 
 [![CI](https://github.com/elixir-lang/elixir/workflows/CI/badge.svg?branch=main)](https://app.circleci.com/pipelines/github/corgifist/barley-lang/10/workflows/45b5d058-5c12-49f8-a44a-0a7f76fdf0c9)
@@ -21,14 +21,14 @@
  - Easily distribute programs by using `dist` module
  - Usually, distributed program is very small in terms of memory
  - Built-in optimization (constant folding, propagation, expression simplification and more)
- - Two Barley instances can talk to each other by sending signals (see `examples/chat.barley`)
+ - Two Zulu instances can talk to each other by sending signals (see `examples/chat.barley`)
  - Clean syntax
  - Built-in terminal code editor
  - `Monty` gui library!
 
 
 
-Barley is a interpreted erlang-like language based on JVM.
+Zulu is a interpreted erlang-like language based on JVM.
 
 ## Installation
 
@@ -38,13 +38,13 @@ If you are using windows, use `runner.bat` for running scripts and baked apps.
 
 ### My `script.barley` doesn't work!
 
-If your script is running in shell, but don't working in Barley.jar
+If your script is running in shell, but don't working in Zulu.jar
 
 Try to bake it! See more in `Coding our first distributed program`
 
 ## Examples
 
-Barley have simplified syntax and other cool things that normal erlang don't have
+Zulu have simplified syntax and other cool things that normal erlang don't have
 
 Simplified syntax and global variables:
 
@@ -99,9 +99,9 @@ main() ->
     
 ### Pattern matching
 
-It wouldn't be called erlang if it didn't have pattern matching! Barley supports matching against arrays, H | T, variables, and just constants.
+It wouldn't be called erlang if it didn't have pattern matching! Zulu supports matching against arrays, H | T, variables, and just constants.
 
-`Barley/Java15 [barley-runtime0.1] [amd64] [threads-2]`
+`Zulu/Java15 [barley-runtime0.1] [amd64] [threads-2]`
 
 `>>> [A, H|T, "string", [C, D]] = [1, [2, 3, 4], "string", [5, 6]].`
 
@@ -113,7 +113,7 @@ It wouldn't be called erlang if it didn't have pattern matching! Barley supports
 
 Unlike Erlang, variables in Barely can be reassigned!
 
-`Barley/Java15 [barley-runtime0.1] [amd64] [threads-2]`
+`Zulu/Java15 [barley-runtime0.1] [amd64] [threads-2]`
 
 `>>> A = 15.`
 
@@ -160,7 +160,7 @@ Resulst are:
 
 ## PKG Manager
 
-Barley have own package manager! It's name is PKG.
+Zulu have own package manager! It's name is PKG.
 
 ### PKG Expressions
 
@@ -219,7 +219,7 @@ The recommended function to spawn a process is a:
 `start(Value) ->
     receive barley:spawn(Value) -> EXPR.`
     
- When process receives a message Barley automatically creates a variables for make it possible and useful.
+ When process receives a message Zulu automatically creates a variables for make it possible and useful.
  
  Rest - the current value of process.
  
@@ -231,7 +231,7 @@ The recommended function to spawn a process is a:
  
  when suddenly you have not designed some aspects of communication with the process! And you are shown an error. 
  
- Fear not, this error did not affect other processes. Isolation of processes is another Barley feature.
+ Fear not, this error did not affect other processes. Isolation of processes is another Zulu feature.
  
  ### Simple process-based program
  
@@ -263,7 +263,7 @@ The probability that two identical id's will be generated is minimal.
 
 ### References
 
-Erlang also have a references. But references in Barley is different to erlang ones.
+Erlang also have a references. But references in Zulu is different to erlang ones.
 
 Reference contains a java class =D
 
@@ -277,13 +277,13 @@ Because you don't need it!
 
 ### Saving && Loading AST in file
 
-Parsing is one of the most difficult processes in executing Barley code. 
+Parsing is one of the most difficult processes in executing Zulu code. 
 
 With 40 lines of code, it takes about 60 milliseconds! 
 
 You can speed up your program by compiling the code into a Byte-AST file beforehand.
 
-To humans, it looks like a lot of random numbers. But Barley can convert that to AST and execute it!
+To humans, it looks like a lot of random numbers. But Zulu can convert that to AST and execute it!
 
 The conversion process is fast and no data loss! 
 
@@ -295,7 +295,7 @@ Use `barley:ast_from_bianry(Path)` to transform byte-ast to normal ast and run i
 
 ### Signals
 
-Two or more Barley instances can talk to each other by messages.
+Two or more Zulu instances can talk to each other by messages.
 
 This messages is named singnals!
 
@@ -311,9 +311,9 @@ See `examples/chat.barley` for more information
 
 ## Thinking about distribution
 
-All releases of programs written in Barley must be distributed in a baked package method.
+All releases of programs written in Zulu must be distributed in a baked package method.
 
-For this, Barley has a "dist" module. Why not distribute the entire program or its AST? 
+For this, Zulu has a "dist" module. Why not distribute the entire program or its AST? 
 
 This is too expensive in terms of memory and upgradeability. 
 
@@ -374,7 +374,7 @@ Okay, the logic is written. But we still haven't published our program!
 
 It needs to be corrected
 
-Warm up your Barley instance and let's go!
+Warm up your Zulu instance and let's go!
 
 First you need to create a entry point.
 
@@ -391,7 +391,7 @@ Use `dist:entry(Module, Target)` to spawn entry point
 So, I made it
 
 ```
-Barley/Java16 [barley-runtime0.1] [amd64] [threads-2]
+Zulu/Java16 [barley-runtime0.1] [amd64] [threads-2]
 >>> Entry = dist:entry(ball_client, main).
 >>> 
 ```
@@ -411,7 +411,7 @@ If you don't, use `barley:reparse(Dir)`. This will parse and save module
 What are we waiting for?
 
 ```
-Barley/Java16 [barley-runtime0.1] [amd64] [threads-2]
+Zulu/Java16 [barley-runtime0.1] [amd64] [threads-2]
 >>> Entry = dist:entry(ball_client, main).
 >>> barley:reparse("examples/magic_ball/m_ball_server.barley").
 >>> barley:reparse("examples/magic_ball/m_ball_client.barley").
@@ -430,7 +430,7 @@ Let's write our info in file
 
 
 ```
-Barley/Java16 [barley-runtime0.1] [amd64] [threads-2]
+Zulu/Java16 [barley-runtime0.1] [amd64] [threads-2]
 >>> Entry = dist:entry(ball_client, main).
 >>> barley:reparse("examples/magic_ball/m_ball_server.barley").
 >>> barley:reparse("examples/magic_ball/m_ball_client.barley").
@@ -451,12 +451,12 @@ It's all!
 
 ## Rescue Trap (Selective Optimization)
 
-Usually programs written in Barley run within acceptable speed limits. 
+Usually programs written in Zulu run within acceptable speed limits. 
 
 But sometimes the application can be so loaded that the speed drops below average, and sometimes low.
 
 
-Sometimes Barley's built-in optimization can speed up a program by 30-50%. But only for slow programs =( 
+Sometimes Zulu's built-in optimization can speed up a program by 30-50%. But only for slow programs =( 
 
 Why is this happening?
 
@@ -466,7 +466,7 @@ Optimization is disabled initially. It can be enabled using `-opt()`
 
 # Amethyst: Parser && Lexer Generator
 
-Barley comes with a bundle of useful modules to create a comfortable environment for programmers!
+Zulu comes with a bundle of useful modules to create a comfortable environment for programmers!
 
 A separate section will be dedicated to one of them.
 
@@ -901,7 +901,7 @@ See `examples/externals.barley` to learn more
 
 # Java interoperability
 
-Barley can instantiate java classes!
+Zulu can instantiate java classes!
 
 To get class use `reflection:class("CLASSPATH")`
 
