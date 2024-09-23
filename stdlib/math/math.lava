@@ -1,0 +1,102 @@
+-module(math). 
+-opt().
+-strict().
+
+abs(Value) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "abs"),
+	ffi:invoke_static(Method, Value).
+
+acos(Value) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "acos"),
+	ffi:invoke_static(Method, Value).
+
+asin(Value) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "asin"),
+	ffi:invoke_static(Method, Value).
+
+atan(Value) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "atan"),
+	ffi:invoke_static(Method, Value).
+
+cbrt(Value) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "cbrt"),
+	ffi:invoke_static(Method, Value).
+
+clamp(Value, Min, Max) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "clamp"),
+	ffi:invoke_static(Method, Value, Min, Max).
+
+cos(Value) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "cos"),
+	ffi:invoke_static(Method, Value).
+
+sin(Value) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "sin"),
+	ffi:invoke_static(Method, Value).
+
+tan(Value) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "tan"),
+	ffi:invoke_static(Method, Value).
+
+exp(Value) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "exp"),
+	ffi:invoke_static(Method, Value).
+
+floor(Value) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "floor"),
+	ffi:invoke_static(Method, Value).
+
+exp(X, Y) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "exp"),
+	ffi:invoke_static(Method, X, Y).
+
+log(Value) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "log"),
+	ffi:invoke_static(Method, Value).
+
+max(A, B) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "max"),
+	ffi:invoke_static(Method, A, B).
+
+min(A, B) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "min"),
+	ffi:invoke_static(Method, A, B).
+
+nextdown(A) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "nextDown"),
+	ffi:invoke_static(Method, A).
+
+nextup(A) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "nextUp"),
+	ffi:invoke_static(Method, A).
+
+pow(A, B) -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "pow"),
+	ffi:invoke_static(Method, A, B).
+
+random() -> 
+	MapClass = ffi:load_class("", "java.lang.Math"), 
+	Method = ffi:get_method(MapClass, "random"),
+	ffi:invoke_static(Method).
+
+pi() -> 3.141592653589793. 
+e() -> 2.718281828459045. 
+tau() -> 6.283185307179586.
