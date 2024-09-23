@@ -1,0 +1,32 @@
+-module(map). 
+-opt().
+-strict(). 
+
+remove(Map, Value) -> 
+	MapClass = ffi:load_class("", "java.util.Map"), 
+	Method = ffi:get_method_at(MapClass, "remove", 1),
+	ffi:invoke(Method, Map, Value).
+
+put(Map, Key, Value) -> 
+	MapClass = ffi:load_class("", "java.util.Map"), 
+	Method = ffi:get_method(MapClass, "put"),
+	ffi:invoke(Method, Map, Key, Value).
+
+putall(Map, Other) -> 
+	MapClass = ffi:load_class("", "java.util.Map"), 
+	Method = ffi:get_method(MapClass, "putAll"),
+	ffi:invoke(Method, Map, Other).
+
+clear(Map) -> 
+	MapClass = ffi:load_class("", "java.util.Map"), 
+	Method = ffi:get_method(MapClass, "clear"),
+	ffi:invoke(Method, Map).
+
+isempty(Map) -> 
+	MapClass = ffi:load_class("", "java.util.Map"), 
+	Method = ffi:get_method(MapClass, "isEmpty"),
+	ffi:invoke(Method, Map).
+
+
+
+
