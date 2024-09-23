@@ -115,18 +115,21 @@ public class Config {
 				.concat("\thelp\t\t\t - Displays this help information\n")
 				.concat("\tversion\t\t\t - Displays the version of this program\n");
 
-		String logo
-			= "\t___________      .__                 \n"
-			+ "\t\\_   ____________|  | _____ ___  ______\n"
-			+ "\t |    __)_\\_  __ |  | \\__  \\  \\/ \\__  \\ \n"
-			+ "\t |        \\|  | \\|  |__/ __ \\   / / __ \\_ \n"
-			+ "\t/_______  /|__|  |____(____  /\\_/ (____  / \n"
-			+ "\t        \\/                 \\/          \\/ \n"
-			+ "\t\t a proud fork of Barley :) \n\n"
-			+ "\t\t (c) 2024 - Gama Sibusiso\n\n";
+		String logo = 
+"""
+__________     .__         
+\\____    /__ __|  |  __ __ 
+  /     /|  |  \\  | |  |  \\
+ /     /_|  |  /  |_|  |  /
+/_______ \\____/|____/____/ 
+        \\/                 
+
+A proud fork of Barley :)
+(c) 2024 - Gama Sibsusio
+""".indent(1 << 4);
 		System.out.println(out_put);
 		System.out.println(logo);
-		System.exit(101);
+		System.exit(0);
 	}
 
 	public void showVersion() {
