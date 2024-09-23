@@ -7,26 +7,26 @@ import java.util.HashMap;
 
 public class ProcessTable {
 
-    public static HashMap<BarleyPID, BarleyValue> storage = new HashMap<>();
-    public static HashMap<BarleyPID, AST> receives = new HashMap<>();
-    public static ArrayList<BarleyPID> links;
+	public static HashMap<BarleyPID, BarleyValue> storage = new HashMap<>();
+	public static HashMap<BarleyPID, AST> receives = new HashMap<>();
+	public static ArrayList<BarleyPID> links;
 
-    public static void put(BarleyPID pid, BarleyValue val) {
-        storage.put(pid, val);
-    }
+	public static void put(BarleyPID pid, BarleyValue val) {
+		storage.put(pid, val);
+	}
 
-    public static void put(BarleyPID pid) {
-        put(pid, new BarleyNumber(0));
-    }
+	public static void put(BarleyPID pid) {
+		put(pid, new BarleyNumber(0));
+	}
 
-    public static BarleyValue get(BarleyPID pid) {
-        BarleyValue result = storage.get(pid);
-        return result;
-    }
+	public static BarleyValue get(BarleyPID pid) {
+		BarleyValue result = storage.get(pid);
+		return result;
+	}
 
-    public static void dump() {
-        System.out.println(storage);
-        System.out.println(receives);
-    }
+	public static void dump() {
+		System.out.println(storage);
+		System.out.println(receives);
+	}
 
 }

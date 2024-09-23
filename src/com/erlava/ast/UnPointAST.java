@@ -8,38 +8,39 @@ import com.erlava.utils.AST;
 import com.erlava.utils.BarleyException;
 import com.erlava.utils.Pointers;
 
-import java.io.Serializable;
+public class UnPointAST implements AST {
 
-public class UnPointAST implements AST, Serializable {
+	private static final long serialVersionUID = 1L;
+	private final int line;
+	private final String current;
+	private AST ast;
 
-		private static final long serialVersionUID = 1L;
-    private final int line;
-    private final String current;
-    private AST ast;
+	public UnPointAST(AST ast, int line, String current) {
+		this.ast = ast;
+		this.line = line;
+		this.current = current;
+	}
 
-    public UnPointAST(AST ast, int line, String current) {
-        this.ast = ast;
-        this.line = line;
-        this.current = current;
-    }
+	@Override
+	public BarleyValue execute() {
+		BarleyValue execute = ast.execute();
+		if (!(execute instanceof BarleyPointer)) {
+			Main.error("BadPointer", "expected POINTER as pointer, got '" + execute.toString() + "'", line, current);
+		}
+		BarleyValue res = Pointers.get(execute.toString());
+		if (res == null) {
+			throw new BarleyException("BadPointer", "segmentation fault");
+		}
+		return res;
+	}
 
-    @Override
-    public BarleyValue execute() {
-        BarleyValue execute = ast.execute();
-        if (!(execute instanceof BarleyPointer))
-            Main.error("BadPointer", "expected POINTER as pointer, got '" + execute.toString() + "'", line, current);
-        BarleyValue res = Pointers.get(execute.toString());
-        if (res == null) throw new BarleyException("BadPointer", "segmentation fault");
-        return res;
-    }
+	@Override
+	public void visit(Optimization optimization) {
+		ast.visit(optimization);
+	}
 
-    @Override
-    public void visit(Optimization optimization) {
-        ast.visit(optimization);
-    }
-
-    @Override
-    public String toString() {
-        return "##" +  ast.toString();
-    }
+	@Override
+	public String toString() {
+		return "##" + ast.toString();
+	}
 }

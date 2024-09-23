@@ -1,22 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package tests;
 
 import com.erlava.ast.ConstantAST;
 import com.erlava.ast.MethodAST;
-import com.erlava.optimizations.Optimization;
 import com.erlava.parser.Lexer;
 import com.erlava.parser.Parser;
-import com.erlava.parser.TokenType;
-import com.erlava.runtime.BarleyNumber;
 import com.erlava.utils.AST;
 import com.erlava.utils.Token;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  *
@@ -38,24 +29,24 @@ public class ParserTests extends Tester {
 	public void run() {
 		List<TestFunction> functions = addFunctions();
 		List<TestFunction> failures = functions
-						.stream()
-						.filter(function -> {
-							boolean result = !function.apply();
-							if (result) {
-								System.out.println("Test failed!");
-							}
-							return result;
-						}).toList();
+			.stream()
+			.filter(function -> {
+				boolean result = !function.apply();
+				if (result) {
+					System.out.println("Test failed!");
+				}
+				return result;
+			}).toList();
 
-		if (failures.size() != 0) {
+		if (!failures.isEmpty()) {
 			System.err.println(
-							String.format(
-											"\nTest failed: %02d/%02d test passed\n - %02d/%02d tests failed\n",
-											functions.size() - failures.size(),
-											functions.size(),
-											failures.size(),
-											functions.size()
-							)
+				String.format(
+					"\nTest failed: %02d/%02d test passed\n - %02d/%02d tests failed\n",
+					functions.size() - failures.size(),
+					functions.size(),
+					failures.size(),
+					functions.size()
+				)
 			);
 			assert false;
 		} else {
@@ -73,14 +64,14 @@ add(X, Y) -> X + Y.
 		List<Token> tokens = lexer.tokenize();
 		Parser parser = new Parser(tokens, input);
 		List<AST> nodes = parser.parse();
-		var func = nodes.remove(0); 
+		var func = nodes.remove(0);
 
 		return func instanceof MethodAST;
 	}
 
 	public static boolean testModuleSetup() {
 		System.out.println("running testModuleSetup()");
-		
+
 		String input = """
  -module(test).
  -opt().
@@ -94,9 +85,9 @@ add(X, Y) -> X + Y.
 
 		var first = nodes.remove(0);
 		var second = nodes.remove(0);
-		var third = nodes.remove(0); 
-		
-		return first instanceof ConstantAST 
+		var third = nodes.remove(0);
+
+		return first instanceof ConstantAST
 			&& second instanceof ConstantAST
 			&& third instanceof ConstantAST;
 	}

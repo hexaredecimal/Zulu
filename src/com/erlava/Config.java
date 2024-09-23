@@ -145,19 +145,22 @@ public class Config {
 			return;
 		}
 
-		Scanner sc = new Scanner(System.in);
-		System.out.print("Enter project name: ");
-		String name = sc.nextLine();
+		try (Scanner sc = new Scanner(System.in);) {
+			System.out.print("Enter project name: ");
+			String name = sc.nextLine();
 
-		if (name.isBlank()) {
-			System.err.println("Error: Invalid project name");
-			System.exit(1);
+			if (name.isBlank()) {
+				System.err.println("Error: Invalid project name");
+				System.exit(1);
+			}
+
+			createProjectFile(name);
+			System.out.println("Successfully created a new project");
+			System.exit(0);
+			return;
+		} catch (Exception ex) {
+
 		}
-
-		createProjectFile(name);
-		System.out.println("Successfully created a new project");
-		System.exit(0);
-		return;
 	}
 
 	public static boolean isProject() {

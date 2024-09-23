@@ -48,14 +48,11 @@ import com.erlava.ast.ConsAST;
 import com.erlava.ast.ExtractBindAST;
 import com.erlava.ast.ConstantAST;
 import com.erlava.ast.BindAST;
-import com.erlava.Main;
 import com.erlava.ast.InstanceAST;
 import com.erlava.ast.TypeAst;
 import com.erlava.ast.XMLAST;
-import com.erlava.ast.XMLInternalExpression;
 import com.erlava.optimizations.TableEmulator;
 import com.erlava.optimizations.VariableInfo;
-import com.erlava.runtime.BarleyValue;
 import com.erlava.runtime.TypeTable;
 import com.erlava.units.UnitBase;
 import com.erlava.units.Units;
@@ -68,10 +65,7 @@ import com.erlava.utils.SourceLoader;
 import java.io.IOException;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class Parser implements Serializable {
 
@@ -276,9 +270,9 @@ public final class Parser implements Serializable {
 						.filter(ast -> {
 							return ast instanceof MethodAST;
 						}).forEach(node -> {
-							MethodAST method = (MethodAST) node;
-							mtds.put(method.getName(), new UserFunction(method.method.getClauses()));
-						});
+						MethodAST method = (MethodAST) node;
+						mtds.put(method.getName(), new UserFunction(method.method.getClauses()));
+					});
 
 					return new CompileAST(module_name, mtds);
 				} catch (IOException ex) {
@@ -304,13 +298,11 @@ public final class Parser implements Serializable {
 					String p = files.get(module_name + ".lava");
 					List<AST> nodes = Handler.load(SourceLoader.readSource(p));
 					List<AST> found = new LinkedList<>();
-					String lookup = "";
-					for (AST node : nodes) { 													// Keep the for loop because I have to remove the method from the list
-						if (node instanceof MethodAST method) {								// after I locate and convert it. 
-							boolean found_it = false;
-							if (array.contains(method.getName())) {  		// Find it here
-								found.add(node);													
-								array.remove(method.getName()); 					// ^^
+					for (AST node : nodes) { // Keep the for loop because I have to remove the method from the list
+						if (node instanceof MethodAST method) {// after I locate and convert it. 
+							if (array.contains(method.getName())) {// Find it here
+								found.add(node);
+								array.remove(method.getName());// ^^
 							}
 						}
 					}
@@ -594,8 +586,8 @@ public final class Parser implements Serializable {
 		AST result = unary();
 
 		while (true) {
-			Object _result = switch(get(0).getType()) {
-				case STAR ->  {
+			Object _result = switch (get(0).getType()) {
+				case STAR -> {
 					match(TokenType.STAR);
 					yield new BinaryAST(result, unary(), '*', line(), currentLine());
 				}
@@ -620,13 +612,15 @@ public final class Parser implements Serializable {
 					match(TokenType.GTGT);
 					yield new PointShiftAST(result, expression());
 				}
-				default -> get(0);
+				default ->
+					get(0);
 			};
 
 			if (_result instanceof AST res) {
 				result = res;
-			} else 
+			} else {
 				break;
+			}
 		}
 
 		return result;
@@ -739,7 +733,6 @@ public final class Parser implements Serializable {
 		String sp = "";
 		Token prev = top;
 		while (top.getType() != TokenType.BAR) {
-			int pos_inc = 1;
 			switch (top.getType()) {
 				case VAR: {
 					Token next = get(1);
@@ -943,8 +936,6 @@ public final class Parser implements Serializable {
 				}
 			}
 
-			var next = get(0);
-			
 			return new ExtractBindAST(current.getText(), line(), currentLine());
 		}
 		if (match(TokenType.ATOM)) {
@@ -1027,7 +1018,7 @@ public final class Parser implements Serializable {
 			} else if (match(TokenType.STRING)) {
 				// case "text":
 				pattern = new CaseAST.ConstantPattern(
-								new BarleyString(current.getText())
+					new BarleyString(current.getText())
 				);
 			} else if (match(TokenType.VAR)) {
 				// case value:
@@ -1145,7 +1136,6 @@ public final class Parser implements Serializable {
 		return new CallAST(new RemoteAST(new ConstantAST(new BarleyAtom(module)), new ConstantAST(new BarleyAtom(method)), line(), currentLine()), args, line(), currentLine());
 	}
 
-
 	private void emitVariable(String name) {
 		emulator.set(name, new VariableInfo(new BarleyNull(), 0));
 	}
@@ -1153,12 +1143,18 @@ public final class Parser implements Serializable {
 	private Pattern pattern(AST ast) {
 
 		return switch (ast) {
-			case ExtractBindAST extract -> new VariablePattern(extract.toString());
-			case ConstantAST constant -> new ConstantPattern(constant.execute());
-			case BindAST bind -> new ConstantPattern(bind.execute());
-			case ListAST list -> new ListPattern(list.getArray());
-			case ConsAST cons -> new ConsPattern(cons.getLeft().toString(), cons.getRight().toString());
-			default -> null;
+			case ExtractBindAST extract ->
+				new VariablePattern(extract.toString());
+			case ConstantAST constant ->
+				new ConstantPattern(constant.execute());
+			case BindAST bind ->
+				new ConstantPattern(bind.execute());
+			case ListAST list ->
+				new ListPattern(list.getArray());
+			case ConsAST cons ->
+				new ConsPattern(cons.getLeft().toString(), cons.getRight().toString());
+			default ->
+				null;
 		};
 	}
 

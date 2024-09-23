@@ -6,33 +6,31 @@ import com.erlava.runtime.BarleyValue;
 import com.erlava.utils.AST;
 import com.erlava.utils.Pointers;
 
-import java.io.Serializable;
+public class PointShiftAST implements AST {
 
-public class PointShiftAST implements AST, Serializable {
+	private static final long serialVersionUID = 1L;
+	private AST pointer, value;
 
-		private static final long serialVersionUID = 1L;
-    private AST pointer, value;
+	public PointShiftAST(AST pointer, AST value) {
+		this.pointer = pointer;
+		this.value = value;
+	}
 
-    public PointShiftAST(AST pointer, AST value) {
-        this.pointer = pointer;
-        this.value = value;
-    }
+	@Override
+	public BarleyValue execute() {
+		BarleyPointer point = (BarleyPointer) pointer.execute();
+		Pointers.put(point.toString(), value.execute());
+		return point;
+	}
 
-    @Override
-    public BarleyValue execute() {
-        BarleyPointer point = (BarleyPointer) pointer.execute();
-        Pointers.put(point.toString(), value.execute());
-        return point;
-    }
+	@Override
+	public void visit(Optimization optimization) {
+		pointer.visit(optimization);
+		value.visit(optimization);
+	}
 
-    @Override
-    public void visit(Optimization optimization) {
-        pointer.visit(optimization);
-        value.visit(optimization);
-    }
-
-    @Override
-    public String toString() {
-        return pointer + " >> " + value;
-    }
+	@Override
+	public String toString() {
+		return pointer + " >> " + value;
+	}
 }

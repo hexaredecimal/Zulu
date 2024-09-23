@@ -5,14 +5,13 @@ import com.erlava.utils.BarleyException;
 import com.erlava.utils.Function;
 import com.erlava.utils.FunctionState;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Objects;
 
-public class BarleyFunction implements BarleyValue, Function, FunctionState, Serializable {
+public class BarleyFunction implements BarleyValue, Function, FunctionState {
 
+	private static final long serialVersionUID = 1L;
 	private Function function;
 	public static BarleyFunction EMPTY = new BarleyFunction((args) -> new BarleyNumber(0));
 

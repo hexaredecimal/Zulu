@@ -16,11 +16,12 @@ import tests.LexerTests;
  * @author hexaredecimal
  */
 public class Test {
+
 	public static void run() {
 		// Run it
-		Object[][] testers = { {LexerTests.class, new LexerTests()}, {ParserTests.class, new ParserTests()}};
-		
-		for (Object[] tester: testers) {
+		Object[][] testers = {{LexerTests.class, new LexerTests()}, {ParserTests.class, new ParserTests()}};
+
+		for (Object[] tester : testers) {
 			Class test_class = (Class) tester[0];
 			Tester test_instance = (Tester) tester[1];
 			Thread t = new Thread(() -> {
@@ -33,23 +34,23 @@ public class Test {
 				Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
-		
+
 	}
 
 	private static void perform(Class clz, Tester tester) {
-		Instant start  = Instant.now(); 
+		Instant start = Instant.now();
 		System.out.println("===============================================");
 		System.out.println("running tests for: " + clz.getName());
 		System.out.println("start time: " + start);
 		System.out.println("");
 
 		tester.run();
-		Instant end = Instant.now(); 
+		Instant end = Instant.now();
 		System.out.println("end time: " + end);
 		System.out.println("");
 
 		Duration time = Duration.between(start, end);
 		System.out.println("duration (ms): " + time.toMillis());
 		System.out.println("===============================================");
-	} 
+	}
 }

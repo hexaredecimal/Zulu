@@ -1,10 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.erlava;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +16,7 @@ import java.util.logging.Logger;
  * @author hexaredecimal
  */
 public class FileAttributes implements Serializable {
+
 	private static final long serialVersionUID = 1L;
 	private File file;
 	private long lastFileSize;
@@ -31,8 +26,10 @@ public class FileAttributes implements Serializable {
 		this.lastFileSize = file.length();
 	}
 
-	public String getPath() { return this.file.getPath(); }
-	
+	public String getPath() {
+		return this.file.getPath();
+	}
+
 	public boolean equals(FileAttributes other) {
 		return this.toString().equals(other.toString());
 	}
@@ -43,9 +40,9 @@ public class FileAttributes implements Serializable {
 			.concat(this.file.getName())
 			.concat(", ")
 			.concat("" + this.lastFileSize)
-			.concat(" }\n"); 
+			.concat(" }\n");
 	}
-	
+
 	public FileAttributes loadAttributes() {
 		String path = ".pkg/attr.ssh";
 		FileAttributes att = null;
@@ -60,7 +57,7 @@ public class FileAttributes implements Serializable {
 		return att;
 	}
 
-public void saveAttributes() {
+	public void saveAttributes() {
 		try (FileOutputStream out = new FileOutputStream(".pkg/attr.ssh")) {
 			ObjectOutputStream wr = new ObjectOutputStream(out);
 			wr.writeObject(this);

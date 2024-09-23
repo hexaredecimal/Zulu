@@ -6,9 +6,7 @@ import com.erlava.runtime.BarleyValue;
 import com.erlava.runtime.Table;
 import com.erlava.utils.AST;
 
-import java.io.Serializable;
-
-public class ExtractBindAST implements AST, Serializable {
+public class ExtractBindAST implements AST {
 
 	private static final long serialVersionUID = 1L;
 

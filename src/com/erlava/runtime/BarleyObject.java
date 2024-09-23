@@ -11,11 +11,12 @@ import java.util.HashMap;
  * @author hexaredecimal
  */
 public class BarleyObject {
+
 	private HashMap<String, BarleyValue> fields;
 	private String parent;
 
 	public BarleyObject(String parent, HashMap<String, BarleyValue> fields) {
-		this.parent = parent; 
+		this.parent = parent;
 		this.fields = fields;
 	}
 
@@ -29,6 +30,6 @@ public class BarleyObject {
 
 	@Override
 	public String toString() {
-		return parent + "@" + fields; 
+		return parent + "@" + fields;
 	}
 }

@@ -6,28 +6,27 @@ import com.erlava.runtime.BarleyValue;
 import com.erlava.runtime.UserFunction;
 import com.erlava.utils.AST;
 
-import java.io.Serializable;
+public class ClosureAST implements AST {
 
-public class ClosureAST implements AST, Serializable {
-		private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private UserFunction function;
+	private UserFunction function;
 
-    public ClosureAST(UserFunction function) {
-        this.function = function;
-    }
+	public ClosureAST(UserFunction function) {
+		this.function = function;
+	}
 
-    @Override
-    public BarleyValue execute() {
-        return new BarleyClosure(function);
-    }
+	@Override
+	public BarleyValue execute() {
+		return new BarleyClosure(function);
+	}
 
-    @Override
-    public void visit(Optimization optimization) {
-    }
+	@Override
+	public void visit(Optimization optimization) {
+	}
 
-    @Override
-    public String toString() {
-        return function.toString();
-    }
+	@Override
+	public String toString() {
+		return function.toString();
+	}
 }

@@ -12,5 +12,6 @@ import java.util.HashMap;
  * @author hexaredecimal
  */
 public class TypeTable {
+
 	public static HashMap<String, ArrayList<String>> types = new HashMap<>();
 }

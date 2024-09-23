@@ -10,124 +10,130 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class Table {
 
-    private static final Object lock = new Object();
-    public static boolean strict = false;
-    public static volatile Scope scope;
+	private static final Object lock = new Object();
+	public static boolean strict = false;
+	public static volatile Scope scope;
 
-    static {
-        Table.clear();
-    }
+	static {
+		Table.clear();
+	}
 
-    private Table() {
-    }
+	private Table() {
+	}
 
-    public static Map<String, BarleyValue> variables() {
-        return scope.vars();
-    }
+	public static Map<String, BarleyValue> variables() {
+		return scope.vars();
+	}
 
-    public static void clear() {
-        scope = new Scope();
-    }
+	public static void clear() {
+		scope = new Scope();
+	}
 
-    public static void push() {
-        if (strict) return;
-        synchronized (lock) {
-            scope = new Scope(scope);
-        }
-    }
+	public static void push() {
+		if (strict) {
+			return;
+		}
+		synchronized (lock) {
+			scope = new Scope(scope);
+		}
+	}
 
-    public static void pop() {
-        if (strict) return;
-        synchronized (lock) {
-            if (scope.parent != null) {
-                scope = scope.parent;
-            }
-        }
-    }
+	public static void pop() {
+		if (strict) {
+			return;
+		}
+		synchronized (lock) {
+			if (scope.parent != null) {
+				scope = scope.parent;
+			}
+		}
+	}
 
-    public static boolean isExists(String key) {
-        synchronized (lock) {
-            return findScope(key).isFound;
-        }
-    }
+	public static boolean isExists(String key) {
+		synchronized (lock) {
+			return findScope(key).isFound;
+		}
+	}
 
-    public static BarleyValue get(String key) {
-        synchronized (lock) {
-            final ScopeFindData scopeData = findScope(key);
-            if (scopeData.isFound) {
-                return scopeData.scope.variables.get(key);
-            }
-        }
-        throw new BarleyException("UnboundVar", "unbound var '" + key + "'");
-    }
+	public static BarleyValue get(String key) {
+		synchronized (lock) {
+			final ScopeFindData scopeData = findScope(key);
+			if (scopeData.isFound) {
+				return scopeData.scope.variables.get(key);
+			}
+		}
+		throw new BarleyException("UnboundVar", "unbound var '" + key + "'");
+	}
 
-    public static void set(String key, BarleyValue value) {
-        if (strict) {
-            scope.variables.put(key, value);
-            return;
-        }
-        synchronized (lock) {
-            findScope(key).scope.variables.put(key, value);
-        }
-    }
+	public static void set(String key, BarleyValue value) {
+		if (strict) {
+			scope.variables.put(key, value);
+			return;
+		}
+		synchronized (lock) {
+			findScope(key).scope.variables.put(key, value);
+		}
+	}
 
-    public static void define(String key, BarleyValue value) {
-        synchronized (lock) {
-            scope.variables.put(key, value);
-        }
-    }
+	public static void define(String key, BarleyValue value) {
+		synchronized (lock) {
+			scope.variables.put(key, value);
+		}
+	}
 
-    public static void remove(String key) {
-        synchronized (lock) {
-            findScope(key).scope.variables.remove(key);
-        }
-    }
+	public static void remove(String key) {
+		synchronized (lock) {
+			findScope(key).scope.variables.remove(key);
+		}
+	}
 
-    /*
+	/*
      * Find scope where variable exists.
-     */
-    private static ScopeFindData findScope(String variable) {
-        final ScopeFindData result = new ScopeFindData();
+	 */
+	private static ScopeFindData findScope(String variable) {
+		final ScopeFindData result = new ScopeFindData();
 
-        Scope current = scope;
-        do {
-            if (current.variables.containsKey(variable)) {
-                result.isFound = true;
-                result.scope = current;
-                return result;
-            }
-        } while ((current = current.parent) != null);
+		Scope current = scope;
+		do {
+			if (current.variables.containsKey(variable)) {
+				result.isFound = true;
+				result.scope = current;
+				return result;
+			}
+		} while ((current = current.parent) != null);
 
-        result.isFound = false;
-        result.scope = scope;
-        return result;
-    }
+		result.isFound = false;
+		result.scope = scope;
+		return result;
+	}
 
-    public static class Scope implements Serializable {
-        final Scope parent;
-        final Map<String, BarleyValue> variables;
+	public static class Scope implements Serializable {
 
-        Scope() {
-            this(null);
-        }
+		final Scope parent;
+		final Map<String, BarleyValue> variables;
 
-        Scope(Scope parent) {
-            this.parent = parent;
-            variables = new ConcurrentHashMap<>();
-        }
+		Scope() {
+			this(null);
+		}
 
-        public Map<String, BarleyValue> vars() {
-            Scope current = this;
-            Map<String, BarleyValue> result = new HashMap<>();
-            do {
-                result.putAll(current.variables);
-            } while ((current = current.parent) != null);
-            return result;
-        }
-    }
+		Scope(Scope parent) {
+			this.parent = parent;
+			variables = new ConcurrentHashMap<>();
+		}
 
-    private static class ScopeFindData {
-        boolean isFound;
-        Scope scope;
-    }
+		public Map<String, BarleyValue> vars() {
+			Scope current = this;
+			Map<String, BarleyValue> result = new HashMap<>();
+			do {
+				result.putAll(current.variables);
+			} while ((current = current.parent) != null);
+			return result;
+		}
+	}
+
+	private static class ScopeFindData {
+
+		boolean isFound;
+		Scope scope;
+	}
 }

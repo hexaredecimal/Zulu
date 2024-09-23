@@ -7,42 +7,37 @@ import java.awt.datatransfer.StringSelection;
 
 import static java.awt.event.KeyEvent.*;
 
-public class SystemClipboard
-{
-    public static void copy(String text)
-    {
-        Clipboard clipboard = getSystemClipboard();
-        clipboard.setContents(new StringSelection(text), null);
-    }
+public class SystemClipboard {
 
-    public static void paste() throws AWTException
-    {
-        Robot robot = new Robot();
+	public static void copy(String text) {
+		Clipboard clipboard = getSystemClipboard();
+		clipboard.setContents(new StringSelection(text), null);
+	}
 
-        int controlKey = VK_CONTROL;
-        robot.keyPress(controlKey);
-        robot.keyPress(VK_V);
-        robot.keyRelease(controlKey);
-        robot.keyRelease(VK_V);
-    }
+	public static void paste() throws AWTException {
+		Robot robot = new Robot();
 
-    public static String get() throws Exception
-    {
-        Clipboard systemClipboard = getSystemClipboard();
-        DataFlavor dataFlavor = DataFlavor.stringFlavor;
+		int controlKey = VK_CONTROL;
+		robot.keyPress(controlKey);
+		robot.keyPress(VK_V);
+		robot.keyRelease(controlKey);
+		robot.keyRelease(VK_V);
+	}
 
-        if (systemClipboard.isDataFlavorAvailable(dataFlavor))
-        {
-            Object text = systemClipboard.getData(dataFlavor);
-            return (String) text;
-        }
+	public static String get() throws Exception {
+		Clipboard systemClipboard = getSystemClipboard();
+		DataFlavor dataFlavor = DataFlavor.stringFlavor;
 
-        return null;
-    }
+		if (systemClipboard.isDataFlavorAvailable(dataFlavor)) {
+			Object text = systemClipboard.getData(dataFlavor);
+			return (String) text;
+		}
 
-    private static Clipboard getSystemClipboard()
-    {
-        Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
-        return defaultToolkit.getSystemClipboard();
-    }
+		return null;
+	}
+
+	private static Clipboard getSystemClipboard() {
+		Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
+		return defaultToolkit.getSystemClipboard();
+	}
 }

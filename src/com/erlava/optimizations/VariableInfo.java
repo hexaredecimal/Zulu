@@ -3,16 +3,17 @@ package com.erlava.optimizations;
 import com.erlava.runtime.BarleyValue;
 
 public final class VariableInfo {
-    public BarleyValue value;
-    public int modifications;
 
-    public VariableInfo(BarleyValue value, int modifications) {
-        this.value = value;
-        this.modifications = modifications;
-    }
+	public BarleyValue value;
+	public int modifications;
 
-    @Override
-    public String toString() {
-        return (value == null ? "?" : value) + " (" + modifications + " mods)";
-    }
+	public VariableInfo(BarleyValue value, int modifications) {
+		this.value = value;
+		this.modifications = modifications;
+	}
+
+	@Override
+	public String toString() {
+		return (value == null ? "?" : value) + " (" + modifications + " mods)";
+	}
 }

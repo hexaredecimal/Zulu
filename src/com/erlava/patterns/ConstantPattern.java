@@ -2,22 +2,21 @@ package com.erlava.patterns;
 
 import com.erlava.runtime.BarleyValue;
 
-import java.io.Serializable;
+public class ConstantPattern extends Pattern {
 
-public class ConstantPattern extends Pattern implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private BarleyValue constant;
 
-    private BarleyValue constant;
+	public ConstantPattern(BarleyValue constant) {
+		this.constant = constant;
+	}
 
-    public ConstantPattern(BarleyValue constant) {
-        this.constant = constant;
-    }
+	public BarleyValue getConstant() {
+		return constant;
+	}
 
-    public BarleyValue getConstant() {
-        return constant;
-    }
-
-    @Override
-    public String toString() {
-        return constant.toString();
-    }
+	@Override
+	public String toString() {
+		return constant.toString();
+	}
 }

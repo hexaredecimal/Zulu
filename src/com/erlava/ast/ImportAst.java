@@ -8,14 +8,13 @@ import com.erlava.optimizations.Optimization;
 import com.erlava.runtime.BarleyAtom;
 import com.erlava.runtime.BarleyValue;
 import com.erlava.utils.AST;
-import java.io.Serializable;
 import java.util.List;
 
 /**
  *
  * @author hexaredecimal
  */
-public class ImportAst implements AST, Serializable {
+public class ImportAst implements AST {
 
 	private List<AST> nodes;
 

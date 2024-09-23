@@ -5,22 +5,23 @@ import com.erlava.runtime.BarleyValue;
 import java.util.HashMap;
 
 public class Unit {
-    private HashMap<String, BarleyValue> fields;
 
-    public Unit(HashMap<String, BarleyValue> fields) {
-        this.fields = fields;
-    }
+	private final HashMap<String, BarleyValue> fields;
 
-    public BarleyValue get(Object key) {
-        return fields.get(key);
-    }
+	public Unit(HashMap<String, BarleyValue> fields) {
+		this.fields = fields;
+	}
 
-    public BarleyValue put(String key, BarleyValue value) {
-        return fields.put(key, value);
-    }
+	public BarleyValue get(Object key) {
+		return fields.get(key.toString());
+	}
 
-    @Override
-    public String toString() {
-        return "#Unit" + fields;
-    }
+	public BarleyValue put(String key, BarleyValue value) {
+		return fields.put(key, value);
+	}
+
+	@Override
+	public String toString() {
+		return "#Unit" + fields;
+	}
 }

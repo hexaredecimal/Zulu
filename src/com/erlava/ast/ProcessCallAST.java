@@ -7,37 +7,35 @@ import com.erlava.runtime.ProcessTable;
 import com.erlava.runtime.Table;
 import com.erlava.utils.AST;
 
-import java.io.Serializable;
+public class ProcessCallAST implements AST {
 
-public class ProcessCallAST implements AST, Serializable {
+	private static final long serialVersionUID = 1L;
+	//private final int line;
+	//private final String current;
+	public AST pid, expr;
 
-		private static final long serialVersionUID = 1L;
-    private final int line;
-    private final String current;
-    public AST pid, expr;
+	public ProcessCallAST(AST pid, AST expr, int line, String current) {
+		this.pid = pid;
+		this.expr = expr;
+		//this.line = line;
+		//this.current = current;
+	}
 
-    public ProcessCallAST(AST pid, AST expr, int line, String current) {
-        this.pid = pid;
-        this.expr = expr;
-        this.line = line;
-        this.current = current;
-    }
+	@Override
+	public BarleyValue execute() {
+		Table.set("Message", expr.execute());
+		BarleyPID id = (BarleyPID) pid.execute();
+		JavaFunctionAST ast = (JavaFunctionAST) ProcessTable.receives.get(id);
+		return ast.execute();
+	}
 
-    @Override
-    public BarleyValue execute() {
-        Table.set("Message", expr.execute());
-        BarleyPID id = (BarleyPID) pid.execute();
-        JavaFunctionAST ast = (JavaFunctionAST) ProcessTable.receives.get(id);
-        return ast.execute();
-    }
+	@Override
+	public void visit(Optimization optimization) {
+		expr = optimization.optimize(expr);
+	}
 
-    @Override
-    public void visit(Optimization optimization) {
-        expr = optimization.optimize(expr);
-    }
-
-    @Override
-    public String toString() {
-        return pid + " ! " + expr;
-    }
+	@Override
+	public String toString() {
+		return pid + " ! " + expr;
+	}
 }

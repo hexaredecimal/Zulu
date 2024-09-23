@@ -8,10 +8,9 @@ import com.erlava.runtime.UserFunction;
 import com.erlava.utils.AST;
 import com.erlava.utils.Clause;
 
-import java.io.Serializable;
+public class MethodAST implements AST {
 
-public class MethodAST implements AST, Serializable {
-		private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 	public UserFunction method;
 	private Parser parser;
 	private String name;

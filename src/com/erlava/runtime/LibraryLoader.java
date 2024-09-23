@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.erlava.runtime;
 
 import com.erlava.utils.BarleyException;
@@ -11,8 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -21,7 +15,7 @@ import java.util.logging.Logger;
 public class LibraryLoader {
 
 	private static HashMap<String, URLClassLoader> loaded = new HashMap<>();
-	public static HashMap<String, Class> primitives = new HashMap<>();
+	public static HashMap<String, Class<?>> primitives = new HashMap<>();
 
 	public static void init() {
 		primitives.put("int", int.class);
@@ -53,8 +47,8 @@ public class LibraryLoader {
 		return loader;
 	}
 
-	public static Class loadClass(String library, String class_name) {
-		Class clz = null;
+	public static Class<?> loadClass(String library, String class_name) {
+		Class<?> clz = null;
 		try {
 			clz = Class.forName(class_name);
 		} catch (ClassNotFoundException ex) {

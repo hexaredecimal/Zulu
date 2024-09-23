@@ -2,14 +2,14 @@ package com.erlava.patterns;
 
 public class PackPattern extends Pattern {
 
-    private String name;
+	private String name;
 
-    public PackPattern(String name) {
-        this.name = name;
-    }
+	public PackPattern(String name) {
+		this.name = name;
+	}
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@Override
+	public String toString() {
+		return name;
+	}
 }

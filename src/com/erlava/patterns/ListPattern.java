@@ -2,23 +2,23 @@ package com.erlava.patterns;
 
 import com.erlava.utils.AST;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 
-public class ListPattern extends Pattern implements Serializable {
+public class ListPattern extends Pattern {
 
-    private LinkedList<AST> arr;
+	private static final long serialVersionUID = 1L;
+	private LinkedList<AST> arr;
 
-    public ListPattern(LinkedList<AST> arr) {
-        this.arr = arr;
-    }
+	public ListPattern(LinkedList<AST> arr) {
+		this.arr = arr;
+	}
 
-    public LinkedList<AST> getArr() {
-        return arr;
-    }
+	public LinkedList<AST> getArr() {
+		return arr;
+	}
 
-    @Override
-    public String toString() {
-        return arr.toString();
-    }
+	@Override
+	public String toString() {
+		return arr.toString();
+	}
 }

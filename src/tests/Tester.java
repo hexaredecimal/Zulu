@@ -9,5 +9,6 @@ package tests;
  * @author hexaredecimal
  */
 public abstract class Tester {
+
 	public abstract void run();
 }

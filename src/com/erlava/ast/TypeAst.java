@@ -9,20 +9,20 @@ import com.erlava.runtime.BarleyAtom;
 import com.erlava.runtime.BarleyValue;
 import com.erlava.runtime.TypeTable;
 import com.erlava.utils.AST;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author hexaredecimal
  */
-public class TypeAst implements AST, Serializable{
-		private static final long serialVersionUID = 1L;
-	private String type_name; 
-	private ArrayList<String> fields; 
+public class TypeAst implements AST {
+
+	private static final long serialVersionUID = 1L;
+	private String type_name;
+	private ArrayList<String> fields;
 
 	public TypeAst(String type_name, ArrayList<String> fields) {
-		this.type_name = type_name; 
+		this.type_name = type_name;
 		this.fields = fields;
 		TypeTable.types.put(type_name, fields);
 	}
@@ -37,9 +37,9 @@ public class TypeAst implements AST, Serializable{
 
 	@Override
 	public String toString() {
-		return this.type_name + " -> " + this.fields; 
+		return this.type_name + " -> " + this.fields;
 	}
-	
+
 	@Override
 	public BarleyValue execute() {
 		return new BarleyAtom("ok");
@@ -47,6 +47,5 @@ public class TypeAst implements AST, Serializable{
 
 	@Override
 	public void visit(Optimization optimization) {
-		// TODO: 
 	}
 }

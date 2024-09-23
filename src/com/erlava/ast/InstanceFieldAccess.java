@@ -17,7 +17,7 @@ import com.erlava.utils.BarleyException;
  */
 public class InstanceFieldAccess implements AST {
 
-		private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 	private AST object;
 	private String key;
 
@@ -38,13 +38,14 @@ public class InstanceFieldAccess implements AST {
 				throw new BarleyException("Runtime", "Expected an object reference but found " + v);
 			}
 			obj = (BarleyObject) r;
-		} else 
-				throw new BarleyException("Runtime", "Expected an object reference but found " + v);
+		} else {
+			throw new BarleyException("Runtime", "Expected an object reference but found " + v);
+		}
 
 		if (!obj.getFields().containsKey(key)) {
-				throw new BarleyException("Runtime", key + " is not a field of type " + obj.getParent());
+			throw new BarleyException("Runtime", key + " is not a field of type " + obj.getParent());
 		}
-		
+
 		return obj.getFields().get(key);
 	}
 

@@ -5,9 +5,8 @@ import com.erlava.runtime.BarleyPointer;
 import com.erlava.runtime.BarleyValue;
 import com.erlava.utils.AST;
 
-import java.io.Serializable;
+public class PointerAST implements AST {
 
-public class PointerAST implements AST, Serializable {
 	private static final long serialVersionUID = 1L;
 	private AST value;
 

@@ -12,19 +12,16 @@ import com.erlava.parser.Lexer;
 import com.erlava.parser.Parser;
 import com.erlava.runtime.BarleyValue;
 import com.erlava.runtime.ProcessTable;
-import com.erlava.runtime.Table;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class Handler {
 
-	public static String RUNTIME_VERSION = "0.2.1";
+	public static String RUNTIME_VERSION = "0.3.5";
 
 	public static List<AST> load(String input) {
 		Lexer lexer = new Lexer(input);
@@ -44,7 +41,6 @@ public class Handler {
 				}
 			}
 		}
-
 
 		return nodes;
 	}
@@ -82,7 +78,7 @@ public class Handler {
 			measurement.start("Execute time");
 			for (AST node : nodes) {
 				node.execute();
-			};
+			}
 			Storage.reset();
 			measurement.stop("Execute time");
 			if (time) {

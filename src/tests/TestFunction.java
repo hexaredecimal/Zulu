@@ -9,5 +9,6 @@ package tests;
  * @author hexaredecimal
  */
 public interface TestFunction {
+
 	public boolean apply();
 }

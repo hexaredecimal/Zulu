@@ -13,10 +13,6 @@ import com.erlava.utils.Arguments;
 import com.erlava.utils.Handler;
 import com.erlava.monty.Monty;
 import com.erlava.reflection.Reflection;
-import com.sun.net.httpserver.HttpContext;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -29,7 +25,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.DecimalFormat;
@@ -81,7 +76,7 @@ public class Modules {
 	public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
 	public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
 
-	private static void initIo() {
+	private static void initIo() { // TDOD: Remove this module as it implemented on the language level
 		HashMap<String, Function> io = new HashMap<>();
 		io.put("write", args -> {
 			Arguments.check(1, args.length);
@@ -1871,7 +1866,6 @@ public class Modules {
 			Class cls = LibraryLoader.loadClass(libname, clasz_name);
 			return new BarleyReference(cls);
 		});
-
 
 		module.put("invoke", args -> {
 			if (args.length == 1) {

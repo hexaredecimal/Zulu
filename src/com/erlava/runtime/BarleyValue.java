@@ -5,9 +5,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public interface BarleyValue extends Serializable {
-    BigInteger asInteger();
 
-    BigDecimal asFloat();
+	BigInteger asInteger();
 
-    Object raw();
+	BigDecimal asFloat();
+
+	Object raw();
 }

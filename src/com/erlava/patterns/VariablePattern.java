@@ -1,21 +1,20 @@
 package com.erlava.patterns;
 
-import java.io.Serializable;
+public class VariablePattern extends Pattern {
 
-public class VariablePattern extends Pattern implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private String variable;
 
-    private String variable;
+	public VariablePattern(String variable) {
+		this.variable = variable;
+	}
 
-    public VariablePattern(String variable) {
-        this.variable = variable;
-    }
+	public String getVariable() {
+		return variable;
+	}
 
-    public String getVariable() {
-        return variable;
-    }
-
-    @Override
-    public String toString() {
-        return variable;
-    }
+	@Override
+	public String toString() {
+		return variable;
+	}
 }

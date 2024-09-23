@@ -5,14 +5,14 @@ import com.erlava.optimizations.Optimization;
 import com.erlava.runtime.BarleyList;
 import com.erlava.runtime.BarleyValue;
 import com.erlava.utils.AST;
-import java.io.Serializable;
 
 /**
  *
  * @author hexaredecimal
  */
-public class ListIndexAST implements AST, Serializable {
+public class ListIndexAST implements AST {
 
+	private static final long serialVersionUID = 1L;
 	private AST list, index;
 	private String current;
 	private int line;
@@ -39,11 +39,11 @@ public class ListIndexAST implements AST, Serializable {
 
 		var pos = ((Integer) idx);
 		var items = ((BarleyList) arr).getList();
-		
+
 		if (pos >= items.size()) {
 			Main.error("Out of bounds", String.format("Attempt to index array of size %d with index %d", items.size(), pos), line, current);
 		}
-		
+
 		return items.get(pos);
 	}
 

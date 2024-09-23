@@ -1,26 +1,25 @@
 package com.erlava.patterns;
 
-import java.io.Serializable;
+public class ConsPattern extends Pattern {
 
-public class ConsPattern extends Pattern implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private String left, right;
 
-    private String left, right;
+	public ConsPattern(String left, String right) {
+		this.left = left;
+		this.right = right;
+	}
 
-    public ConsPattern(String left, String right) {
-        this.left = left;
-        this.right = right;
-    }
+	public String getLeft() {
+		return left;
+	}
 
-    public String getLeft() {
-        return left;
-    }
+	public String getRight() {
+		return right;
+	}
 
-    public String getRight() {
-        return right;
-    }
-
-    @Override
-    public String toString() {
-        return left + " | " + right;
-    }
+	@Override
+	public String toString() {
+		return left + " | " + right;
+	}
 }
