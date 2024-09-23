@@ -1,11 +1,11 @@
 package tests;
 
-import com.erlava.ast.ConstantAST;
-import com.erlava.ast.MethodAST;
-import com.erlava.parser.Lexer;
-import com.erlava.parser.Parser;
-import com.erlava.utils.AST;
-import com.erlava.utils.Token;
+import com.zulu.ast.ConstantAST;
+import com.zulu.ast.MethodAST;
+import com.zulu.parser.Lexer;
+import com.zulu.parser.Parser;
+import com.zulu.utils.AST;
+import com.zulu.utils.Token;
 import java.util.LinkedList;
 import java.util.List;
 

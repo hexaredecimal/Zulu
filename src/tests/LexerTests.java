@@ -1,8 +1,8 @@
 package tests;
 
-import com.erlava.parser.Lexer;
-import com.erlava.parser.TokenType;
-import com.erlava.utils.Token;
+import com.zulu.parser.Lexer;
+import com.zulu.parser.TokenType;
+import com.zulu.utils.Token;
 import java.util.LinkedList;
 import java.util.List;
 
