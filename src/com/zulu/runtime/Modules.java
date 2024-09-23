@@ -1842,7 +1842,7 @@ public class Modules {
 
 		module.put("string", args -> {
 			if (args.length != 1) {
-				throw new BarleyException("BadArg", "Expected atleast 1 argument to invoke");
+				throw new BarleyException("BadArg", "Expected 1 argument to reference:string");
 			}
 
 			ZuluValue first = args[0];
@@ -1851,6 +1851,35 @@ public class Modules {
 			}
 
 			return new ZuluString(first.raw().toString());
+		});
+
+		module.put("number", args -> {
+			if (args.length != 1) {
+				throw new BarleyException("BadArg", "Expected 1 argument to reference:number");
+			}
+
+			ZuluValue first = args[0];
+			if (!(first instanceof ZuluReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			var value = Double.valueOf(first.raw().toString());
+			return new ZuluNumber(value);
+		});
+
+
+		module.put("boolean", args -> {
+			if (args.length != 1) {
+				throw new BarleyException("BadArg", "Expected 1 argument to reference:number");
+			}
+
+			ZuluValue first = args[0];
+			if (!(first instanceof ZuluReference)) {
+				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			var value = Boolean.valueOf(first.raw().toString());
+			return new ZuluAtom(value.toString());
 		});
 
 		put("reference", module);
