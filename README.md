@@ -1,5 +1,5 @@
 <div align="center">
-<img width="20%" src="https://github.com/hexaredecimal/Erlava/assets/51314855/9e93375c-3350-4f81-b071-2742f4665398" />
+<img width="30%" src="https://github.com/hexaredecimal/Zulu/blob/main/assets/zulu.png" />
 <h1>ZULU Programming Language</h1>
 </div>
 
@@ -27,7 +27,6 @@
  - `Monty` gui library!
 
 
-
 Zulu is a interpreted erlang-like language based on JVM.
 
 ## Installation
@@ -41,6 +40,8 @@ If you are using windows, use `runner.bat` for running scripts and baked apps.
 If your script is running in shell, but don't working in Zulu.jar
 
 Try to bake it! See more in `Coding our first distributed program`
+
+<img width="30%" src="https://github.com/hexaredecimal/Zulu/blob/main/assets/zulu-warrior.png" />
 
 ## Examples
 
