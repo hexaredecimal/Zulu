@@ -1,7 +1,7 @@
 package com.zulu.runtime;
 
 import com.zulu.memory.Storage;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -18,12 +18,12 @@ public class ZuluReference implements ZuluValue {
 
 	@Override
 	public BigInteger asInteger() {
-		throw new BarleyException("BadArithmetic", "Cannot cast REFERENCE to a NUMBER");
+		throw new ZuluException("BadArithmetic", "Cannot cast REFERENCE to a NUMBER");
 	}
 
 	@Override
 	public BigDecimal asFloat() {
-		throw new BarleyException("BadArithmetic", "Cannot cast REFERENCE to a NUMBER");
+		throw new ZuluException("BadArithmetic", "Cannot cast REFERENCE to a NUMBER");
 	}
 
 	@Override

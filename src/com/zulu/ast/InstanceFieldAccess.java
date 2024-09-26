@@ -8,7 +8,7 @@ import com.zulu.optimizations.Optimization;
 import com.zulu.runtime.ZuluObject;
 import com.zulu.runtime.ZuluReference;
 import com.zulu.utils.AST;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.runtime.ZuluValue;
 
 /**
@@ -35,15 +35,15 @@ public class InstanceFieldAccess implements AST {
 			ZuluReference ref = (ZuluReference) v;
 			Object r = ref.raw();
 			if (!(r instanceof ZuluObject)) {
-				throw new BarleyException("Runtime", "Expected an object reference but found " + v);
+				throw new ZuluException("Runtime", "Expected an object reference but found " + v);
 			}
 			obj = (ZuluObject) r;
 		} else {
-			throw new BarleyException("Runtime", "Expected an object reference but found " + v);
+			throw new ZuluException("Runtime", "Expected an object reference but found " + v);
 		}
 
 		if (!obj.getFields().containsKey(key)) {
-			throw new BarleyException("Runtime", key + " is not a field of type " + obj.getParent());
+			throw new ZuluException("Runtime", key + " is not a field of type " + obj.getParent());
 		}
 
 		return obj.getFields().get(key);

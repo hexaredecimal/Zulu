@@ -1,6 +1,6 @@
 package com.zulu.runtime;
 
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 
 import java.io.Serializable;
 import java.nio.file.Paths;
@@ -62,7 +62,7 @@ public final class Table {
 				return scopeData.scope.variables.get(key);
 			}
 		}
-		throw new BarleyException("UnboundVar", "unbound var '" + key + "'");
+		throw new ZuluException("UnboundVar", "unbound var '" + key + "'");
 	}
 
 	public static void set(String key, ZuluValue value) {

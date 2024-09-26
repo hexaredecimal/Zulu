@@ -1,6 +1,6 @@
 package com.zulu.runtime;
 
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -12,12 +12,12 @@ public class ZuluNull implements ZuluValue {
 
 	@Override
 	public BigInteger asInteger() {
-		throw new BarleyException("BadArithmetic", "can't cast NULL to NUMBER");
+		throw new ZuluException("BadArithmetic", "can't cast NULL to NUMBER");
 	}
 
 	@Override
 	public BigDecimal asFloat() {
-		throw new BarleyException("BadArithmetic", "can't cast NULL to NUMBER");
+		throw new ZuluException("BadArithmetic", "can't cast NULL to NUMBER");
 	}
 
 	@Override

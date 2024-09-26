@@ -11,7 +11,7 @@ import com.zulu.optimizations.VariableInfo;
 import com.zulu.runtime.ZuluList;
 import com.zulu.runtime.Table;
 import com.zulu.utils.AST;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -163,7 +163,7 @@ public class BindAST implements AST {
 			} else if (root instanceof ConsPattern) {
 
 			}
-		} catch (BarleyException ex) {
+		} catch (ZuluException ex) {
 
 		}
 		return storage;

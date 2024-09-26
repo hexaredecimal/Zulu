@@ -1,11 +1,11 @@
 package com.zulu.utils;
 
-public class BarleyException extends RuntimeException {
+public class ZuluException extends RuntimeException {
 
 	private String type;
 	private String text;
 
-	public BarleyException(String type, String text) {
+	public ZuluException(String type, String text) {
 		super();
 		this.type = type;
 		this.text = text;

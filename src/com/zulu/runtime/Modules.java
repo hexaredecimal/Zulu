@@ -5,7 +5,7 @@ import com.zulu.utils.TimeMeasurement;
 import com.zulu.utils.SerializeUtils;
 import com.zulu.utils.PidValues;
 import com.zulu.utils.AST;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.Function;
 import com.zulu.utils.EntryPoint;
 import com.zulu.utils.GeneratorSkip;
@@ -13,6 +13,7 @@ import com.zulu.utils.Arguments;
 import com.zulu.utils.Handler;
 import com.zulu.monty.Monty;
 import com.zulu.reflection.Reflection;
+import com.zulu.reflection.Reflection.ObjectValue;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -149,7 +150,7 @@ public class Modules {
 		bts.put("insert", args -> {
 			Arguments.check(3, args.length);
 			if (!(args[0] instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected REFERENCE as bts table");
+				throw new ZuluException("BadArg", "expected REFERENCE as bts table");
 			}
 			ZuluReference ref = (ZuluReference) args[0];
 			((HashMap<ZuluValue, ZuluValue>) ref.getRef()).put(args[1], args[2]);
@@ -158,7 +159,7 @@ public class Modules {
 		bts.put("tabtolist", args -> {
 			Arguments.check(1, args.length);
 			if (!(args[0] instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected REFERENCE as bts table");
+				throw new ZuluException("BadArg", "expected REFERENCE as bts table");
 			}
 			ZuluReference ref = (ZuluReference) args[0];
 			HashMap<ZuluValue, ZuluValue> map = (HashMap<ZuluValue, ZuluValue>) ref.getRef();
@@ -177,7 +178,7 @@ public class Modules {
 		bts.put("member", args -> {
 			Arguments.check(2, args.length);
 			if (!(args[0] instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected REFERENCE as bts table");
+				throw new ZuluException("BadArg", "expected REFERENCE as bts table");
 			}
 			ZuluReference ref = (ZuluReference) args[0];
 			HashMap<ZuluValue, ZuluValue> map = (HashMap<ZuluValue, ZuluValue>) ref.getRef();
@@ -186,18 +187,18 @@ public class Modules {
 		bts.put("lookup", args -> {
 			Arguments.check(2, args.length);
 			if (!(args[0] instanceof ZuluReference ref)) {
-				throw new BarleyException("BadArg", "expected REFERENCE as bts table");
+				throw new ZuluException("BadArg", "expected REFERENCE as bts table");
 			}
 			HashMap<ZuluValue, ZuluValue> map = (HashMap<ZuluValue, ZuluValue>) ref.getRef();
 			if (!(map.containsKey(args[1]))) {
-				throw new BarleyException("BadArg", "map is empty or doesn't contains key: \n" + args[1] + "");
+				throw new ZuluException("BadArg", "map is empty or doesn't contains key: \n" + args[1] + "");
 			}
 			return map.get(args[1]);
 		});
 		bts.put("remove", args -> {
 			Arguments.check(2, args.length);
 			if (!(args[0] instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected REFERENCE as bts table");
+				throw new ZuluException("BadArg", "expected REFERENCE as bts table");
 			}
 			ZuluReference ref = (ZuluReference) args[0];
 			HashMap<ZuluValue, ZuluValue> map = (HashMap<ZuluValue, ZuluValue>) ref.getRef();
@@ -207,12 +208,12 @@ public class Modules {
 		bts.put("merge", args -> {
 			Arguments.check(2, args.length);
 			if (!(args[0] instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected REFERENCE as bts table");
+				throw new ZuluException("BadArg", "expected REFERENCE as bts table");
 			}
 			ZuluReference ref = (ZuluReference) args[0];
 			HashMap<ZuluValue, ZuluValue> map = (HashMap<ZuluValue, ZuluValue>) ref.getRef();
 			if (!(args[1] instanceof ZuluReference r)) {
-				throw new BarleyException("BadArg", "expected REFERENCE as bts table");
+				throw new ZuluException("BadArg", "expected REFERENCE as bts table");
 			}
 			HashMap<ZuluValue, ZuluValue> m = (HashMap<ZuluValue, ZuluValue>) r.getRef();
 			HashMap<ZuluValue, ZuluValue> result = new HashMap<>(map);
@@ -222,7 +223,7 @@ public class Modules {
 		bts.put("copy", args -> {
 			Arguments.check(1, args.length);
 			if (!(args[0] instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected REFERENCE as bts table");
+				throw new ZuluException("BadArg", "expected REFERENCE as bts table");
 			}
 			ZuluReference ref = (ZuluReference) args[0];
 			HashMap<ZuluValue, ZuluValue> map = (HashMap<ZuluValue, ZuluValue>) ref.getRef();
@@ -298,7 +299,7 @@ public class Modules {
 			Arguments.check(1, args.length);
 			ZuluValue val = args[0];
 			if (!(val instanceof ZuluPID)) {
-				throw new BarleyException("BadArgument", "expected PID as process-id");
+				throw new ZuluException("BadArgument", "expected PID as process-id");
 			}
 			ZuluPID pid = (ZuluPID) val;
 			return ProcessTable.get(pid);
@@ -319,7 +320,7 @@ public class Modules {
 			} else if (arg instanceof ZuluList) {
 				return new ZuluNumber(((ZuluList) arg).getList().size());
 			} else {
-				throw new BarleyException("BadArg", "expected object that support length function");
+				throw new ZuluException("BadArg", "expected object that support length function");
 			}
 		});
 		shell.put("binary", args -> {
@@ -443,7 +444,7 @@ public class Modules {
 
 		shell.put("throw", args -> {
 			Arguments.check(1, args.length);
-			throw new BarleyException(args[0].toString(), args[0].toString());
+			throw new ZuluException(args[0].toString(), args[0].toString());
 		});
 
 		shell.put("catch", args -> {
@@ -452,7 +453,7 @@ public class Modules {
 			ZuluFunction c = (ZuluFunction) args[1];
 			try {
 				return fun.execute();
-			} catch (BarleyException ex) {
+			} catch (ZuluException ex) {
 				return c.execute(new ZuluAtom(ex.getType().toLowerCase(Locale.ROOT)));
 			}
 		});
@@ -640,7 +641,7 @@ public class Modules {
 			String first = args[0].toString();
 			ZuluValue second = args[1];
 			if (!(second instanceof ZuluNumber)) {
-				throw new BarleyException("Runtime", "Expected type of argument 2 to be a number, but found " + second);
+				throw new ZuluException("Runtime", "Expected type of argument 2 to be a number, but found " + second);
 			}
 
 			int count = second.asInteger().intValue();
@@ -698,7 +699,7 @@ public class Modules {
 					return new ZuluList(result);
 				}
 				default ->
-					throw new BarleyException("BadArg", "unexpected error was occurred");
+					throw new ZuluException("BadArg", "unexpected error was occurred");
 			}
 		});
 
@@ -762,7 +763,7 @@ public class Modules {
 			Arguments.check(1, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as stack object");
+				throw new ZuluException("BadArg", "expected reference as stack object");
 			}
 			Stack<ZuluValue> st = (Stack<ZuluValue>) ((ZuluReference) s).getRef();
 			return new ZuluAtom(AtomTable.put(String.valueOf(st.isEmpty())));
@@ -778,7 +779,7 @@ public class Modules {
 			Arguments.check(1, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as stack object");
+				throw new ZuluException("BadArg", "expected reference as stack object");
 			}
 			Stack<ZuluValue> st = (Stack<ZuluValue>) ((ZuluReference) s).getRef();
 			return st.peek();
@@ -788,7 +789,7 @@ public class Modules {
 			Arguments.check(1, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as stack object");
+				throw new ZuluException("BadArg", "expected reference as stack object");
 			}
 			Stack<ZuluValue> st = (Stack<ZuluValue>) ((ZuluReference) s).getRef();
 			LinkedList<ZuluValue> result = new LinkedList<>();
@@ -856,12 +857,12 @@ public class Modules {
 
 			if (!(hashref instanceof ZuluReference)) {
 				System.out.println("" + hashref);
-				throw new BarleyException("BadArg", "expected reference as hashmap object");
+				throw new ZuluException("BadArg", "expected reference as hashmap object");
 			}
 
 			HashMap<ZuluValue, ZuluValue> map_obj = (HashMap<ZuluValue, ZuluValue>) hashref.raw();
 			if (!map_obj.containsKey(key)) {
-				throw new BarleyException("Hash Key error", key + " is not a key in hashmap at " + hashref);
+				throw new ZuluException("Hash Key error", key + " is not a key in hashmap at " + hashref);
 			}
 
 			return map_obj.get(key);
@@ -873,12 +874,12 @@ public class Modules {
 			ZuluValue value = args[1];
 
 			if (!(hashref instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as hashmap object");
+				throw new ZuluException("BadArg", "expected reference as hashmap object");
 			}
 
 			HashMap<ZuluValue, ZuluValue> map_obj = (HashMap<ZuluValue, ZuluValue>) hashref.raw();
 			if (!map_obj.containsValue(value)) {
-				throw new BarleyException("Hash Value error", value + " is not a value in hashmap at " + hashref);
+				throw new ZuluException("Hash Value error", value + " is not a value in hashmap at " + hashref);
 			}
 
 			for (Entry<ZuluValue, ZuluValue> entry : map_obj.entrySet()) {
@@ -897,7 +898,7 @@ public class Modules {
 
 			if (!(hashref instanceof ZuluReference)) {
 				System.out.println("" + hashref);
-				throw new BarleyException("BadArg", "expected reference as hashmap object");
+				throw new ZuluException("BadArg", "expected reference as hashmap object");
 			}
 
 			HashMap<ZuluValue, ZuluValue> map_obj = (HashMap<ZuluValue, ZuluValue>) hashref.raw();
@@ -913,7 +914,7 @@ public class Modules {
 
 			if (!(hashref instanceof ZuluReference)) {
 				System.out.println("" + hashref);
-				throw new BarleyException("BadArg", "expected reference as hashmap object");
+				throw new ZuluException("BadArg", "expected reference as hashmap object");
 			}
 
 			HashMap<ZuluValue, ZuluValue> map_obj = (HashMap<ZuluValue, ZuluValue>) hashref.raw();
@@ -928,7 +929,7 @@ public class Modules {
 
 			if (!(hashref instanceof ZuluReference)) {
 				System.out.println("" + hashref);
-				throw new BarleyException("BadArg", "expected reference as hashmap object");
+				throw new ZuluException("BadArg", "expected reference as hashmap object");
 			}
 			HashMap<ZuluValue, ZuluValue> map_obj = (HashMap<ZuluValue, ZuluValue>) hashref.raw();
 			boolean exists = map_obj.containsKey(key);
@@ -942,7 +943,7 @@ public class Modules {
 
 			if (!(hashref instanceof ZuluReference)) {
 				System.out.println("" + hashref);
-				throw new BarleyException("BadArg", "expected reference as hashmap object");
+				throw new ZuluException("BadArg", "expected reference as hashmap object");
 			}
 			HashMap<ZuluValue, ZuluValue> map_obj = (HashMap<ZuluValue, ZuluValue>) hashref.raw();
 			boolean exists = map_obj.containsValue(key);
@@ -955,7 +956,7 @@ public class Modules {
 
 			if (!(hashref instanceof ZuluReference)) {
 				System.out.println("" + hashref);
-				throw new BarleyException("BadArg", "expected reference as hashmap object");
+				throw new ZuluException("BadArg", "expected reference as hashmap object");
 			}
 			HashMap<ZuluValue, ZuluValue> map_obj = (HashMap<ZuluValue, ZuluValue>) hashref.raw();
 			LinkedList<ZuluValue> keys = new LinkedList<>();
@@ -971,7 +972,7 @@ public class Modules {
 
 			if (!(hashref instanceof ZuluReference)) {
 				System.out.println("" + hashref);
-				throw new BarleyException("BadArg", "expected reference as hashmap object");
+				throw new ZuluException("BadArg", "expected reference as hashmap object");
 			}
 			HashMap<ZuluValue, ZuluValue> map_obj = (HashMap<ZuluValue, ZuluValue>) hashref.raw();
 			LinkedList<ZuluValue> keys = new LinkedList<>();
@@ -993,7 +994,7 @@ public class Modules {
 
 			if (!(hashref instanceof ZuluReference)) {
 				System.out.println("" + hashref);
-				throw new BarleyException("BadArg", "expected reference as hashmap object");
+				throw new ZuluException("BadArg", "expected reference as hashmap object");
 			}
 
 			HashMap<ZuluValue, ZuluValue> map_obj = (HashMap<ZuluValue, ZuluValue>) hashref.raw();
@@ -1006,7 +1007,7 @@ public class Modules {
 			ZuluValue hashref = args[0];
 
 			if (!(hashref instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as hashmap object");
+				throw new ZuluException("BadArg", "expected reference as hashmap object");
 			}
 
 			HashMap<ZuluValue, ZuluValue> map_obj = (HashMap<ZuluValue, ZuluValue>) hashref.raw();
@@ -1043,7 +1044,7 @@ public class Modules {
 			Arguments.check(2, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as queue object");
+				throw new ZuluException("BadArg", "expected reference as queue object");
 			}
 			ConcurrentLinkedQueue<ZuluValue> st = (ConcurrentLinkedQueue<ZuluValue>) ((ZuluReference) s).getRef();
 			st.add(args[1]);
@@ -1054,7 +1055,7 @@ public class Modules {
 			Arguments.check(1, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as queue object");
+				throw new ZuluException("BadArg", "expected reference as queue object");
 			}
 			ConcurrentLinkedQueue<ZuluValue> st = (ConcurrentLinkedQueue<ZuluValue>) ((ZuluReference) s).getRef();
 			return st.remove();
@@ -1064,7 +1065,7 @@ public class Modules {
 			Arguments.check(1, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as queue object");
+				throw new ZuluException("BadArg", "expected reference as queue object");
 			}
 			ConcurrentLinkedQueue<ZuluValue> st = (ConcurrentLinkedQueue<ZuluValue>) ((ZuluReference) s).getRef();
 			return st.peek();
@@ -1074,7 +1075,7 @@ public class Modules {
 			Arguments.check(1, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as queue object");
+				throw new ZuluException("BadArg", "expected reference as queue object");
 			}
 			ConcurrentLinkedQueue<ZuluValue> st = (ConcurrentLinkedQueue<ZuluValue>) ((ZuluReference) s).getRef();
 			ZuluValue[] calls = st.toArray(new ZuluValue[]{});
@@ -1089,7 +1090,7 @@ public class Modules {
 			Arguments.check(1, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as queue object");
+				throw new ZuluException("BadArg", "expected reference as queue object");
 			}
 			ConcurrentLinkedQueue<ZuluValue> st = (ConcurrentLinkedQueue<ZuluValue>) ((ZuluReference) s).getRef();
 			return new ZuluAtom(String.valueOf(st.isEmpty()));
@@ -1110,7 +1111,7 @@ public class Modules {
 			Arguments.check(2, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as measurement object");
+				throw new ZuluException("BadArg", "expected reference as measurement object");
 			}
 			TimeMeasurement st = (TimeMeasurement) ((ZuluReference) s).getRef();
 			st.start(args[1].toString());
@@ -1121,7 +1122,7 @@ public class Modules {
 			Arguments.check(2, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as measurement object");
+				throw new ZuluException("BadArg", "expected reference as measurement object");
 			}
 			TimeMeasurement st = (TimeMeasurement) ((ZuluReference) s).getRef();
 			st.stop(args[1].toString());
@@ -1132,7 +1133,7 @@ public class Modules {
 			Arguments.check(2, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as measurement object");
+				throw new ZuluException("BadArg", "expected reference as measurement object");
 			}
 			TimeMeasurement st = (TimeMeasurement) ((ZuluReference) s).getRef();
 			st.pause(args[1].toString());
@@ -1143,7 +1144,7 @@ public class Modules {
 			Arguments.check(1, args.length);
 			ZuluValue s = args[0];
 			if (!(s instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected reference as measurement object");
+				throw new ZuluException("BadArg", "expected reference as measurement object");
 			}
 			TimeMeasurement st = (TimeMeasurement) ((ZuluReference) s).getRef();
 			System.out.println("======================");
@@ -1228,7 +1229,7 @@ public class Modules {
 		code.put("load_bts", args -> {
 			Arguments.check(1, args.length);
 			if (!(args[0] instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "expected REFERENCE as bts table");
+				throw new ZuluException("BadArg", "expected REFERENCE as bts table");
 			}
 			try {
 				ZuluReference ref = (ZuluReference) args[0];
@@ -1288,7 +1289,7 @@ public class Modules {
 			Arguments.check(1, args.length);
 			HashMap<String, Function> module = get(args[0].toString());
 			if (module == null) {
-				throw new BarleyException("BadArg", "module is not compiled '" + args[0] + "'");
+				throw new ZuluException("BadArg", "module is not compiled '" + args[0] + "'");
 			}
 			HashMap<ZuluValue, ZuluValue> m = new HashMap<>();
 			for (Map.Entry<String, Function> entry : module.entrySet()) {
@@ -1829,12 +1830,12 @@ public class Modules {
 
 		module.put("raw", args -> {
 			if (args.length != 1) {
-				throw new BarleyException("BadArg", "Expected atleast 1 argument to invoke");
+				throw new ZuluException("BadArg", "Expected atleast 1 argument to invoke");
 			}
 
 			ZuluValue first = args[0];
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			return (ZuluValue) first.raw();
@@ -1842,12 +1843,12 @@ public class Modules {
 
 		module.put("string", args -> {
 			if (args.length != 1) {
-				throw new BarleyException("BadArg", "Expected 1 argument to reference:string");
+				throw new ZuluException("BadArg", "Expected 1 argument to reference:string");
 			}
 
 			ZuluValue first = args[0];
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			return new ZuluString(first.raw().toString());
@@ -1855,27 +1856,26 @@ public class Modules {
 
 		module.put("number", args -> {
 			if (args.length != 1) {
-				throw new BarleyException("BadArg", "Expected 1 argument to reference:number");
+				throw new ZuluException("BadArg", "Expected 1 argument to reference:number");
 			}
 
 			ZuluValue first = args[0];
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			var value = Double.valueOf(first.raw().toString());
 			return new ZuluNumber(value);
 		});
 
-
 		module.put("boolean", args -> {
 			if (args.length != 1) {
-				throw new BarleyException("BadArg", "Expected 1 argument to reference:number");
+				throw new ZuluException("BadArg", "Expected 1 argument to reference:number");
 			}
 
 			ZuluValue first = args[0];
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			var value = Boolean.valueOf(first.raw().toString());
@@ -1888,6 +1888,19 @@ public class Modules {
 	public static void initFFI() {
 		HashMap<String, Function> module = new HashMap<>();
 
+		module.put("int", args -> new ZuluReference(int.class));
+		module.put("byte", args -> new ZuluReference(byte.class));
+		module.put("float", args -> new ZuluReference(float.class));
+		module.put("short", args -> new ZuluReference(short.class));
+		module.put("long", args -> new ZuluReference(long.class));
+		module.put("double", args -> new ZuluReference(double.class));
+		module.put("int_arr", args -> new ZuluReference(int[].class));
+		module.put("byte_arr", args -> new ZuluReference(byte[].class));
+		module.put("float_arr", args -> new ZuluReference(float[].class));
+		module.put("short_arr", args -> new ZuluReference(short[].class));
+		module.put("long_arr", args -> new ZuluReference(long[].class));
+		module.put("double_arr", args -> new ZuluReference(double[].class));
+
 		module.put("load_class", args -> {
 			Arguments.check(2, args.length);
 			String libname = args[0].toString();
@@ -1898,19 +1911,19 @@ public class Modules {
 
 		module.put("invoke", args -> {
 			if (args.length == 1) {
-				throw new BarleyException("BadArg", "Expected atleast 2 argument to invoke");
+				throw new ZuluException("BadArg", "Expected atleast 2 argument to invoke");
 			}
 
 			ZuluValue first = args[0];
 			Object second = args[1].raw();
 
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			Object ref = first.raw();
 			if (!(ref instanceof Method)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Method value, found " + ref);
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Method value, found " + ref);
 			}
 
 			Method method = (Method) ref;
@@ -1926,25 +1939,25 @@ public class Modules {
 			try {
 				result = method.invoke(second, rest);
 			} catch (IllegalAccessException | InvocationTargetException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+				throw new ZuluException(ex.getCause().getMessage(), ex.getMessage());
 			}
-			return new ZuluReference(result);
+			return new ObjectValue(result);
 		});
 
 		module.put("invoke_static", args -> {
 			if (args.length == 1) {
-				throw new BarleyException("BadArg", "Expected atleast 2 argument to invoke");
+				throw new ZuluException("BadArg", "Expected atleast 2 argument to invoke");
 			}
 
 			ZuluValue first = args[0];
 
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			Object ref = first.raw();
 			if (!(ref instanceof Method)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Method value, found " + ref);
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Method value, found " + ref);
 			}
 
 			Method method = (Method) ref;
@@ -1960,26 +1973,26 @@ public class Modules {
 			try {
 				result = method.invoke(null, rest);
 			} catch (IllegalAccessException | InvocationTargetException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+				throw new ZuluException(ex.getCause().getMessage(), ex.getMessage());
 			}
-			return new ZuluReference(result);
+			return new ObjectValue(result);
 		});
 
 		module.put("invoke_field", args -> {
 			if (args.length == 1) {
-				throw new BarleyException("BadArg", "Expected atleast 2 argument to invoke_field");
+				throw new ZuluException("BadArg", "Expected atleast 2 argument to invoke_field");
 			}
 
 			ZuluValue first = args[0];
 			Object field = args[1].raw();
 
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			Object ref = first.raw();
 			if (!(ref instanceof Method)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Method value, found " + ref);
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Method value, found " + ref);
 			}
 
 			Method method = (Method) ref;
@@ -1991,34 +2004,29 @@ public class Modules {
 				}
 			}
 
-			/*for (int i = 0; i < rest.length; i++) {
-				rest[i] = rest[i].toString();
-			}*/
 			Object result = null;
 			try {
 				result = method.invoke(field, rest);
-			} catch (IllegalAccessException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (InvocationTargetException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (IllegalAccessException | InvocationTargetException ex) {
+				throw new ZuluException(ex.getCause().getMessage(), ex.getMessage());
 			}
-			return new ZuluReference(result);
+			return new ObjectValue(result);
 		});
 
 		module.put("get_constructor", args -> {
 			if (args.length == 1) {
-				throw new BarleyException("BadArg", "Expected atleast 1 argument to invoke_field");
+				throw new ZuluException("BadArg", "Expected atleast 1 argument to invoke_field");
 			}
 
 			ZuluValue first = args[0];
 
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			Object ref = first.raw();
 			if (!(ref instanceof Class)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Class value, found " + ref);
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Class value, found " + ref);
 			}
 
 			Class<?> cls = (Class<?>) ref;
@@ -2032,7 +2040,7 @@ public class Modules {
 				Object rawValue = rest[i].raw();
 
 				if (!(rawValue instanceof Class)) {
-					throw new BarleyException("BadArg", "Invalid parameter type at position " + (i + 2) + ", expected a Class value, found " + rawValue);
+					throw new ZuluException("BadArg", "Invalid parameter type at position " + (i + 2) + ", expected a Class value, found " + rawValue);
 				}
 
 				classes[i] = (Class<?>) rawValue;
@@ -2041,29 +2049,26 @@ public class Modules {
 			try {
 				Constructor<?> constructor = cls.getConstructor(classes);
 				return new ZuluReference(constructor);
-			} catch (NoSuchMethodException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (SecurityException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (NoSuchMethodException | SecurityException ex) {
+				throw new ZuluException(ex.getCause().getMessage(), ex.getMessage());
 			}
 
-			return new ZuluReference(null);
 		});
 
-		module.put("new_instance", args -> {
+		module.put("new", args -> {
 			if (args.length == 1) {
-				throw new BarleyException("BadArg", "Expected atleast 1 argument to new_instance");
+				throw new ZuluException("BadArg", "Expected atleast 1 argument to new_instance");
 			}
 
 			ZuluValue first = args[0];
 
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			Object ref = first.raw();
 			if (!(ref instanceof Constructor)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Constructor value, found " + ref);
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Constructor value, found " + ref);
 			}
 
 			Constructor<?> constructor = (Constructor<?>) ref;
@@ -2076,25 +2081,17 @@ public class Modules {
 			}
 
 			// Convert BarleyValues to their raw Class types
-			Object[] values = new Object[rest.length];
 			for (int i = 0; i < rest.length; i++) {
 				Object rawValue = ((ZuluValue) rest[i]).raw();
-				values[i] = rawValue;
+				rest[i] = rawValue;
 			}
 
 			try {
-				Object val = constructor.newInstance(values);
+				Object val = constructor.newInstance(rest);
 				return new ZuluReference(val);
-			} catch (InstantiationException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalAccessException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalArgumentException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (InvocationTargetException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+				throw new ZuluException(ex.getCause().getMessage(), ex.getMessage());
 			}
-			return new ZuluReference(null);
 		});
 
 		module.put("get_field", args -> {
@@ -2104,12 +2101,12 @@ public class Modules {
 			String field_name = args[1].toString();
 
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			Object ref = first.raw();
 			if (!(ref instanceof Class)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Class value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Class value");
 			}
 
 			Class<?> cls = (Class) ref;
@@ -2117,16 +2114,9 @@ public class Modules {
 			try {
 				field = cls.getField(field_name);
 				return new ZuluReference(field.get(null));
-			} catch (NoSuchFieldException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (SecurityException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalArgumentException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalAccessException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
+			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+				throw new ZuluException(ex.getCause().getMessage(), ex.getMessage());
 			}
-			return null;
 		});
 
 		module.put("get_method_at", args -> {
@@ -2135,12 +2125,12 @@ public class Modules {
 			String method_name = args[1].toString();
 			String index = args[2].raw().toString();
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			Object ref = first.raw();
 			if (!(ref instanceof Class)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Class value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Class value");
 			}
 
 			Class cls = (Class) ref;
@@ -2166,12 +2156,12 @@ public class Modules {
 			String method_name = args[1].toString();
 
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			Object ref = first.raw();
 			if (!(ref instanceof Class)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Class value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Class value");
 			}
 			Class cls = (Class) ref;
 
@@ -2189,57 +2179,6 @@ public class Modules {
 			return new ZuluReference(methods.get(0));
 		});
 
-		module.put("construct", args -> {
-			Arguments.check(1, args.length);
-			ZuluValue first = args[0];
-
-			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
-			}
-
-			Object ref = first.raw();
-			if (!(ref instanceof Class)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Class value");
-			}
-
-			Class cls = (Class) ref;
-
-			Object[] rest = new Object[args.length - 1];
-			for (int i = 1; i < args.length; i++) {
-				rest[i - 1] = args[i];
-			}
-
-			// Clean up the arguments to so that they can be understood by java
-			/*for (int i = 0; i < rest.length; i++) {
-				Object c = rest[i];
-				c = switch (c) {
-					case BarleyNull d -> null;
-					case BarleyList l -> l.getList().toArray();
-					case BarleyNumber n -> n.asInteger().intValue();
-					case BarleyString s -> s.toString();
-					default -> c;
-				};
-				rest[i] = c;
-			}*/
-			Object instance = null;
-			try {
-				instance = cls.getDeclaredConstructor().newInstance(rest);
-			} catch (NoSuchMethodException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (SecurityException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (InstantiationException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalAccessException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalArgumentException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (InvocationTargetException ex) {
-				Logger.getLogger(Modules.class.getName()).log(Level.SEVERE, null, ex);
-			}
-
-			return new ZuluReference(instance);
-		});
 
 		put("ffi", module);
 	}
@@ -2267,14 +2206,14 @@ public class Modules {
 			String query = args[1].toString();
 
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			ZuluReference connection_ref = (ZuluReference) first;
 			Object ref = connection_ref.raw();
 
 			if (!(ref instanceof Connection)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a sql connection");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a sql connection");
 			}
 
 			Connection c = (Connection) ref;
@@ -2284,7 +2223,7 @@ public class Modules {
 				statement = c.createStatement();
 				rs = statement.executeQuery(query.toUpperCase());
 			} catch (SQLException ex) {
-				throw new BarleyException("Runtime", "sql query error");
+				throw new ZuluException("Runtime", "sql query error");
 			}
 
 			try {
@@ -2303,7 +2242,7 @@ public class Modules {
 
 				return new ZuluList(results);
 			} catch (SQLException ex) {
-				throw new BarleyException("Runtime", "sql column error");
+				throw new ZuluException("Runtime", "sql column error");
 			}
 		});
 		put("sql", module);
@@ -2317,12 +2256,12 @@ public class Modules {
 			ZuluValue first = args[0];
 
 			if (!(first instanceof ZuluReference)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
 			}
 
 			Object o = ((ZuluReference) first).raw();
 			if (!(o instanceof ZuluXML)) {
-				throw new BarleyException("BadArg", "Invalid value provide for param `1`, expected a Reference to an XML Object value");
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference to an XML Object value");
 			}
 
 			ZuluXML xml = (ZuluXML) o;
@@ -2707,7 +2646,7 @@ public class Modules {
 			Arguments.check(2, args.length);
 			ZuluFunction fun = (ZuluFunction) args[0];
 			if (!(args[1] instanceof ZuluList)) {
-				throw new BarleyException("BadArg", "Expected LIST, got " + args[1]);
+				throw new ZuluException("BadArg", "Expected LIST, got " + args[1]);
 			}
 			ZuluList list = (ZuluList) args[1];
 			LinkedList<ZuluValue> result = new LinkedList<>();
@@ -2943,7 +2882,7 @@ public class Modules {
 		}
 	}
 
-	private static class BUnitAssertionException extends BarleyException {
+	private static class BUnitAssertionException extends ZuluException {
 
 		public BUnitAssertionException(String message) {
 			super("BadTest", message);

@@ -1,6 +1,6 @@
 package com.zulu.memory;
 
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.runtime.ZuluValue;
 
 public class Storage {
@@ -14,7 +14,7 @@ public class Storage {
 	public static void segment(ZuluValue obj) {
 		left -= StorageUtils.size(obj);
 		if (left <= 0) {
-			throw new BarleyException("SegmentationFault", "segmentation fault, last allocation: '#Allocation<" + obj + ":" + StorageUtils.size(obj) + ">'");
+			throw new ZuluException("SegmentationFault", "segmentation fault, last allocation: '#Allocation<" + obj + ":" + StorageUtils.size(obj) + ">'");
 		}
 	}
 

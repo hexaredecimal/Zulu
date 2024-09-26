@@ -5,7 +5,7 @@ import com.zulu.runtime.ZuluPID;
 import com.zulu.runtime.ProcessTable;
 import com.zulu.runtime.Table;
 import com.zulu.utils.AST;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.CallStack;
 import com.zulu.runtime.ZuluValue;
 
@@ -24,7 +24,7 @@ public class RecieveAST implements AST {
 			ZuluValue previous = ProcessTable.get(p);
 			try {
 				ProcessTable.put(p, body.execute());
-			} catch (BarleyException ex) {
+			} catch (ZuluException ex) {
 				System.out.printf("** ERROR REPORT IN THREAD %s: %s\n", p, ex.getText());
 				int count = CallStack.getCalls().size();
 				if (count == 0) {

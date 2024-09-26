@@ -4,7 +4,7 @@ import com.zulu.memory.Allocation;
 import com.zulu.memory.Storage;
 import com.zulu.memory.StorageUtils;
 import com.zulu.utils.Arguments;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.Function;
 import com.zulu.utils.Pointers;
 
@@ -41,7 +41,7 @@ public class Externals {
 			alc.segment(args[1]);
 			//System.out.println("alloc: " + alc.getAllocated() + "\ndefalloc: " + alc.getDefaultAlloc());
 			if (alc.getAllocated() < 0) {
-				throw new BarleyException("SegmentationFault", "segmentation fault");
+				throw new ZuluException("SegmentationFault", "segmentation fault");
 			}
 			alc.getList().add(args[1]);
 			Pointers.put(ptr.toString(), alc);

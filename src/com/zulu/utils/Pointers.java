@@ -11,7 +11,7 @@ public class Pointers {
 	public static ZuluValue get(String key) {
 		ZuluValue result = pointers.get(key);
 		if (result == null) {
-			throw new BarleyException("BadPointer", "segmentation fault");
+			throw new ZuluException("BadPointer", "segmentation fault");
 		}
 		return result;
 	}

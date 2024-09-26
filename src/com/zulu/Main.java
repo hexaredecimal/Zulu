@@ -5,7 +5,7 @@ import com.zulu.runtime.ZuluString;
 import com.zulu.runtime.ZuluList;
 import com.zulu.runtime.LibraryLoader;
 import com.zulu.runtime.Modules;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.FileUtils;
 import com.zulu.utils.Handler;
 import com.zulu.utils.SourceLoader;
@@ -65,6 +65,6 @@ public class Main {
 			.append(text.indent(0))
 			.append(String.format("line %d: ", line).indent(0))
 			.append(current.indent(2));
-		throw new BarleyException(type, sb.toString());
+		throw new ZuluException(type, sb.toString());
 	}
 }

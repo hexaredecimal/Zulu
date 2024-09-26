@@ -10,7 +10,7 @@ import com.zulu.runtime.ZuluFunction;
 import com.zulu.runtime.ZuluReference;
 import com.zulu.memory.Storage;
 import com.zulu.utils.Arguments;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.CallStack;
 import com.zulu.utils.Function;
 
@@ -273,7 +273,7 @@ public class Reflection {
 
 		@Override
 		public String toString() {
-			return "#ObjectValue" + injection;
+			return this.object.toString();
 		}
 
 		@Override
@@ -392,7 +392,7 @@ public class Reflection {
 			types[i] = as[i].getClass();
 		}
 
-		throw new BarleyException("BadReflection", "Can't find constructor for length " + args.length + " and for constructors " + Arrays.toString(ctors) + ". when args: " + Arrays.toString(args) + "\n    when types of args is: " + Arrays.toString(types));
+		throw new ZuluException("BadReflection", "Can't find constructor for length " + args.length + " and for constructors " + Arrays.toString(ctors) + ". when args: " + Arrays.toString(args) + "\n    when types of args is: " + Arrays.toString(types));
 	}
 
 	private static Function methodsToFunction(Object object, List<Method> methods) {
@@ -422,9 +422,9 @@ public class Reflection {
 						return objectToValue(result);
 					}
 					return new ZuluNumber(1);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | BarleyException ex) {
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | ZuluException ex) {
 					System.err.println(ex.getCause());
-					if (ex instanceof BarleyException x) {
+					if (ex instanceof ZuluException x) {
 						System.out.printf("**  reflection error: %s\n", x.getText());
 						int count = CallStack.getCalls().size();
 						if (count == 0) {
@@ -441,7 +441,7 @@ public class Reflection {
 			}
 			final String className = (object == null ? "null" : object.getClass().getName());
 			System.out.println(Arrays.toString(object.getClass().getDeclaredMethods()));
-			throw new BarleyException("BadReflection", "Method" + "  with " + args.length + " arguments"
+			throw new ZuluException("BadReflection", "Method" + "  with " + args.length + " arguments"
 				+ " not found or non accessible in " + className);
 		};
 	}

@@ -1,6 +1,6 @@
 package com.zulu.parser;
 
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.Token;
 
 import java.util.ArrayList;
@@ -227,7 +227,7 @@ public final class Lexer {
 				break;
 			}
 			if (current == '\0') {
-				throw new BarleyException("BadCompiler", "Reached end of file while parsing text string");
+				throw new ZuluException("BadCompiler", "Reached end of file while parsing text string");
 			}
 			buffer.append(current);
 			current = next();
@@ -273,7 +273,7 @@ public final class Lexer {
 		while (true) {
 			if (current == '.' && Character.isDigit(peek(1)) || current == '_') {
 				if (buffer.indexOf(".") != -1) {
-					throw new BarleyException("BadCompiler", "Invalid float number");
+					throw new ZuluException("BadCompiler", "Invalid float number");
 				}
 			} else if (!Character.isDigit(current)) {
 				break;

@@ -4,7 +4,7 @@ import com.zulu.Main;
 import com.zulu.optimizations.Optimization;
 import com.zulu.runtime.ZuluPointer;
 import com.zulu.utils.AST;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.Pointers;
 import com.zulu.runtime.ZuluValue;
 
@@ -29,7 +29,7 @@ public class UnPointAST implements AST {
 		}
 		ZuluValue res = Pointers.get(execute.toString());
 		if (res == null) {
-			throw new BarleyException("BadPointer", "segmentation fault");
+			throw new ZuluException("BadPointer", "segmentation fault");
 		}
 		return res;
 	}

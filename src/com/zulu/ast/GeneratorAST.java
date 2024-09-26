@@ -7,7 +7,7 @@ import com.zulu.runtime.ZuluList;
 import com.zulu.runtime.ZuluNumber;
 import com.zulu.runtime.Table;
 import com.zulu.utils.AST;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -53,7 +53,7 @@ public class GeneratorAST implements AST {
 		LinkedList<ZuluValue> result = new LinkedList<>();
 		int size = list.getList().size();
 		if (size >= 1000000000) {
-			throw new BarleyException("BadGenerator", "generator '" + (gen + " || " + var + " -> " + list) + "' will cause 'segmentation fault'");
+			throw new ZuluException("BadGenerator", "generator '" + (gen + " || " + var + " -> " + list) + "' will cause 'segmentation fault'");
 		}
 		Table.push();
 		for (int i = 0; i < size; i++) {

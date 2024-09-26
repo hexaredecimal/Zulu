@@ -19,7 +19,7 @@ import com.zulu.ast.ConsAST;
 import com.zulu.ast.ConstantAST;
 import com.zulu.ast.BindAST;
 import com.zulu.utils.AST;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 
 import java.util.LinkedList;
 
@@ -97,7 +97,7 @@ public class GeneratorJamming implements Optimization {
 			} else {
 				return new ConstantAST(ast.execute());
 			}
-		} catch (BarleyException ex) {
+		} catch (ZuluException ex) {
 			return ast;
 		}
 	}

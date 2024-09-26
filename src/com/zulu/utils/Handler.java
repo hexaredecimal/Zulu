@@ -85,7 +85,7 @@ public class Handler {
 				System.out.println("======================");
 				System.out.println(measurement.summary(TimeUnit.MILLISECONDS, true));
 			}
-		} catch (BarleyException ex) {
+		} catch (ZuluException ex) {
 			System.out.printf("** exception error: %s\n", ex.getText());
 			int count = CallStack.getCalls().size();
 			if (count == 0) {

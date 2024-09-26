@@ -1,7 +1,7 @@
 package com.zulu.memory;
 
 import com.zulu.runtime.ZuluList;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -73,12 +73,12 @@ public class Allocation implements ZuluValue {
 
 	@Override
 	public BigInteger asInteger() {
-		throw new BarleyException("BadArithmetic", "can't cast ALLOCATION to NUMBER");
+		throw new ZuluException("BadArithmetic", "can't cast ALLOCATION to NUMBER");
 	}
 
 	@Override
 	public BigDecimal asFloat() {
-		throw new BarleyException("BadArithmetic", "can't cast ALLOCATION to NUMBER");
+		throw new ZuluException("BadArithmetic", "can't cast ALLOCATION to NUMBER");
 	}
 
 	public LinkedList<ZuluValue> getList() {

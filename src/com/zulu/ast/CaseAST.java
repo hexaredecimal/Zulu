@@ -5,7 +5,7 @@ import com.zulu.runtime.ZuluList;
 import com.zulu.runtime.ZuluNumber;
 import com.zulu.runtime.Table;
 import com.zulu.utils.AST;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public final class CaseAST implements AST {
 				}
 			}
 		}
-		throw new BarleyException("BadMatch", "no patterns were matched. patterns: " + patterns);
+		throw new ZuluException("BadMatch", "no patterns were matched. patterns: " + patterns);
 	}
 
 	private boolean matchTuplePattern(ZuluList array, TuplePattern p) {

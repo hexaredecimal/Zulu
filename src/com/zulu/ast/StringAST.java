@@ -3,7 +3,7 @@ package com.zulu.ast;
 import com.zulu.optimizations.Optimization;
 import com.zulu.runtime.ZuluString;
 import com.zulu.utils.AST;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.Handler;
 import com.zulu.runtime.ZuluValue;
 
@@ -81,7 +81,7 @@ public class StringAST implements AST {
 	public void visit(Optimization optimization) {
 		try {
 			lex();
-		} catch (BarleyException ex) {
+		} catch (ZuluException ex) {
 			// skip
 			;
 		}

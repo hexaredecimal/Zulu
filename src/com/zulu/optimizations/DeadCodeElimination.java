@@ -20,7 +20,7 @@ import com.zulu.ast.ConstantAST;
 import com.zulu.ast.BindAST;
 import com.zulu.runtime.ZuluList;
 import com.zulu.utils.AST;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 
 import java.util.LinkedList;
 
@@ -97,7 +97,7 @@ public class DeadCodeElimination implements Optimization {
 				count++;
 				return new ConstantAST(new ZuluList());
 			}
-		} catch (BarleyException ex) {
+		} catch (ZuluException ex) {
 
 		}
 		ast.visit(this);
@@ -145,7 +145,7 @@ public class DeadCodeElimination implements Optimization {
 				return ast.left;
 			}
 			return ast.right;
-		} catch (BarleyException ex) {
+		} catch (ZuluException ex) {
 
 		}
 		return ast;

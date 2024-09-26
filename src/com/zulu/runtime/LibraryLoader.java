@@ -1,6 +1,6 @@
 package com.zulu.runtime;
 
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.FileUtils;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -32,7 +32,7 @@ public class LibraryLoader {
 
 		HashMap<String, String> files = FileUtils.getFilesWithExtension(".", ".jar");
 		if (!files.containsKey(name)) {
-			throw new BarleyException("Internal", "Failed to locate a library file (.jar) with name " + name);
+			throw new ZuluException("Internal", "Failed to locate a library file (.jar) with name " + name);
 		}
 		String path = files.get(name);
 
@@ -42,7 +42,7 @@ public class LibraryLoader {
 			loader = new URLClassLoader(new URL[]{library_ptr.toURI().toURL()});
 			loaded.put(name, loader);
 		} catch (MalformedURLException e) {
-			throw new BarleyException("Internal", "Malformed path to library file (.jar) with name " + name);
+			throw new ZuluException("Internal", "Malformed path to library file (.jar) with name " + name);
 		}
 		return loader;
 	}
@@ -56,7 +56,7 @@ public class LibraryLoader {
 			try {
 				clz = loader.loadClass(class_name);
 			} catch (ClassNotFoundException e) {
-				throw new BarleyException("Internal", "Class `" + class_name + "` not found in library " + library);
+				throw new ZuluException("Internal", "Class `" + class_name + "` not found in library " + library);
 			}
 		}
 		return clz;

@@ -4,7 +4,7 @@ import com.zulu.ast.InstanceFieldAccess;
 import com.zulu.utils.Clause;
 import com.zulu.utils.AST;
 import com.zulu.utils.Token;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.Function;
 import com.zulu.runtime.ZuluAtom;
 import com.zulu.runtime.Table;
@@ -245,7 +245,7 @@ public final class Parser implements Serializable {
 		} else if (match(TokenType.GLOBAL)) {
 			return global();
 		} else {
-			throw new BarleyException("BadCompiler", "bad declaration '" + current + "'");
+			throw new ZuluException("BadCompiler", "bad declaration '" + current + "'");
 		}
 	}
 
@@ -276,10 +276,10 @@ public final class Parser implements Serializable {
 
 					return new CompileAST(module_name, mtds);
 				} catch (IOException ex) {
-					throw new BarleyException("BadCompiler", "Import '" + module_name + "' possible syntax error. Check module");
+					throw new ZuluException("BadCompiler", "Import '" + module_name + "' possible syntax error. Check module");
 				}
 			} else {
-				throw new BarleyException("BadCompiler", "Import '" + module_name + "' is not found in current dir");
+				throw new ZuluException("BadCompiler", "Import '" + module_name + "' is not found in current dir");
 			}
 		}
 
@@ -308,18 +308,18 @@ public final class Parser implements Serializable {
 					}
 
 					if (array.size() != 0) {
-						throw new BarleyException("BadCompiler", "Functions '" + array + "' not found in module `" + module_name + "`");
+						throw new ZuluException("BadCompiler", "Functions '" + array + "' not found in module `" + module_name + "`");
 					}
 
 					if (found.size() == 0) {
-						throw new BarleyException("BadCompiler", "Imports not found in module '" + module_name);
+						throw new ZuluException("BadCompiler", "Imports not found in module '" + module_name);
 					}
 					return new ImportAst(found);
 				} catch (IOException ex) {
-					throw new BarleyException("BadCompiler", "Import '" + module_name + "' possible syntax error. Check module");
+					throw new ZuluException("BadCompiler", "Import '" + module_name + "' possible syntax error. Check module");
 				}
 			} else {
-				throw new BarleyException("BadCompiler", "Import '" + module_name + "' is not found in current dir");
+				throw new ZuluException("BadCompiler", "Import '" + module_name + "' is not found in current dir");
 			}
 		}
 
@@ -816,7 +816,7 @@ public final class Parser implements Serializable {
 		consume(TokenType.LBRACE, "Expected `{` after type name in type instance.");
 
 		if (!TypeTable.types.containsKey(type_name.getText())) {
-			throw new BarleyException("BadCompiler", type_name.getText() + " is not a defined type");
+			throw new ZuluException("BadCompiler", type_name.getText() + " is not a defined type");
 		}
 
 		ArrayList<String> fields = TypeTable.types.get(type_name.getText());
@@ -828,7 +828,7 @@ public final class Parser implements Serializable {
 			String field_name = key.getText();
 
 			if (!fields.contains(field_name)) {
-				throw new BarleyException("BadCompiler", field_name + " is not a field of type " + type_name.getText());
+				throw new ZuluException("BadCompiler", field_name + " is not a field of type " + type_name.getText());
 			}
 			map.put(field_name, expression());
 			match(TokenType.COMMA);
@@ -970,7 +970,7 @@ public final class Parser implements Serializable {
 			return receive();
 		}
 
-		throw new BarleyException("BadCompiler", "Unknown term\n    where term:\n        " + current + "\n    when current line:\n      " + currentLine());
+		throw new ZuluException("BadCompiler", "Unknown term\n    where term:\n        " + current + "\n    when current line:\n      " + currentLine());
 	}
 
 	private void warnBadVar(String s) {
@@ -984,7 +984,7 @@ public final class Parser implements Serializable {
 	private AST externCall() {
 		String name = consume(TokenType.ATOM, "expected extern function name after 'extern'").getText();
 		if (!Externals.containsKey(name)) {
-			throw new BarleyException("BadExtern", "unknown extern function '" + name + "' at line " + line());
+			throw new ZuluException("BadExtern", "unknown extern function '" + name + "' at line " + line());
 		}
 		ArrayList<AST> args = arguments();
 		return new CallAST(new ConstantAST(new ZuluFunction(Externals.get(name))), args, line(), currentLine());
@@ -1050,7 +1050,7 @@ public final class Parser implements Serializable {
 			}
 
 			if (pattern == null) {
-				throw new BarleyException("BadCompiler", "wrong pattern in case-of expression at line " + line());
+				throw new ZuluException("BadCompiler", "wrong pattern in case-of expression at line " + line());
 			}
 			if (match(TokenType.WHEN)) {
 				// case e when e > 0:
@@ -1109,7 +1109,7 @@ public final class Parser implements Serializable {
 	private Token consume(TokenType type, String text) {
 		final Token current = get(0);
 		if (type != current.getType()) {
-			throw new BarleyException("BadCompiler", text + "\n    at line " + current.getLine() + "\n      when current line:\n            " + currentLine());
+			throw new ZuluException("BadCompiler", text + "\n    at line " + current.getLine() + "\n      when current line:\n            " + currentLine());
 		}
 		pos++;
 		return current;

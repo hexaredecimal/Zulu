@@ -1,7 +1,7 @@
 package com.zulu.runtime;
 
 import com.zulu.memory.Storage;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.Pointers;
 
 import java.math.BigDecimal;
@@ -26,12 +26,12 @@ public class ZuluPointer implements ZuluValue {
 
 	@Override
 	public BigInteger asInteger() {
-		throw new BarleyException("BadArithmetic", "can't cast POINTER to a NUMBER");
+		throw new ZuluException("BadArithmetic", "can't cast POINTER to a NUMBER");
 	}
 
 	@Override
 	public BigDecimal asFloat() {
-		throw new BarleyException("BadArithmetic", "can't cast POINTER to a NUMBER");
+		throw new ZuluException("BadArithmetic", "can't cast POINTER to a NUMBER");
 	}
 
 	@Override

@@ -2,7 +2,7 @@ package com.zulu.runtime;
 
 import com.zulu.utils.Clause;
 import com.zulu.utils.AST;
-import com.zulu.utils.BarleyException;
+import com.zulu.utils.ZuluException;
 import com.zulu.utils.Function;
 import com.zulu.utils.CallStack;
 import com.zulu.patterns.ListPattern;
@@ -121,12 +121,12 @@ public class UserFunction implements Function, Serializable {
 				break;
 			}
 			if (toExecute == null) {
-				throw new BarleyException("FunctionClause", "can't find function clause for args " + List.of(args) + " with clauses:\n   " + clauses);
+				throw new ZuluException("FunctionClause", "can't find function clause for args " + List.of(args) + " with clauses:\n   " + clauses);
 			}
 			ZuluValue result = toExecute.execute();
 			Table.pop();
 			return result;
-		} catch (BarleyException ex) {
+		} catch (ZuluException ex) {
 			CallStack.exit();
 			throw ex;
 		}
@@ -142,7 +142,7 @@ public class UserFunction implements Function, Serializable {
 
 	private boolean processList(ListPattern pattern, ZuluValue val, ArrayList<String> toDelete) {
 		if (!((val instanceof ZuluList list))) {
-			throw new BarleyException("BadArg", "expected list in list pattern");
+			throw new ZuluException("BadArg", "expected list in list pattern");
 		}
 		if (list.getList().size() != pattern.getArr().size()) {
 			return false;
@@ -197,7 +197,7 @@ public class UserFunction implements Function, Serializable {
 		} else if (ast instanceof StringAST) {
 			return new ConstantPattern(ast.execute());
 		}
-		throw new BarleyException("BadMatch", "invalid pattern in function clause");
+		throw new ZuluException("BadMatch", "invalid pattern in function clause");
 	}
 
 	private LinkedList<Pattern> pattern(ListPattern pattern) {
