@@ -22,12 +22,24 @@ public class ZuluString implements ZuluValue {
 
 	@Override
 	public BigInteger asInteger() {
-		throw new ZuluException("BadArithmetic", "Cannot cast STRING to a NUMBER");
+		String value = new String(string);
+		try {
+			var number = Integer.parseInt(value);
+			return BigInteger.valueOf(number);
+		} catch (NumberFormatException _) {
+			throw new ZuluException("BadArithmetic", "Cannot cast `" + value+ "` to a NUMBER");
+		}
 	}
 
 	@Override
 	public BigDecimal asFloat() {
-		throw new ZuluException("BadArithmetic", "Cannot cast STRING to a NUMBER");
+		String value = new String(string);
+		try {
+			var number = Integer.parseInt(value);
+			return BigDecimal.valueOf(number);
+		} catch (NumberFormatException _) {
+			throw new ZuluException("BadArithmetic", "Cannot cast `" + value+ "` to a NUMBER");
+		}
 	}
 
 	@Override
