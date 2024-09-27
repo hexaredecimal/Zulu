@@ -1945,8 +1945,8 @@ public class Modules {
 		});
 
 		module.put("invoke_static", args -> {
-			if (args.length == 1) {
-				throw new ZuluException("BadArg", "Expected atleast 2 argument to invoke");
+			if (args.length < 1) {
+				throw new ZuluException("BadArg", "Expected atleast 2 argument to invoke_static");
 			}
 
 			ZuluValue first = args[0];
