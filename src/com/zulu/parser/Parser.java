@@ -48,6 +48,7 @@ import com.zulu.ast.ConsAST;
 import com.zulu.ast.ExtractBindAST;
 import com.zulu.ast.ConstantAST;
 import com.zulu.ast.BindAST;
+import com.zulu.ast.CastAST;
 import com.zulu.ast.InstanceAST;
 import com.zulu.ast.TypeAst;
 import com.zulu.ast.XMLAST;
@@ -884,18 +885,19 @@ public final class Parser implements Serializable {
 		AST result = primary();
 
 		while (true) {
-			if (match(TokenType.POINT)) {
+			if (match(TokenType.AS)) {
+				var target_ty = consume(TokenType.VAR, "Expected a type after `as` keyword");
+				result = new CastAST(result, target_ty.getText());
+			} else if (match(TokenType.POINT)) {
 				if (match(TokenType.LBRACKET)) {
 					var index = expression();
 					result = new MapIndexAST(result, index, line(), currentLine());
 					consume(TokenType.RBRACKET, "expected ']' after expression in map index expression");
 				}
-			}
-			if (match(TokenType.LBRACKET)) {
+			} else if (match(TokenType.LBRACKET)) {
 				var index = expression();
 				consume(TokenType.RBRACKET, "expected ']' after expression in index expression");
 				result = new ListIndexAST(result, index, line(), currentLine());
-				continue;
 			}
 			break;
 		}
