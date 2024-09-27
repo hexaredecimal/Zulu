@@ -278,12 +278,12 @@ public class Reflection {
 
 		@Override
 		public BigInteger asInteger() {
-			return BigInteger.ONE;
+			return BigInteger.valueOf(Integer.valueOf(object.toString()));
 		}
 
 		@Override
 		public BigDecimal asFloat() {
-			return BigDecimal.ONE;
+			return BigDecimal.valueOf(Float.valueOf(object.toString()));
 		}
 
 		@Override
