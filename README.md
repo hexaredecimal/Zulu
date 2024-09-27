@@ -54,6 +54,8 @@ $ nvim main.zulu
 
 ## Reference
 [Barley](https://github.com/corgifist/barley-lang/tree/main) - Forked parent
-[Erlang](https://en.wikipedia.org/wiki/Erlang_(programming_language))
-[Java](https://en.wikipedia.org/wiki/Java_(programming_language))
+
+[Erlang](https://en.wikipedia.org/wiki/Erlang_(programming_language)) - Major inspiration
+
+[Java](https://en.wikipedia.org/wiki/Java_(programming_language)) - Compiler and FFI implementations
 
