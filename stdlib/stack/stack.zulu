@@ -1,0 +1,29 @@
+-module(stack).
+-opt().
+-strict().
+-doc("Stack creation and manupulation").
+
+new() -> 
+	StackClass = ffi:load_class("", "java.util.Stack"), 
+	Constructor = ffi:get_constructor(StackClass),
+	Object = ffi:new(Constructor).
+
+peek(Stack) -> 
+	StackClass = ffi:load_class("", "java.util.Stack"), 
+	Method = ffi:get_method(StackClass, "peek"),
+	ffi:invoke(Method, Stack).
+
+push(Stack, Value) -> 
+	StackClass = ffi:load_class("", "java.util.Stack"), 
+	Method = ffi:get_method_at(StackClass, "push", 0),
+	ffi:invoke(Method, Stack, Value).
+
+pop(Stack) -> 
+	Stackclass = ffi:load_class("", "java.util.Stack"), 
+	method = ffi:get_method(Stackclass, "pop"),
+	ffi:invoke(method, Stack).
+
+is_empty(Stack) -> 
+	StackClass = ffi:load_class("", "java.util.Stack"), 
+	Method = ffi:get_method(StackClass, "isEmpty"),
+	ffi:invoke(Method, Stack).
