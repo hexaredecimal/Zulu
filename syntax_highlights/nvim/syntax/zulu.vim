@@ -36,12 +36,12 @@ syn region   zuluEncl transparent matchgroup=zuluKeyword start="#\[" matchgroup=
 " Comments
 syn region zuluComment start="%%" end="$" contains=zuluComment,zuluTodo,@Spell
 " syn region   zuluComment start="\%%" contains=zuluComment,zuluTodo,@Spell
-syn keyword  zuluTodo contained TODO FIXME XXX
+syn keyword  zuluTodo contained TODO FIXME
 
 syn keyword  zuluKeyword  module doc when receive case of end and or global not def opt defguard import
-syn keyword  zuluKeyword  unitbase strict pack unpack ast extern binary_operation unary_operation inline type 
+syn keyword  zuluKeyword  unitbase strict pack unpack ast extern binary_operation unary_operation inline type as
 
-syn keyword  zuluType     Number String List XML Boolean Reference
+syn keyword  zuluType     Number String List XML Boolean Reference Pointer Atom Null
 
 syn keyword  zuluThread       Rest Message
 syn keyword  zuluBoolean      true false
