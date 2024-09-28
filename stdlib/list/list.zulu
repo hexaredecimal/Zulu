@@ -1,0 +1,85 @@
+-module(list).
+-opt().
+-strict().
+-doc("List manipulation functions").
+
+add(List, Value) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method_at(ListClass, "add", 1),
+	ffi:invoke(Method, List, Value).
+
+add_first(List, Value) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "addFirst"),
+	ffi:invoke_unraw(Method, List, Value).
+
+add_last(List, Value) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "addLast"),
+	ffi:invoke_unraw(Method, List, Value).
+
+clear(List) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "clear"),
+	ffi:invoke(Method, List).
+
+get_first(List) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "getFirst"),
+	ffi:invoke_unraw(Method, List).
+
+get_last(List) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "getLast"),
+	ffi:invoke_unraw(Method, List).
+
+index_of(List, Value) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "indexOf"),
+	ffi:invoke_unraw(Method, List, Value).
+
+last_index_of(List, Value) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "lastIndexOf"),
+	ffi:invoke_unraw(Method, List, Value).
+
+peek(List) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "peek"),
+	ffi:invoke(Method, List).
+
+peek_first(List) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "peekFirst"),
+	ffi:invoke(Method, List).
+
+peek_last(List) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "peekLast"),
+	ffi:invoke(Method, List).
+
+remove(List) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "remove"),
+	ffi:invoke(Method, List).
+
+remove_first(List) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "removeFirst"),
+	ffi:invoke(Method, List).
+
+remove_last(List) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "removeLast"),
+	ffi:invoke(Method, List).
+
+
+len(List) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "size"),
+	ffi:invoke(Method, List).
+
+is_empty(List) -> 
+	ListClass = ffi:load_class("", "java.util.LinkedList"), 
+	Method = ffi:get_method(ListClass, "isEmpty"),
+	ffi:invoke(Method, List).
