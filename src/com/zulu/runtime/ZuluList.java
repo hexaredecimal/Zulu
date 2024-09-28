@@ -55,25 +55,19 @@ public class ZuluList implements ZuluValue {
 
 	@Override
 	public Object raw() {
-		return list.toArray();
+		return list;
 	}
 
 	@Override
 	public String toString() {
-		if (list.size() >= 10) {
-			List<ZuluValue> rest = list.subList(1, 10);
-			StringBuilder buffer = new StringBuilder();
-			buffer.append("[");
-			int i = 1;
-			for (ZuluValue val : rest) {
-				buffer.append(i == 10 ? val.toString() : val + ", ");
-				i++;
-			}
-			buffer.append("...");
-			buffer.append("]");
-			return buffer.toString();
-		} else {
-			return list.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		int size = list.size(); 
+		for (int i = 0; i < size; i++) {
+			var val = list.get(i);
+			sb.append(i < size - 1 ? val + ", " : val.toString());
 		}
+		sb.append("]");
+		return sb.toString();
 	}
 }
