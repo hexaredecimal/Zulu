@@ -1797,14 +1797,14 @@ public class Modules {
 
 	public static void init() {
 		initBarley();
-		initIo();
-		initBts();
-		initMath();
+		// initIo(); Deprecation
+		// initBts(); Deprecation
+		// initMath(); Deprecation
 		initString();
-		initStack();
+		// initStack(); Deprecation
 		initTypes();
 		initQueue();
-		initHashmap();
+		//initHashmap(); Deprecation
 		initMeasurement();
 		initSignal();
 		initCode();
@@ -1812,7 +1812,7 @@ public class Modules {
 		initFile();
 		// initSocket(); Deprecation
 		initDist();
-		initLists();
+		//initLists(); Deprecation
 		initAmethyst();
 		initInterface();
 		initAnsi();
@@ -1908,6 +1908,43 @@ public class Modules {
 			Class cls = LibraryLoader.loadClass(libname, clasz_name);
 			return new ZuluReference(cls);
 		});
+
+
+		module.put("invoke_unraw", args -> {
+			if (args.length == 1) {
+				throw new ZuluException("BadArg", "Expected atleast 2 argument to invoke");
+			}
+
+			ZuluValue first = args[0];
+			Object second = args[1].raw();
+
+			if (!(first instanceof ZuluReference)) {
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Reference value");
+			}
+
+			Object ref = first.raw();
+			if (!(ref instanceof Method)) {
+				throw new ZuluException("BadArg", "Invalid value provide for param `1`, expected a Method value, found " + ref);
+			}
+
+			Method method = (Method) ref;
+
+			Object[] rest = new Object[args.length - 2];
+			if (args.length - 2 >= 1) {
+				for (int i = 2; i < args.length; i++) {
+					rest[i - 2] = ((ZuluValue) args[i]);
+				}
+			}
+
+			Object result = null;
+			try {
+				result = method.invoke(second, rest);
+			} catch (IllegalAccessException | InvocationTargetException ex) {
+				throw new ZuluException(ex.getCause().getMessage(), ex.getMessage());
+			}
+			return new ObjectValue(result);
+		});
+
 
 		module.put("invoke", args -> {
 			if (args.length == 1) {
@@ -2014,7 +2051,7 @@ public class Modules {
 		});
 
 		module.put("get_constructor", args -> {
-			if (args.length == 1) {
+			if (args.length < 1) {
 				throw new ZuluException("BadArg", "Expected atleast 1 argument to invoke_field");
 			}
 
@@ -2056,7 +2093,7 @@ public class Modules {
 		});
 
 		module.put("new", args -> {
-			if (args.length == 1) {
+			if (args.length < 1) {
 				throw new ZuluException("BadArg", "Expected atleast 1 argument to new_instance");
 			}
 
@@ -2142,7 +2179,7 @@ public class Modules {
 				}).collect(Collectors.toList());
 
 			if (methods.isEmpty()) {
-				System.err.println("Fatal");
+				System.err.println("Fatal: Method `" + method_name + "` does not exist");
 				System.exit(0);
 			}
 
